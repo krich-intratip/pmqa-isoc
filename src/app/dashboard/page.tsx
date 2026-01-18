@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ROLES, canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
-import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuthStore();
@@ -297,6 +297,55 @@ export default function DashboardPage() {
                         <CardContent>
                             <Link href="/phase2/baseline-analyzer">
                                 <Button variant="outline" className="w-full text-emerald-700 bg-emerald-50 border-emerald-100 hover:bg-emerald-100">วิเคราะห์</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Phase 3: Analysis & Narrative */}
+                <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 3: Analysis & Narrative</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-sky-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-sky-700">
+                                <FileText className="h-5 w-5" />
+                                <span className="text-base">Context Pack</span>
+                            </CardTitle>
+                            <CardDescription>รวบรวมบริบทองค์กร (3.1)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase3/context-pack">
+                                <Button variant="outline" className="w-full text-sky-700 bg-sky-50 border-sky-100 hover:bg-sky-100">จัดการ</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-orange-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-orange-700">
+                                <AlertTriangle className="h-5 w-5" />
+                                <span className="text-base">Risk Analyzer</span>
+                            </CardTitle>
+                            <CardDescription>วิเคราะห์ความเสี่ยง (3.2)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase3/risk-analyzer">
+                                <Button variant="outline" className="w-full text-orange-700 bg-orange-50 border-orange-100 hover:bg-orange-100">วิเคราะห์</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-purple-700">
+                                <GitBranch className="h-5 w-5" />
+                                <span className="text-base">Strategy Linker</span>
+                            </CardTitle>
+                            <CardDescription>เชื่อมโยงยุทธศาสตร์ (3.3)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase3/strategy-linker">
+                                <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">จัดการ</Button>
                             </Link>
                         </CardContent>
                     </Card>
