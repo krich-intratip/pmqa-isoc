@@ -1,0 +1,41 @@
+import type { Metadata } from 'next';
+import { Kanit, Sarabun } from "next/font/google";
+import './globals.css';
+import { Toaster } from '@/components/ui/sonner';
+
+const kanit = Kanit({
+  subsets: ["thai", "latin"],
+  weight: ["200", "300", "400", "500", "600"],
+  variable: '--font-kanit',
+});
+
+const sarabun = Sarabun({
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: '--font-sarabun',
+});
+
+export const metadata: Metadata = {
+  title: "PMQA 4.0 - ISOC",
+  description: "Internal Security Operations Command Performance Assessment",
+};
+
+import AppFooter from '@/components/layout/AppFooter';
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="th">
+      <body className={`${kanit.className} ${kanit.variable} ${sarabun.variable} antialiased min-h-screen bg-slate-50 flex flex-col`}>
+        <div className="flex-1">
+          {children}
+        </div>
+        <AppFooter />
+        <Toaster />
+      </body>
+    </html>
+  );
+}
