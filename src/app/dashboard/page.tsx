@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ROLES, canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
-import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool, Package } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuthStore();
@@ -380,6 +380,40 @@ export default function DashboardPage() {
                         <CardContent>
                             <Link href="/phase4/sar-writer">
                                 <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">เขียน</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Phase 5: Results */}
+                <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 5: Results (Category 7)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-emerald-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-emerald-700">
+                                <Package className="h-5 w-5" />
+                                <span className="text-base">Results Data Pack</span>
+                            </CardTitle>
+                            <CardDescription>รวบรวมผลลัพธ์หมวด 7 (5.1)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase5/results-pack">
+                                <Button variant="outline" className="w-full text-emerald-700 bg-emerald-50 border-emerald-100 hover:bg-emerald-100">ดูผลลัพธ์</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-amber-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-amber-700">
+                                <BookOpen className="h-5 w-5" />
+                                <span className="text-base">Recovery Narrative</span>
+                            </CardTitle>
+                            <CardDescription>บทวิเคราะห์ผลลัพธ์ (5.2)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase5/recovery-narrative">
+                                <Button variant="outline" className="w-full text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">สร้างบทวิเคราะห์</Button>
                             </Link>
                         </CardContent>
                     </Card>
