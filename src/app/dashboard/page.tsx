@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ROLES, canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
-import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuthStore();
@@ -346,6 +346,40 @@ export default function DashboardPage() {
                         <CardContent>
                             <Link href="/phase3/strategy-linker">
                                 <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">จัดการ</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Phase 4: SAR Writing */}
+                <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 4: SAR Writing (AI-Powered)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                <FileText className="h-5 w-5" />
+                                <span className="text-base">SAR Outline</span>
+                            </CardTitle>
+                            <CardDescription>สร้างโครงร่าง SAR (4.1)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase4/sar-outline">
+                                <Button variant="outline" className="w-full text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">สร้าง</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-purple-700">
+                                <PenTool className="h-5 w-5" />
+                                <span className="text-base">SAR Writer</span>
+                            </CardTitle>
+                            <CardDescription>เขียนเนื้อหาด้วย AI (4.2)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase4/sar-writer">
+                                <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">เขียน</Button>
                             </Link>
                         </CardContent>
                     </Card>
