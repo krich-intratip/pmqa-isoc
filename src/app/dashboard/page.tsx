@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ROLES, canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
-import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool, Package, Calculator } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool, Package, Calculator, Presentation, HelpCircle } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuthStore();
@@ -448,6 +448,40 @@ export default function DashboardPage() {
                         <CardContent>
                             <Link href="/phase6/score-simulator">
                                 <Button variant="outline" className="w-full text-teal-700 bg-teal-50 border-teal-100 hover:bg-teal-100">จำลอง</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Phase 7: Interview Prep */}
+                <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 7: Interview Prep</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-rose-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-rose-700">
+                                <Presentation className="h-5 w-5" />
+                                <span className="text-base">Interview Brief</span>
+                            </CardTitle>
+                            <CardDescription>เตรียมรับการตรวจประเมิน (7.1)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase7/interview-brief">
+                                <Button variant="outline" className="w-full text-rose-700 bg-rose-50 border-rose-100 hover:bg-rose-100">สร้าง Brief</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-violet-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-violet-700">
+                                <HelpCircle className="h-5 w-5" />
+                                <span className="text-base">Q&A Bank</span>
+                            </CardTitle>
+                            <CardDescription>คลังคำถาม-คำตอบ (7.2)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase7/qa-bank">
+                                <Button variant="outline" className="w-full text-violet-700 bg-violet-50 border-violet-100 hover:bg-violet-100">จัดการ Q&A</Button>
                             </Link>
                         </CardContent>
                     </Card>

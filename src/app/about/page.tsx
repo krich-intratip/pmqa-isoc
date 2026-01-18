@@ -54,6 +54,7 @@ export default function AboutPage() {
                 <p className="mt-1">
                     Developed by <a href="https://portfolio-two-sepia-33.vercel.app/" target="_blank" className="text-indigo-600 hover:underline">พล.ท.ดร.กริช อินทราทิพย์</a>
                 </p>
+                <p className="mt-2 text-xs text-slate-400">Version 1.0.0 | อัปเดตล่าสุด: 18 มกราคม 2569</p>
             </footer>
         </div>
     );
