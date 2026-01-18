@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Kanit, Sarabun } from "next/font/google";
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/context/AuthContext';
 
 const kanit = Kanit({
   subsets: ["thai", "latin"],
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 };
 
 import AppFooter from '@/components/layout/AppFooter';
+import AppHeader from '@/components/layout/AppHeader';
 
 export default function RootLayout({
   children,
@@ -30,11 +32,14 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${kanit.className} ${kanit.variable} ${sarabun.variable} antialiased min-h-screen bg-slate-50 flex flex-col`}>
-        <div className="flex-1">
-          {children}
-        </div>
-        <AppFooter />
-        <Toaster />
+        <AuthProvider>
+          <AppHeader />
+          <div className="flex-1">
+            {children}
+          </div>
+          <AppFooter />
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

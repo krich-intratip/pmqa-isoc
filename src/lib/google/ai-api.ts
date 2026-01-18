@@ -2,10 +2,16 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText, streamText } from 'ai';
 
 export const GEMINI_MODELS = [
-    { id: 'gemini-2.0-flash-exp', name: 'Gemini 3 Flash (Preview)', description: 'Fastest and most efficient model (Preview)', cost: 'Free' },
-    { id: 'gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro', description: 'Best for complex reasoning and SAR writing', cost: 'Free (Rate Limited)' },
-    { id: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash', description: 'Fast and versatile', cost: 'Free' },
-    { id: 'gemini-pro', name: 'Gemini 1.0 Pro', description: 'Standard model', cost: 'Free' },
+    // Gemini 3.0 Series (Latest - December 2025)
+    { id: 'gemini-3.0-flash', name: 'Gemini 3.0 Flash', description: 'รุ่นล่าสุด เร็วและฉลาดที่สุด (Default)', cost: 'Free' },
+    { id: 'gemini-3.0-pro', name: 'Gemini 3.0 Pro', description: 'รุ่นใหม่ล่าสุด สำหรับงานซับซ้อน', cost: 'Free' },
+    // Gemini 2.5 Series (June 2025)
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'ฉลาดที่สุด เหมาะกับการวิเคราะห์และเขียน SAR', cost: 'Free' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'รวดเร็ว เหมาะกับงานทั่วไป', cost: 'Free' },
+    { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', description: 'ประหยัดต้นทุน เหมาะกับงานง่ายๆ', cost: 'Free' },
+    // Gemini 2.0 Series (February 2025)
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', description: 'เวอร์ชันเสถียร รองรับ 1M tokens', cost: 'Free' },
+    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', description: 'ประหยัดต้นทุน', cost: 'Free' },
 ];
 
 export const createAIClient = (apiKey: string) => {
