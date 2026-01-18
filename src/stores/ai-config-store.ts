@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
+import { db, auth } from '@/lib/firebase/config';
 import { AIConfig } from '@/types/database';
 import { GEMINI_MODELS } from '@/lib/google/ai-api';
 
@@ -11,7 +11,7 @@ interface AIConfigState {
     setApiKey: (key: string) => void;
     setSelectedModel: (modelId: string) => void;
     loadConfig: () => Promise<void>;
-    saveConfig: () => Promise<void>;
+    saveConfig: (userId?: string) => Promise<void>;
 }
 
 export const useAIConfigStore = create<AIConfigState>()(
@@ -34,15 +34,17 @@ export const useAIConfigStore = create<AIConfigState>()(
                     console.error("Failed to load AI config", error);
                 }
             },
-            saveConfig: async () => {
+            saveConfig: async (userId?: string) => {
                 const { apiKey, selectedModel } = get();
+                // Get current user ID from Firebase Auth if not provided
+                const currentUserId = userId || auth.currentUser?.uid || 'unknown';
                 try {
                     await setDoc(doc(db, 'ai_config', 'default'), {
                         id: 'default',
                         apiKey,
                         selectedModel,
                         updatedAt: serverTimestamp(),
-                        updatedBy: 'system' // Should be user ID
+                        updatedBy: currentUserId
                     });
                 } catch (error) {
                     console.error("Failed to save AI config", error);

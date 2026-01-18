@@ -73,16 +73,21 @@ export default function EvidenceRegisterPage() {
             return;
         }
 
+        if (!user?.unitId || !user?.uid) {
+            toast.error('กรุณาเข้าสู่ระบบก่อนดำเนินการ');
+            return;
+        }
+
         setIsAdding(true);
         try {
             const newEvidence: Partial<Evidence> = {
-                unitId: user!.unitId!,
+                unitId: user.unitId,
                 categoryId: selectedCategory,
                 criteriaId: newCriteria,
                 type: newType,
                 title: newTitle,
                 url: newUrl,
-                uploadedBy: user!.uid,
+                uploadedBy: user.uid,
                 uploadedAt: serverTimestamp() as Timestamp,
                 verificationStatus: 'pending',
                 completeness: 'partial',

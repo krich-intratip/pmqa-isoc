@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
+import { useAuthStore } from '@/stores/auth-store';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,18 +13,24 @@ import {
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
     Presentation, HelpCircle
 } from 'lucide-react';
+import { canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
 
 export default function Dashboard() {
-    const { user, loading } = useAuth();
+    const { user, loading, initialize } = useAuthStore();
     const router = useRouter();
 
-    // Mock roles for development/testing
-    const isAdmin = true;
-    const isReviewer = true;
+    // Use actual user role from profile
+    const isAdmin = user ? canManageUsers(user.role) : false;
+    const isReviewer = user ? canApproveEvidence(user.role) : false;
+
+    useEffect(() => {
+        const unsubscribe = initialize();
+        return () => unsubscribe();
+    }, [initialize]);
 
     useEffect(() => {
         if (!loading && !user) {
-            router.push('/login');
+            router.push('/auth/login');
         }
     }, [user, loading, router]);
 

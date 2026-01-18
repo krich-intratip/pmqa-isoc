@@ -114,10 +114,15 @@ export default function DataSourceCatalogPage() {
             return;
         }
 
+        if (!user?.unitId) {
+            toast.error('กรุณาเข้าสู่ระบบก่อนดำเนินการ');
+            return;
+        }
+
         setSaving(true);
         try {
             const sourceData = {
-                unitId: user!.unitId,
+                unitId: user.unitId,
                 name: formName,
                 description: formDescription,
                 type: formType,

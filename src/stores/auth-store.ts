@@ -18,13 +18,21 @@ export const useAuthStore = create<AuthState>((set) => ({
     initialize: () => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // Fetch full profile from Firestore
-                const profile = await getUserProfile(firebaseUser.uid);
-                if (profile) {
-                    set({ user: profile, loading: false });
-                } else {
-                    // Fallback if profile doesn't exist yet (e.g. specialized creation flow not finished)
-                    set({ loading: false }); // User might be logged in via Firebase but not in DB yet
+                try {
+                    // Fetch full profile from Firestore
+                    const profile = await getUserProfile(firebaseUser.uid);
+                    if (profile) {
+                        set({ user: profile, loading: false });
+                    } else {
+                        // Firebase user exists but no Firestore profile yet
+                        // This happens when user just signed up but profile creation failed
+                        // Set user as null to trigger registration flow
+                        console.warn('Firebase user exists but no Firestore profile found:', firebaseUser.uid);
+                        set({ user: null, loading: false });
+                    }
+                } catch (error) {
+                    console.error('Error fetching user profile:', error);
+                    set({ user: null, loading: false });
                 }
             } else {
                 set({ user: null, loading: false });

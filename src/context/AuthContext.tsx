@@ -1,9 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase/config';
 import { useRouter } from 'next/navigation';
+import { User } from '@/types/database';
+import { getUserProfile, signInWithGoogle as signInWithGoogleAuth } from '@/lib/firebase/auth';
 
 interface AuthContextType {
     user: User | null;
@@ -20,8 +22,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Fetch full profile from Firestore
+                const profile = await getUserProfile(firebaseUser.uid);
+                setUser(profile);
+            } else {
+                setUser(null);
+            }
             setLoading(false);
         });
 
@@ -29,10 +37,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const signInWithGoogle = async () => {
-        const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
-            router.push('/dashboard');
+            const result = await signInWithGoogleAuth();
+            if (result.isNew) {
+                router.push('/profile?status=pending');
+            } else {
+                router.push('/dashboard');
+            }
         } catch (error) {
             console.error('Error signing in with Google', error);
             throw error;
@@ -42,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = async () => {
         try {
             await signOut(auth);
+            setUser(null);
             router.push('/');
         } catch (error) {
             console.error('Error signing out', error);
@@ -51,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout }}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }

@@ -26,19 +26,21 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
                     router.push('/auth/login');
                 }
             } else {
-                // User is logged in
-                if (user.status === 'pending' && pathname !== '/auth/pending') {
-                    // Maybe redirect to pending page if waiting approval?
-                    // For now, allow access to profile or request page
-                    if (pathname !== '/auth/register' && pathname !== '/auth/login') {
-                        // If fully strictly pending, maybe block access
-                        // But register/request page is where they submit request.
-                        // If request submitted, maybe just wait.
+                // User is logged in - check status and roles
+                if (user.status === 'pending') {
+                    // Pending users can only access profile page to view their status
+                    const allowedPendingPaths = ['/profile', '/auth/login', '/auth/register'];
+                    if (!allowedPendingPaths.includes(pathname)) {
+                        router.push('/profile?status=pending');
                     }
-                }
-
-                if (allowedRoles && !allowedRoles.includes(user.role)) {
-                    router.push('/dashboard?error=unauthorized');
+                } else if (user.status === 'rejected' || user.status === 'disabled') {
+                    // Rejected or disabled users should be logged out or shown error
+                    router.push('/auth/login?error=account_disabled');
+                } else if (user.status === 'approved') {
+                    // Check role-based access for approved users
+                    if (allowedRoles && !allowedRoles.includes(user.role)) {
+                        router.push('/dashboard?error=unauthorized');
+                    }
                 }
             }
         }

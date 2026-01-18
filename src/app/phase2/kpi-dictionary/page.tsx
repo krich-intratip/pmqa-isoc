@@ -122,10 +122,15 @@ export default function KPIDictionaryPage() {
             return;
         }
 
+        if (!user?.unitId) {
+            toast.error('กรุณาเข้าสู่ระบบก่อนดำเนินการ');
+            return;
+        }
+
         setSaving(true);
         try {
             const kpiData = {
-                unitId: user!.unitId,
+                unitId: user.unitId,
                 code: formCode,
                 name: formName,
                 description: formDescription,
