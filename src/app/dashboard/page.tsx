@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ROLES, canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
-import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool, Package } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Map, Calendar, FileText, CheckCircle2, BarChart3, ShieldCheck, FolderPlus, User, ClipboardCheck, Database, BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart, AlertTriangle, GitBranch, PenTool, Package, Calculator } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuthStore();
@@ -414,6 +414,40 @@ export default function DashboardPage() {
                         <CardContent>
                             <Link href="/phase5/recovery-narrative">
                                 <Button variant="outline" className="w-full text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">สร้างบทวิเคราะห์</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Phase 6: Quality Assurance */}
+                <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 6: Quality Assurance</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-blue-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-blue-700">
+                                <ShieldCheck className="h-5 w-5" />
+                                <span className="text-base">Consistency Auditor</span>
+                            </CardTitle>
+                            <CardDescription>ตรวจสอบความสอดคล้อง (6.1)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase6/consistency-auditor">
+                                <Button variant="outline" className="w-full text-blue-700 bg-blue-50 border-blue-100 hover:bg-blue-100">ตรวจสอบ</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-teal-50">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-teal-700">
+                                <Calculator className="h-5 w-5" />
+                                <span className="text-base">Score Simulator</span>
+                            </CardTitle>
+                            <CardDescription>จำลองคะแนน PMQA (6.2)</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/phase6/score-simulator">
+                                <Button variant="outline" className="w-full text-teal-700 bg-teal-50 border-teal-100 hover:bg-teal-100">จำลอง</Button>
                             </Link>
                         </CardContent>
                     </Card>
