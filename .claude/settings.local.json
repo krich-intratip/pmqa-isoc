@@ -16,7 +16,8 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd setup-admin page for initial Super Admin configuration\n\nProvides a secure UI at /setup-admin for the designated admin email\nto self-register as Super Admin with full permissions in Firestore.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(vercel --version:*)",
       "Bash(npx vercel:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(printf:*)"
     ]
   }
 }

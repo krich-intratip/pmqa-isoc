@@ -42,13 +42,11 @@ export default function LoginPage() {
             }
         } catch (error: any) {
             console.error('Login error:', error);
-            console.error('Error code:', error?.code);
-            console.error('Error message:', error?.message);
             const errorMessage = error?.code === 'auth/popup-closed-by-user'
                 ? 'คุณปิด popup ก่อนเข้าสู่ระบบ'
                 : error?.code === 'auth/unauthorized-domain'
-                ? 'Domain ไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ'
-                : `เกิดข้อผิดพลาด: ${error?.code || error?.message || 'Unknown error'}`;
+                    ? 'Domain ไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ'
+                    : 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
             toast.error(errorMessage);
         } finally {
             setIsLoading(false);
