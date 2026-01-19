@@ -32,7 +32,7 @@ export default function AboutPage() {
                 </p>
                 <div className="flex items-center justify-center gap-4">
                     <Badge variant="outline" className="text-lg px-4 py-2">
-                        Version 1.6.0
+                        Version 1.6.1
                     </Badge>
                     <Badge className="text-lg px-4 py-2 bg-green-100 text-green-800">
                         Released: 20 มกราคม 2569
