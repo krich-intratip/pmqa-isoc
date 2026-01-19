@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,17 +30,34 @@ interface DataIssue {
 
 export default function DataCleaningPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [issues, setIssues] = useState<DataIssue[]>([]);
     const [loading, setLoading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
 
+    // v1.6.0: Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const analyzeData = async () => {
         if (!user?.unitId) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
+
         setAnalyzing(true);
 
         try {
-            // Fetch all KPI data
-            const dataQ = query(collection(db, 'kpi_data'), where('unitId', '==', user.unitId));
+            // Fetch KPI data with cycle filter
+            const dataQ = query(
+                collection(db, 'kpi_data'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id) // v1.6.0
+            );
             const dataSnap = await getDocs(dataQ);
             const allData: any[] = [];
             dataSnap.forEach(d => allData.push({ id: d.id, ...d.data() }));
@@ -180,11 +198,33 @@ export default function DataCleaningPage() {
                         </h1>
                         <p className="text-muted-foreground">ตรวจสอบและทำความสะอาดข้อมูล (App 2.5)</p>
                     </div>
-                    <Button onClick={analyzeData} disabled={analyzing} className="gap-2 bg-violet-600 hover:bg-violet-700">
-                        <RefreshCw className={`h-4 w-4 ${analyzing ? 'animate-spin' : ''}`} />
-                        {analyzing ? 'กำลังวิเคราะห์...' : 'วิเคราะห์ข้อมูล'}
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-violet-700 border-violet-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Button onClick={analyzeData} disabled={analyzing || !selectedCycle} className="gap-2 bg-violet-600 hover:bg-violet-700">
+                            <RefreshCw className={`h-4 w-4 ${analyzing ? 'animate-spin' : ''}`} />
+                            {analyzing ? 'กำลังวิเคราะห์...' : 'วิเคราะห์ข้อมูล'}
+                        </Button>
+                    </div>
                 </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
