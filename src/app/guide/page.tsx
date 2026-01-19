@@ -21,7 +21,7 @@ export default function GuidePage() {
                     คู่มือการใช้งานระบบ PMQA 4.0 Web Application สำหรับ กอ.รมน. ฉบับสมบูรณ์
                     ครอบคลุมทุกขั้นตอนตั้งแต่เริ่มต้นจนถึงการเตรียมรับการตรวจประเมิน
                 </p>
-                <Badge className="mt-4 bg-indigo-100 text-indigo-700">Version 1.2.0 | อัปเดต 19 มกราคม 2569</Badge>
+                <Badge className="mt-4 bg-indigo-100 text-indigo-700">Version 1.5.0 | อัปเดต 19 มกราคม 2569</Badge>
             </div>
 
             <div className="grid gap-8">
@@ -643,7 +643,7 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 <div className="text-center mt-8 space-y-2 py-6 border-t">
                     <p className="text-lg font-semibold text-slate-700">PMQA 4.0 Web Application</p>
-                    <p className="text-sm text-slate-500">Version 1.2.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
+                    <p className="text-sm text-slate-500">Version 1.5.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
                     <p className="text-sm text-slate-400">Internal Security Operations Command (กอ.รมน.)</p>
                     <p className="text-xs text-slate-400 mt-2">
                         พัฒนาโดย{' '}

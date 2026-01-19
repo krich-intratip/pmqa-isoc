@@ -77,7 +77,7 @@ export default function Home() {
 
       <footer className="py-6 text-center text-slate-400 text-sm">
         <p>© 2026 Internal Security Operations Command. All rights reserved.</p>
-        <p className="mt-1 text-xs">Version 1.2.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
+        <p className="mt-1 text-xs">Version 1.5.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
       </footer>
     </div>
   );
