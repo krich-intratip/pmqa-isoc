@@ -2,6 +2,7 @@ import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from 
 import { auth, db } from './config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { User, Unit } from '@/types/database';
+import { logLogin, logLogout } from '@/lib/activity-log/activity-logger';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -35,7 +36,19 @@ export const signInWithGoogle = async () => {
         } else {
             // Update last login
             await setDoc(userRef, { lastLoginAt: serverTimestamp() }, { merge: true });
-            return { user: userSnap.data() as User, isNew: false };
+            const userData = userSnap.data() as User;
+
+            // Log login activity (only for approved users)
+            if (userData.status === 'approved') {
+                try {
+                    await logLogin(userData);
+                } catch (error) {
+                    console.error('Failed to log login activity:', error);
+                    // Don't block login if logging fails
+                }
+            }
+
+            return { user: userData, isNew: false };
         }
     } catch (error) {
         console.error('Error signing in with Google', error);

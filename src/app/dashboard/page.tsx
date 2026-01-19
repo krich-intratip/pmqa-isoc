@@ -7,11 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
-    Users, Settings, Map, Calendar, FileText, CheckCircle2,
+    Users, Settings, Map, Calendar as CalendarIcon, FileText, CheckCircle2,
     BarChart3, ShieldCheck, FolderPlus, ClipboardCheck, Database,
     BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart,
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
-    Presentation, HelpCircle
+    Presentation, HelpCircle, Calendar, UserCog, Activity
 } from 'lucide-react';
 import { canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
 
@@ -98,13 +98,43 @@ export default function Dashboard() {
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <Calendar className="h-5 w-5" />
+                                    <span className="text-base">Cycle Management</span>
+                                </CardTitle>
+                                <CardDescription>จัดการรอบการประเมิน PMQA</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Link href="/admin/cycles">
+                                    <Button variant="outline" className="w-full">จัดการรอบ</Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <UserCog className="h-5 w-5" />
+                                    <span className="text-base">User Management</span>
+                                </CardTitle>
+                                <CardDescription>จัดการผู้ใช้งานระบบ</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Link href="/admin/users">
+                                    <Button variant="outline" className="w-full">จัดการผู้ใช้</Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-indigo-700">
                                     <Users className="h-5 w-5" />
                                     <span className="text-base">User Approvals</span>
                                 </CardTitle>
                                 <CardDescription>อนุมัติผู้ขอใช้งานระบบ</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <Link href="/admin/approvals">
+                                <Link href="/admin/users?filter=pending">
                                     <Button variant="outline" className="w-full">จัดการ</Button>
                                 </Link>
                             </CardContent>
@@ -136,6 +166,21 @@ export default function Dashboard() {
                             <CardContent>
                                 <Link href="/settings/ai">
                                     <Button variant="outline" className="w-full">ตั้งค่า</Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <Activity className="h-5 w-5" />
+                                    <span className="text-base">Activity Log</span>
+                                </CardTitle>
+                                <CardDescription>ประวัติการใช้งานระบบ</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Link href="/admin/activity-log">
+                                    <Button variant="outline" className="w-full">ดูรายการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -239,7 +284,7 @@ export default function Dashboard() {
                 <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-amber-50">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-amber-700">
-                            <Calendar className="h-5 w-5" />
+                            <CalendarIcon className="h-5 w-5" />
                             <span className="text-base">Submission Calendar</span>
                         </CardTitle>
                         <CardDescription>ตารางกำหนดการส่งงาน</CardDescription>

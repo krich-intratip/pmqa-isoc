@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,17 +10,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { User, Settings, Shield, Building2, Phone, Mail, Calendar, Save, Loader2 } from 'lucide-react';
-import { db } from '@/lib/firebase/config';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { User, Settings, Shield, Building2, Phone, Mail, Calendar, Save, Loader2, Trash2, AlertTriangle } from 'lucide-react';
+import { db, auth } from '@/lib/firebase/config';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 import { getRoleDisplay } from '@/lib/auth/role-helper';
 import ThaiUtils from '@/lib/utils/thai-utils';
 
 export default function ProfilePage() {
-    const { user, setUser } = useAuthStore();
+    const { user, setUser, logout } = useAuthStore();
+    const router = useRouter();
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     // Editable fields
     const [phone, setPhone] = useState('');
@@ -64,6 +69,38 @@ export default function ProfilePage() {
             toast.error('เกิดข้อผิดพลาดในการบันทึก');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!user) return;
+        setDeleting(true);
+
+        try {
+            // Soft delete: เปลี่ยนสถานะเป็น disabled
+            await updateDoc(doc(db, 'users', user.uid), {
+                status: 'disabled',
+                isActive: false,
+                updatedAt: serverTimestamp(),
+                metadata: {
+                    ...user.metadata,
+                    deletedAt: serverTimestamp(),
+                    deleteReason: 'self-deletion'
+                }
+            });
+
+            toast.success('ปิดการใช้งาน Account เรียบร้อยแล้ว กำลังออกจากระบบ...');
+
+            // รอ 1 วินาที แล้ว logout
+            setTimeout(async () => {
+                await logout();
+                router.push('/auth/login');
+            }, 1000);
+        } catch (error) {
+            console.error(error);
+            toast.error('เกิดข้อผิดพลาดในการปิดการใช้งาน Account');
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -219,6 +256,71 @@ export default function ProfilePage() {
                         </CardContent>
                     </Card>
                 )}
+
+                {/* Danger Zone - Delete Account */}
+                <Card className="mt-6 border-red-200 bg-red-50">
+                    <CardHeader>
+                        <CardTitle className="text-red-700 flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5" />
+                            Danger Zone
+                        </CardTitle>
+                        <CardDescription>การดำเนินการในส่วนนี้จะส่งผลกระทบต่อ Account ของคุณอย่างรุนแรง</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-red-200">
+                            <div>
+                                <p className="font-medium text-slate-900">ปิดการใช้งาน Account</p>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    คุณจะไม่สามารถเข้าสู่ระบบได้ แต่ข้อมูลจะยังคงอยู่ในระบบ (Admin สามารถเปิดใช้งานใหม่ได้)
+                                </p>
+                            </div>
+                            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="destructive" className="ml-4">
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        ปิดการใช้งาน
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle className="flex items-center gap-2 text-red-700">
+                                            <AlertTriangle className="h-5 w-5" />
+                                            ยืนยันการปิดการใช้งาน Account
+                                        </DialogTitle>
+                                        <DialogDescription className="space-y-2 pt-4">
+                                            <p>คุณแน่ใจหรือไม่ที่จะปิดการใช้งาน Account?</p>
+                                            <ul className="list-disc list-inside space-y-1 text-sm">
+                                                <li>คุณจะถูก logout ออกจากระบบทันที</li>
+                                                <li>คุณจะไม่สามารถเข้าสู่ระบบได้อีก</li>
+                                                <li>ข้อมูลของคุณจะยังคงอยู่ในระบบ</li>
+                                                <li>Admin สามารถเปิดใช้งาน Account ของคุณใหม่ได้</li>
+                                            </ul>
+                                            <p className="font-medium text-red-700 mt-4">การดำเนินการนี้ไม่สามารถยกเลิกได้!</p>
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
+                                            ยกเลิก
+                                        </Button>
+                                        <Button variant="destructive" onClick={handleDeleteAccount} disabled={deleting}>
+                                            {deleting ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                    กำลังดำเนินการ...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Trash2 className="h-4 w-4 mr-2" />
+                                                    ยืนยันปิดการใช้งาน
+                                                </>
+                                            )}
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </ProtectedRoute>
     );

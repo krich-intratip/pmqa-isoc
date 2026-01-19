@@ -57,18 +57,92 @@ export interface AIConfig {
     updatedBy: string;
 }
 
+export type ActivityAction =
+    | 'login'
+    | 'logout'
+    | 'create'
+    | 'update'
+    | 'delete'
+    | 'upload'
+    | 'download'
+    | 'view'
+    | 'approve'
+    | 'reject'
+    | 'enable'
+    | 'disable';
+
+export type ActivityResourceType =
+    | 'user'
+    | 'cycle'
+    | 'evidence'
+    | 'unit'
+    | 'file'
+    | 'system'
+    | 'auth';
+
 export interface ActivityLog {
     id: string;
     userId: string;
-    action: string;
-    resourceType: string;
-    resourceId: string;
-    details: any;
+    userName: string; // denormalized for fast query
+    userEmail: string;
+    unitId?: string;
+    unitName?: string; // denormalized
+
+    action: ActivityAction;
+
+    resourceType: ActivityResourceType;
+    resourceId?: string;
+    resourceName?: string;
+
+    details: {
+        // Additional details based on action
+        changes?: any; // for update operations
+        oldValue?: any;
+        newValue?: any;
+
+        // File operations
+        filename?: string;
+        filesize?: number;
+        fileType?: string;
+
+        // Login/Logout
+        ipAddress?: string;
+        userAgent?: string;
+        device?: string;
+        browser?: string;
+
+        // General
+        description?: string;
+        errorMessage?: string;
+    };
+
     timestamp: Timestamp;
+    createdAt: Timestamp;
+}
+
+export interface AssessmentCycle {
+    id: string;
+    year: number; // 2568, 2569
+    name: string; // "รอบประเมิน PMQA 2568"
+    description?: string;
+    targetCategories: number[]; // [1,2,3,4,5,6,7] หรือเลือกบางหมวด
+    startDate: Timestamp;
+    endDate: Timestamp;
+    status: 'draft' | 'active' | 'completed' | 'archived';
+    isActive: boolean; // มีเพียง 1 cycle ที่ isActive = true
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+    createdBy: string;
+    metadata?: {
+        targetScore?: number;
+        evaluationDate?: Timestamp;
+        notes?: string;
+    };
 }
 
 export interface Evidence {
     id: string;
+    cycleId: string; // เพิ่ม: อ้างอิงรอบการประเมิน
     unitId: string;
     categoryId: number; // PMQA Category 1-7
     criteriaId: string; // e.g. "1.1", "2.2"

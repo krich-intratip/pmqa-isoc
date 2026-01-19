@@ -1,0 +1,323 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
+import { useEffect, useState } from 'react';
+import { useAuthStore } from '@/stores/auth-store';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, updateDoc, doc, serverTimestamp, query, where } from 'firebase/firestore';
+import { User } from '@/types/database';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
+import { Users, Edit, UserX, Search, Filter } from 'lucide-react';
+
+export default function UsersManagementPage() {
+    const { user } = useAuthStore();
+    const [users, setUsers] = useState<User[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState<string>('all');
+
+    // Form states
+    const [displayName, setDisplayName] = useState('');
+    const [role, setRole] = useState<User['role']>('read_only');
+    const [unitId, setUnitId] = useState('');
+    const [status, setStatus] = useState<User['status']>('approved');
+    const [position, setPosition] = useState('');
+    const [department, setDepartment] = useState('');
+    const [phone, setPhone] = useState('');
+
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            // ดึงเฉพาะ User ที่ approved หรือ disabled (ไม่รวม pending)
+            const q = query(
+                collection(db, 'users'),
+                where('status', 'in', ['approved', 'disabled', 'rejected'])
+            );
+            const querySnapshot = await getDocs(q);
+            const usersData: User[] = [];
+            querySnapshot.forEach((docSnap) => {
+                usersData.push(docSnap.data() as User);
+            });
+            setUsers(usersData);
+            setFilteredUsers(usersData);
+        } catch (error) {
+            console.error(error);
+            toast.error('ไม่สามารถดึงข้อมูลผู้ใช้งานได้');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user && canManageUsers(user.role)) {
+            fetchUsers();
+        }
+    }, [user]);
+
+    // Filter and search
+    useEffect(() => {
+        let result = users;
+
+        // Filter by status
+        if (filterStatus !== 'all') {
+            result = result.filter(u => u.status === filterStatus);
+        }
+
+        // Search by name or email
+        if (searchTerm) {
+            result = result.filter(u =>
+                u.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                u.email.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        setFilteredUsers(result);
+    }, [searchTerm, filterStatus, users]);
+
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setDisplayName(user.displayName);
+        setRole(user.role);
+        setUnitId(user.unitId || '');
+        setStatus(user.status);
+        setPosition(user.metadata?.position || '');
+        setDepartment(user.metadata?.department || '');
+        setPhone(user.metadata?.phone || '');
+        setDialogOpen(true);
+    };
+
+    const handleSave = async () => {
+        if (!editingUser) return;
+
+        try {
+            await updateDoc(doc(db, 'users', editingUser.uid), {
+                displayName,
+                role,
+                unitId: unitId || null,
+                status,
+                metadata: {
+                    position: position || undefined,
+                    department: department || undefined,
+                    phone: phone || undefined,
+                },
+                updatedAt: serverTimestamp(),
+            });
+
+            toast.success('อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว');
+            setDialogOpen(false);
+            setEditingUser(null);
+            fetchUsers();
+        } catch (error) {
+            console.error(error);
+            toast.error('เกิดข้อผิดพลาดในการอัปเดต');
+        }
+    };
+
+    const handleDisable = async (userId: string, currentStatus: User['status']) => {
+        const newStatus = currentStatus === 'disabled' ? 'approved' : 'disabled';
+        const confirmMsg = newStatus === 'disabled'
+            ? 'ยืนยันที่จะปิดการใช้งานผู้ใช้นี้?'
+            : 'ยืนยันที่จะเปิดการใช้งานผู้ใช้นี้?';
+
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {
+                status: newStatus,
+                isActive: newStatus === 'approved',
+                updatedAt: serverTimestamp(),
+            });
+
+            toast.success(newStatus === 'disabled' ? 'ปิดการใช้งานแล้ว' : 'เปิดการใช้งานแล้ว');
+            fetchUsers();
+        } catch (error) {
+            console.error(error);
+            toast.error('เกิดข้อผิดพลาด');
+        }
+    };
+
+    const getStatusBadge = (status: User['status']) => {
+        switch (status) {
+            case 'approved':
+                return <Badge className="bg-green-100 text-green-800">อนุมัติแล้ว</Badge>;
+            case 'disabled':
+                return <Badge className="bg-gray-100 text-gray-800">ปิดใช้งาน</Badge>;
+            case 'rejected':
+                return <Badge className="bg-red-100 text-red-800">ไม่อนุมัติ</Badge>;
+            default:
+                return <Badge variant="outline">{status}</Badge>;
+        }
+    };
+
+    return (
+        <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN]}>
+            <div className="container mx-auto py-8">
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Users className="h-5 w-5 text-indigo-600" />
+                                    จัดการผู้ใช้งาน
+                                </CardTitle>
+                                <CardDescription>แก้ไข ปิด/เปิดการใช้งาน และจัดการข้อมูลผู้ใช้</CardDescription>
+                            </div>
+                        </div>
+                        <div className="flex gap-4 mt-4">
+                            <div className="flex-1 relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="ค้นหาชื่อหรืออีเมล..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="pl-10"
+                                />
+                            </div>
+                            <Select value={filterStatus} onValueChange={setFilterStatus}>
+                                <SelectTrigger className="w-48">
+                                    <Filter className="h-4 w-4 mr-2" />
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">ทั้งหมด</SelectItem>
+                                    <SelectItem value="approved">อนุมัติแล้ว</SelectItem>
+                                    <SelectItem value="disabled">ปิดใช้งาน</SelectItem>
+                                    <SelectItem value="rejected">ไม่อนุมัติ</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                            <div className="text-center py-8">กำลังโหลด...</div>
+                        ) : filteredUsers.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground">ไม่พบผู้ใช้งาน</div>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>ชื่อ-นามสกุล</TableHead>
+                                        <TableHead>อีเมล</TableHead>
+                                        <TableHead>บทบาท</TableHead>
+                                        <TableHead>หน่วยงาน</TableHead>
+                                        <TableHead>สถานะ</TableHead>
+                                        <TableHead className="text-right">จัดการ</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredUsers.map((u) => (
+                                        <TableRow key={u.uid}>
+                                            <TableCell className="font-medium">{u.displayName}</TableCell>
+                                            <TableCell className="text-sm text-muted-foreground">{u.email}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline">{getRoleDisplay(u.role)}</Badge>
+                                            </TableCell>
+                                            <TableCell className="font-mono text-sm">{u.unitId || '-'}</TableCell>
+                                            <TableCell>{getStatusBadge(u.status)}</TableCell>
+                                            <TableCell className="text-right space-x-2">
+                                                <Button size="sm" variant="outline" onClick={() => handleEdit(u)}>
+                                                    <Edit className="h-3 w-3 mr-1" /> แก้ไข
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant={u.status === 'disabled' ? 'default' : 'destructive'}
+                                                    onClick={() => handleDisable(u.uid, u.status)}
+                                                >
+                                                    <UserX className="h-3 w-3 mr-1" />
+                                                    {u.status === 'disabled' ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogContent className="max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle>แก้ไขข้อมูลผู้ใช้</DialogTitle>
+                            <DialogDescription>อัปเดตข้อมูลและสิทธิ์การใช้งาน</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div>
+                                <Label>ชื่อ-นามสกุล</Label>
+                                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label>บทบาท</Label>
+                                    <Select value={role} onValueChange={(v: any) => setRole(v)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="super_admin">ผู้ดูแลระบบสูงสุด</SelectItem>
+                                            <SelectItem value="central_admin">ผู้ดูแลส่วนกลาง</SelectItem>
+                                            <SelectItem value="regional_coordinator">ผู้ประสานงานภาค</SelectItem>
+                                            <SelectItem value="provincial_staff">เจ้าหน้าที่จังหวัด</SelectItem>
+                                            <SelectItem value="data_owner">เจ้าของข้อมูล</SelectItem>
+                                            <SelectItem value="reviewer">ผู้ตรวจสอบ</SelectItem>
+                                            <SelectItem value="read_only">ผู้เข้าชม</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Label>สถานะ</Label>
+                                    <Select value={status} onValueChange={(v: any) => setStatus(v)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="approved">อนุมัติแล้ว</SelectItem>
+                                            <SelectItem value="disabled">ปิดใช้งาน</SelectItem>
+                                            <SelectItem value="rejected">ไม่อนุมัติ</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div>
+                                <Label>รหัสหน่วยงาน</Label>
+                                <Input value={unitId} onChange={(e) => setUnitId(e.target.value)} placeholder="เช่น UNIT001" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label>ตำแหน่ง</Label>
+                                    <Input value={position} onChange={(e) => setPosition(e.target.value)} />
+                                </div>
+                                <div>
+                                    <Label>ฝ่าย/แผนก</Label>
+                                    <Input value={department} onChange={(e) => setDepartment(e.target.value)} />
+                                </div>
+                            </div>
+                            <div>
+                                <Label>เบอร์โทรศัพท์</Label>
+                                <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setDialogOpen(false)}>ยกเลิก</Button>
+                            <Button onClick={handleSave}>บันทึกการแก้ไข</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </ProtectedRoute>
+    );
+}

@@ -53,16 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const logout = async () => {
         try {
-            // Log logout activity before signing out
-            if (user && user.status === 'approved') {
-                try {
-                    await logLogout(user);
-                } catch (error) {
-                    console.error('Failed to log logout activity:', error);
-                    // Don't block logout if logging fails
-                }
-            }
-
             await signOut(auth);
             setUser(null);
             router.push('/');
