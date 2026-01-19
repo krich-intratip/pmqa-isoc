@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,9 +32,15 @@ const PMQA_CATEGORIES = [
 
 export default function EvidenceRegisterPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [selectedCategory, setSelectedCategory] = useState(1);
     const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
     const [loading, setLoading] = useState(false);
+
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
 
     // Add Dialog State
     const [isAdding, setIsAdding] = useState(false);
@@ -44,12 +51,21 @@ export default function EvidenceRegisterPage() {
 
     const fetchEvidence = async (catId: number) => {
         if (!user?.unitId) return;
+
+        // If no cycle selected, show message
+        if (!selectedCycle) {
+            setEvidenceList([]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             const q = query(
                 collection(db, 'evidence'),
                 where('unitId', '==', user.unitId),
-                where('categoryId', '==', catId)
+                where('categoryId', '==', catId),
+                where('cycleId', '==', selectedCycle.id)
             );
             const snap = await getDocs(q);
             const data: Evidence[] = [];
@@ -65,7 +81,7 @@ export default function EvidenceRegisterPage() {
 
     useEffect(() => {
         fetchEvidence(selectedCategory);
-    }, [selectedCategory, user]);
+    }, [selectedCategory, user, selectedCycle]);
 
     const handleAddEvidence = async () => {
         if (!newTitle || !newUrl || !newCriteria) {
@@ -78,6 +94,11 @@ export default function EvidenceRegisterPage() {
             return;
         }
 
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อนเพิ่มหลักฐาน');
+            return;
+        }
+
         setIsAdding(true);
         try {
             const newEvidence: Partial<Evidence> = {
@@ -87,6 +108,7 @@ export default function EvidenceRegisterPage() {
                 type: newType,
                 title: newTitle,
                 url: newUrl,
+                cycleId: selectedCycle.id, // Add cycleId
                 uploadedBy: user.uid,
                 uploadedAt: serverTimestamp() as Timestamp,
                 verificationStatus: 'pending',
@@ -111,11 +133,35 @@ export default function EvidenceRegisterPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
-                    <FileText className="h-8 w-8 text-indigo-600" />
-                    Evidence Register
-                </h1>
-                <p className="text-muted-foreground mb-6">เริ่มนำเข้าหลักฐานการดำเนินการ (Phase 1)</p>
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
+                            <FileText className="h-8 w-8 text-indigo-600" />
+                            Evidence Register
+                        </h1>
+                        <p className="text-muted-foreground">เริ่มนำเข้าหลักฐานการดำเนินการ (Phase 1)</p>
+                    </div>
+                    {selectedCycle && (
+                        <div className="text-right">
+                            <p className="text-sm text-muted-foreground">รอบการประเมิน</p>
+                            <p className="font-semibold text-indigo-700">{selectedCycle.name || `ปี ${selectedCycle.year}`}</p>
+                        </div>
+                    )}
+                </div>
+
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน หรือติดต่อ Admin เพื่อสร้างรอบการประเมินใหม่</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Tabs value={selectedCategory.toString()} onValueChange={(v) => setSelectedCategory(Number(v))}>
                     <div className="overflow-x-auto pb-2">
