@@ -12,6 +12,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Debug: Log config in browser console
+if (typeof window !== 'undefined') {
+  console.log('Firebase Config:', {
+    apiKey: firebaseConfig.apiKey ? '✓ Set' : '✗ Missing',
+    authDomain: firebaseConfig.authDomain || '✗ Missing',
+    projectId: firebaseConfig.projectId || '✗ Missing',
+    storageBucket: firebaseConfig.storageBucket || '✗ Missing',
+    messagingSenderId: firebaseConfig.messagingSenderId ? '✓ Set' : '✗ Missing',
+    appId: firebaseConfig.appId ? '✓ Set' : '✗ Missing',
+  });
+}
+
 // Check if running on client-side (browser)
 const isBrowser = typeof window !== 'undefined';
 
