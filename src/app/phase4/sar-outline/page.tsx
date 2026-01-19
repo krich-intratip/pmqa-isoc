@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,11 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, Download, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
+import { FileText, Download, Sparkles, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
+
 
 interface OutlineSection {
     id: string;
@@ -101,11 +103,17 @@ const OUTLINE_TEMPLATE: OutlineSection[] = [
 
 export default function SAROutlinePage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
     const [selectedSections, setSelectedSections] = useState<string[]>([]);
     const [orgName, setOrgName] = useState('');
     const [fiscalYear, setFiscalYear] = useState('2569');
+
+    // v1.6.0: Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
 
     useEffect(() => {
         // Auto-select all sections by default
@@ -122,6 +130,12 @@ export default function SAROutlinePage() {
     const generateOutline = async () => {
         if (!orgName.trim()) {
             toast.error('กรุณากรอกชื่อหน่วยงาน');
+            return;
+        }
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
             return;
         }
 
@@ -152,9 +166,11 @@ export default function SAROutlinePage() {
                 });
             });
 
-            // Save to Firestore
-            await setDoc(doc(db, 'sar_outlines', user!.unitId!), {
+            // Save to Firestore with cycle-specific ID
+            const docId = `${user!.unitId}_${selectedCycle.id}`;
+            await setDoc(doc(db, 'sar_outlines', docId), {
                 unitId: user!.unitId,
+                cycleId: selectedCycle.id, // v1.6.0
                 orgName,
                 fiscalYear,
                 selectedSections: selectedSections,
@@ -191,20 +207,42 @@ export default function SAROutlinePage() {
                         </h1>
                         <p className="text-muted-foreground">สร้างโครงร่าง Self Assessment Report (App 4.1)</p>
                     </div>
-                    <Button onClick={generateOutline} disabled={generating} size="lg" className="gap-2">
-                        {generating ? (
-                            <>
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                                กำลังสร้าง...
-                            </>
-                        ) : (
-                            <>
-                                <Download className="h-5 w-5" />
-                                สร้างและดาวน์โหลด
-                            </>
+                    <div className="flex items-center gap-3">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
                         )}
-                    </Button>
+                        <Button onClick={generateOutline} disabled={generating || !selectedCycle} size="lg" className="gap-2">
+                            {generating ? (
+                                <>
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                    กำลังสร้าง...
+                                </>
+                            ) : (
+                                <>
+                                    <Download className="h-5 w-5" />
+                                    สร้างและดาวน์โหลด
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Configuration */}

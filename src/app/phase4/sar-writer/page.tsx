@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import { useAIConfigStore } from '@/stores/ai-config-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenTool, Sparkles, Copy, Save, Loader2, FileText, Trash2 } from 'lucide-react';
+import { PenTool, Sparkles, Copy, Save, Loader2, FileText, Trash2, AlertTriangle } from 'lucide-react';
 import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 interface SavedContent {
     id: string;
     unitId: string;
+    cycleId: string; // v1.6.0: Added cycle support
     category: number;
     subsection: string;
     content: string;
@@ -36,6 +38,7 @@ const PMQA_CATEGORIES = [
 
 export default function SARWriterPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const { apiKey, selectedModel } = useAIConfigStore();
     const [selectedCategory, setSelectedCategory] = useState(1);
     const [selectedSubsection, setSelectedSubsection] = useState('');
@@ -47,6 +50,11 @@ export default function SARWriterPage() {
 
     const currentCategory = PMQA_CATEGORIES.find(c => c.id === selectedCategory);
 
+    // v1.6.0: Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     useEffect(() => {
         if (currentCategory && currentCategory.subsections.length > 0) {
             setSelectedSubsection(currentCategory.subsections[0]);
@@ -55,12 +63,23 @@ export default function SARWriterPage() {
 
     useEffect(() => {
         fetchSavedContents();
-    }, [user?.unitId]);
+    }, [user?.unitId, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const fetchSavedContents = async () => {
         if (!user?.unitId) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            setSavedContents([]);
+            return;
+        }
+
         try {
-            const q = query(collection(db, 'sar_contents'), where('unitId', '==', user.unitId));
+            const q = query(
+                collection(db, 'sar_contents'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id) // v1.6.0
+            );
             const snap = await getDocs(q);
             const contents: SavedContent[] = [];
             snap.forEach(d => contents.push({ id: d.id, ...d.data() } as SavedContent));
@@ -73,6 +92,12 @@ export default function SARWriterPage() {
     const handleGenerate = async () => {
         if (!apiKey) {
             toast.error('กรุณาตั้งค่า Gemini API Key ที่ Settings > AI Config');
+            return;
+        }
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
             return;
         }
 
@@ -116,10 +141,17 @@ ${contextInput}
             return;
         }
 
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
+
         setSaving(true);
         try {
             await addDoc(collection(db, 'sar_contents'), {
                 unitId: user!.unitId,
+                cycleId: selectedCycle.id, // v1.6.0
                 category: selectedCategory,
                 subsection: selectedSubsection,
                 content: generatedContent,
@@ -167,10 +199,32 @@ ${contextInput}
                         </h1>
                         <p className="text-muted-foreground">เขียนเนื้อหา SAR ด้วย AI (App 4.2)</p>
                     </div>
-                    <Badge variant="outline" className="text-sm">
-                        Model: {selectedModel || 'ไม่ได้ตั้งค่า'}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-purple-700 border-purple-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Badge variant="outline" className="text-sm">
+                            Model: {selectedModel || 'ไม่ได้ตั้งค่า'}
+                        </Badge>
+                    </div>
                 </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Tabs defaultValue="writer" className="mb-6">
                     <TabsList className="grid w-full grid-cols-2">
