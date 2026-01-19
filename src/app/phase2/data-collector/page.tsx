@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ClipboardEdit, Save, AlertCircle, CheckCircle2, TrendingUp, TrendingDown } from 'lucide-react';
+import { ClipboardEdit, Save, AlertCircle, CheckCircle2, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -21,6 +22,7 @@ interface KPIData {
     kpiCode: string;
     kpiName: string;
     unitId: string;
+    cycleId?: string; // Add cycleId field
     period: string; // format: YYYY-MM
     value: number;
     target: number;
@@ -36,6 +38,7 @@ const MONTHS = [
 
 export default function DataCollectorPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [kpiList, setKpiList] = useState<any[]>([]);
     const [dataEntries, setDataEntries] = useState<KPIData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,8 +49,23 @@ export default function DataCollectorPage() {
     // Form state for data entry
     const [formValues, setFormValues] = useState<Record<string, string>>({});
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const fetchData = async () => {
         if (!user?.unitId) return;
+
+        // If no cycle selected, clear data
+        if (!selectedCycle) {
+            setKpiList([]);
+            setDataEntries([]);
+            setFormValues({});
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             // Fetch KPI definitions
@@ -57,12 +75,13 @@ export default function DataCollectorPage() {
             kpiSnap.forEach(d => kpis.push({ id: d.id, ...d.data() }));
             setKpiList(kpis);
 
-            // Fetch existing data entries for selected period
+            // Fetch existing data entries for selected period and cycle
             const period = `${parseInt(selectedYear) - 543}-${selectedMonth.padStart(2, '0')}`;
             const dataQ = query(
                 collection(db, 'kpi_data'),
                 where('unitId', '==', user.unitId),
-                where('period', '==', period)
+                where('period', '==', period),
+                where('cycleId', '==', selectedCycle.id)
             );
             const dataSnap = await getDocs(dataQ);
             const entries: KPIData[] = [];
@@ -85,7 +104,7 @@ export default function DataCollectorPage() {
 
     useEffect(() => {
         fetchData();
-    }, [user, selectedYear, selectedMonth]);
+    }, [user, selectedYear, selectedMonth, selectedCycle]);
 
     const handleValueChange = (kpiId: string, value: string) => {
         setFormValues(prev => ({ ...prev, [kpiId]: value }));
@@ -103,6 +122,11 @@ export default function DataCollectorPage() {
     };
 
     const handleSaveAll = async () => {
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อนบันทึกข้อมูล');
+            return;
+        }
+
         setSaving(true);
         const period = `${parseInt(selectedYear) - 543}-${selectedMonth.padStart(2, '0')}`;
 
@@ -117,6 +141,7 @@ export default function DataCollectorPage() {
                     kpiCode: kpi.code,
                     kpiName: kpi.name,
                     unitId: user!.unitId,
+                    cycleId: selectedCycle.id, // Add cycleId
                     period,
                     value,
                     target: kpi.targetValue,
@@ -188,6 +213,21 @@ export default function DataCollectorPage() {
                         </Button>
                     </div>
                 </div>
+
+                {/* Warning when no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน หรือติดต่อ Admin เพื่อสร้างรอบการประเมินใหม่</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Period Selection */}
                 <Card className="mb-6">
