@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
+import CycleSelector from '@/components/cycles/CycleSelector';
 
 export default function AppHeader() {
     const { user, logout } = useAuth();
@@ -39,9 +40,16 @@ export default function AppHeader() {
                 <div className="flex items-center gap-4">
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                         <Link href="/dashboard" className="hover:text-indigo-600 transition-colors">หน้าหลัก</Link>
-                        <Link href="/guide" className="hover:text-indigo-600 transition-colors">คู่มือการใช้งาน</Link>
+                        <Link href="/roadmap" className="hover:text-indigo-600 transition-colors">Roadmap</Link>
+                        <Link href="/guide" className="hover:text-indigo-600 transition-colors">คู่มือ</Link>
                         <Link href="/about" className="hover:text-indigo-600 transition-colors">เกี่ยวกับ</Link>
                     </nav>
+
+                    {user && user.status === 'approved' && (
+                        <div className="hidden lg:block">
+                            <CycleSelector compact />
+                        </div>
+                    )}
 
                     {user ? (
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">

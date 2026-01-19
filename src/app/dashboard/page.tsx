@@ -11,7 +11,7 @@ import {
     BarChart3, ShieldCheck, FolderPlus, ClipboardCheck, Database,
     BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart,
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
-    Presentation, HelpCircle, Calendar, UserCog, Activity
+    Presentation, HelpCircle, Calendar, UserCog, Activity, MapPin
 } from 'lucide-react';
 import { canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
 
@@ -92,6 +92,22 @@ export default function Dashboard() {
 
             <h2 className="text-xl font-semibold mb-4 text-slate-800">เมนูหลัก (Applications)</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {/* Roadmap - Available to all users */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-purple-700">
+                            <MapPin className="h-5 w-5" />
+                            <span className="text-base">Assessment Roadmap</span>
+                        </CardTitle>
+                        <CardDescription>แผนที่เส้นทางการประเมิน</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Link href="/roadmap">
+                            <Button variant="outline" className="w-full border-purple-300 hover:bg-purple-100">เริ่มต้น</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
 
                 {isAdmin && (
                     <>
