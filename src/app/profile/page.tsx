@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +20,8 @@ import { getRoleDisplay } from '@/lib/auth/role-helper';
 import ThaiUtils from '@/lib/utils/thai-utils';
 
 export default function ProfilePage() {
-    const { user, setUser, logout } = useAuthStore();
+    const { user, setUser } = useAuthStore();
+    const { logout } = useAuth();
     const router = useRouter();
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
@@ -24,7 +24,7 @@ import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
 import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown } from 'lucide-react';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 
-export default function UsersManagementPage() {
+function UsersManagementContent() {
     const searchParams = useSearchParams();
     const { user } = useAuthStore();
     const { logApproveAction, logRejectAction, logUserStatusChangeAction } = useActivityLogger();
@@ -778,5 +778,13 @@ export default function UsersManagementPage() {
                 </Dialog>
             </div>
         </ProtectedRoute>
+    );
+}
+
+export default function UsersManagementPage() {
+    return (
+        <Suspense fallback={<div className="container mx-auto py-8">กำลังโหลด...</div>}>
+            <UsersManagementContent />
+        </Suspense>
     );
 }

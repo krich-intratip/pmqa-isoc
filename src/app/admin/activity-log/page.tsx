@@ -80,7 +80,7 @@ export default function ActivityLogPage() {
     };
 
     useEffect(() => {
-        if (user && [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN].includes(user.role)) {
+        if (user && (user.role === ROLES.SUPER_ADMIN || user.role === ROLES.CENTRAL_ADMIN)) {
             fetchLogs();
         }
     }, [user, filterAction, filterResourceType, filterDateFrom, filterDateTo]);
