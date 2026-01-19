@@ -204,11 +204,16 @@ export default function DataCollectorPage() {
                         <p className="text-muted-foreground">กรอกข้อมูล KPI รายเดือน (App 2.4)</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Button variant="outline" onClick={handleSaveAll} disabled={saving}>
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-cyan-700 border-cyan-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Button variant="outline" onClick={handleSaveAll} disabled={saving || !selectedCycle}>
                             <Save className="h-4 w-4 mr-2" />
                             บันทึกร่าง
                         </Button>
-                        <Button onClick={handleSubmitAll} disabled={saving || dataEntries.length === 0}>
+                        <Button onClick={handleSubmitAll} disabled={saving || dataEntries.length === 0 || !selectedCycle}>
                             ส่งข้อมูล
                         </Button>
                     </div>
