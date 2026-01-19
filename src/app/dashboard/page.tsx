@@ -1,8 +1,9 @@
 'use client';
 
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -11,13 +12,22 @@ import {
     BarChart3, ShieldCheck, FolderPlus, ClipboardCheck, Database,
     BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart,
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
-    Presentation, HelpCircle, Calendar, UserCog, Activity, MapPin
+    Presentation, HelpCircle, Calendar, UserCog, Activity, MapPin, Loader2
 } from 'lucide-react';
 import { canManageUsers, canApproveEvidence } from '@/lib/auth/role-helper';
+import { db } from '@/lib/firebase/config';
+import { collection, query, where, getDocs, getCountFromServer } from 'firebase/firestore';
 
 export default function Dashboard() {
     const { user, loading, initialize } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const router = useRouter();
+
+    // Dashboard Stats State
+    const [statsLoading, setStatsLoading] = useState(true);
+    const [evidenceCount, setEvidenceCount] = useState(0);
+    const [categoryProgress, setCategoryProgress] = useState(0);
+    const [verifiedCount, setVerifiedCount] = useState(0);
 
     // Use actual user role from profile
     const isAdmin = user ? canManageUsers(user.role) : false;
@@ -29,10 +39,57 @@ export default function Dashboard() {
     }, [initialize]);
 
     useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
+    useEffect(() => {
         if (!loading && !user) {
             router.push('/auth/login');
         }
     }, [user, loading, router]);
+
+    // Fetch real dashboard stats
+    useEffect(() => {
+        const fetchDashboardStats = async () => {
+            if (!user?.unitId || !selectedCycle?.id) {
+                setStatsLoading(false);
+                return;
+            }
+
+            setStatsLoading(true);
+            try {
+                // Count total evidence for this cycle
+                const evidenceQuery = query(
+                    collection(db, 'evidence'),
+                    where('unitId', '==', user.unitId),
+                    where('cycleId', '==', selectedCycle.id)
+                );
+                const evidenceSnap = await getDocs(evidenceQuery);
+                const totalEvidence = evidenceSnap.size;
+                setEvidenceCount(totalEvidence);
+
+                // Count verified evidence
+                let verified = 0;
+                evidenceSnap.forEach(doc => {
+                    if (doc.data().verificationStatus === 'verified') {
+                        verified++;
+                    }
+                });
+                setVerifiedCount(verified);
+
+                // Calculate progress (verified / total * 100)
+                const progress = totalEvidence > 0 ? Math.round((verified / totalEvidence) * 100) : 0;
+                setCategoryProgress(progress);
+
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            } finally {
+                setStatsLoading(false);
+            }
+        };
+
+        fetchDashboardStats();
+    }, [user, selectedCycle]);
 
     if (loading) {
         return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -51,7 +108,9 @@ export default function Dashboard() {
                     <p className="text-slate-500 mt-2">ติดตามความคืบหน้าการประเมิน PMQA 4.0 ของหน่วยงานคุณ</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-slate-500">สถานะปัจจุบัน</p>
+                    <p className="text-sm text-slate-500">
+                        {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
+                    </p>
                     <div className="flex items-center gap-2 text-emerald-600 font-medium">
                         <CheckCircle2 size={18} />
                         <span>กำลังดำเนินการ (Phase 1-2)</span>
@@ -63,11 +122,16 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">ความคืบหน้าหมวด 1</CardTitle>
+                        <CardTitle className="text-sm font-medium">ความคืบหน้าหลักฐาน</CardTitle>
+                        {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0%</div>
-                        <p className="text-xs text-muted-foreground">ยังไม่ได้เริ่มดำเนินการ</p>
+                        <div className="text-2xl font-bold text-emerald-600">
+                            {statsLoading ? '-' : `${categoryProgress}%`}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            {statsLoading ? 'กำลังโหลด...' : `${verifiedCount}/${evidenceCount} ผ่านการตรวจสอบ`}
+                        </p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -82,10 +146,15 @@ export default function Dashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">เอกสารหลักฐาน</CardTitle>
+                        {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground">ไฟล์ที่อัปโหลดแล้ว</p>
+                        <div className="text-2xl font-bold text-indigo-600">
+                            {statsLoading ? '-' : evidenceCount}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            {statsLoading ? 'กำลังโหลด...' : 'ไฟล์ที่อัปโหลดแล้ว'}
+                        </p>
                     </CardContent>
                 </Card>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CheckCircle2, XCircle, Eye, ShieldCheck, ExternalLink } from 'lucide-react';
+import { CheckCircle2, XCircle, Eye, ShieldCheck, ExternalLink, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { Evidence } from '@/types/database';
@@ -28,20 +29,47 @@ const PMQA_CATEGORIES = [
 
 export default function EvidenceGateCheckerPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [pendingEvidence, setPendingEvidence] = useState<Evidence[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
     const [feedback, setFeedback] = useState('');
     const [processing, setProcessing] = useState(false);
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const fetchPending = async () => {
         if (!user) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            setPendingEvidence([]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             // Reviewers see pending evidence from their unit or all if admin
-            const q = user.role === ROLES.SUPER_ADMIN || user.role === ROLES.CENTRAL_ADMIN
-                ? query(collection(db, 'evidence'), where('verificationStatus', '==', 'pending'))
-                : query(collection(db, 'evidence'), where('unitId', '==', user.unitId), where('verificationStatus', '==', 'pending'));
+            // v1.6.0: Always filter by cycle
+            let q;
+            if (user.role === ROLES.SUPER_ADMIN || user.role === ROLES.CENTRAL_ADMIN) {
+                q = query(
+                    collection(db, 'evidence'),
+                    where('verificationStatus', '==', 'pending'),
+                    where('cycleId', '==', selectedCycle.id) // v1.6.0
+                );
+            } else {
+                q = query(
+                    collection(db, 'evidence'),
+                    where('unitId', '==', user.unitId),
+                    where('verificationStatus', '==', 'pending'),
+                    where('cycleId', '==', selectedCycle.id) // v1.6.0
+                );
+            }
 
             const snap = await getDocs(q);
             const data: Evidence[] = [];
@@ -57,7 +85,7 @@ export default function EvidenceGateCheckerPage() {
 
     useEffect(() => {
         fetchPending();
-    }, [user]);
+    }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const handleVerify = async (status: 'verified' | 'rejected') => {
         if (!selectedEvidence || !user) return;
@@ -89,11 +117,35 @@ export default function EvidenceGateCheckerPage() {
     return (
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REVIEWER]}>
             <div className="container mx-auto py-8">
-                <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
-                    <ShieldCheck className="h-8 w-8 text-purple-600" />
-                    Evidence Gate Checker
-                </h1>
-                <p className="text-muted-foreground mb-6">ตรวจสอบและอนุมัติหลักฐาน (Phase 1.3)</p>
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
+                            <ShieldCheck className="h-8 w-8 text-purple-600" />
+                            Evidence Gate Checker
+                        </h1>
+                        <p className="text-muted-foreground">ตรวจสอบและอนุมัติหลักฐาน (Phase 1.3)</p>
+                    </div>
+                    {selectedCycle && (
+                        <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                            รอบ: {selectedCycle.name || selectedCycle.year}
+                        </Badge>
+                    )}
+                </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Card>
                     <CardHeader>

@@ -1,8 +1,8 @@
 {
   "name": "pmqa-isoc",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
-  "lastUpdate": "2026-01-19",
+  "lastUpdate": "2026-01-20",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { BookOpen, Plus, Trash2, Edit, Target, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { BookOpen, Plus, Trash2, Edit, Target, TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 interface KPIDefinition {
     id: string;
     unitId: string;
+    cycleId: string; // v1.6.0: Added cycle support
     code: string;
     name: string;
     description: string;
@@ -46,6 +48,7 @@ const PMQA_CATEGORIES = [
 
 export default function KPIDictionaryPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [kpis, setKPIs] = useState<KPIDefinition[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -65,11 +68,28 @@ export default function KPIDictionaryPage() {
     const [formOwner, setFormOwner] = useState('');
     const [formFrequency, setFormFrequency] = useState<'monthly' | 'quarterly' | 'yearly'>('yearly');
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const fetchKPIs = async () => {
         if (!user?.unitId) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            setKPIs([]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
-            const q = query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId));
+            const q = query(
+                collection(db, 'kpi_definitions'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id) // v1.6.0
+            );
             const snap = await getDocs(q);
             const data: KPIDefinition[] = [];
             snap.forEach(d => data.push({ id: d.id, ...d.data() } as KPIDefinition));
@@ -83,7 +103,7 @@ export default function KPIDictionaryPage() {
 
     useEffect(() => {
         fetchKPIs();
-    }, [user]);
+    }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const resetForm = () => {
         setFormCode('');
@@ -127,10 +147,17 @@ export default function KPIDictionaryPage() {
             return;
         }
 
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
+
         setSaving(true);
         try {
             const kpiData = {
                 unitId: user.unitId,
+                cycleId: selectedCycle.id, // v1.6.0
                 code: formCode,
                 name: formName,
                 description: formDescription,
@@ -197,86 +224,108 @@ export default function KPIDictionaryPage() {
                         </h1>
                         <p className="text-muted-foreground">พจนานุกรม KPI (App 2.2)</p>
                     </div>
-                    <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-                        <DialogTrigger asChild>
-                            <Button className="gap-2">
-                                <Plus className="h-4 w-4" /> เพิ่ม KPI
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle>{editingKPI ? 'แก้ไข KPI' : 'เพิ่ม KPI ใหม่'}</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-6 gap-4">
-                                    <div className="col-span-2 space-y-2">
-                                        <Label>รหัส KPI</Label>
-                                        <Input value={formCode} onChange={(e) => setFormCode(e.target.value)} placeholder="KPI-7.1" />
+                    <div className="flex items-center gap-4">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+                            <DialogTrigger asChild>
+                                <Button className="gap-2" disabled={!selectedCycle}>
+                                    <Plus className="h-4 w-4" /> เพิ่ม KPI
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>{editingKPI ? 'แก้ไข KPI' : 'เพิ่ม KPI ใหม่'}</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-6 gap-4">
+                                        <div className="col-span-2 space-y-2">
+                                            <Label>รหัส KPI</Label>
+                                            <Input value={formCode} onChange={(e) => setFormCode(e.target.value)} placeholder="KPI-7.1" />
+                                        </div>
+                                        <div className="col-span-4 space-y-2">
+                                            <Label>ชื่อ KPI</Label>
+                                            <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="อัตราความพึงพอใจ" />
+                                        </div>
                                     </div>
-                                    <div className="col-span-4 space-y-2">
-                                        <Label>ชื่อ KPI</Label>
-                                        <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="อัตราความพึงพอใจ" />
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>หมวด PMQA</Label>
+                                            <select value={formCategory} onChange={(e) => setFormCategory(Number(e.target.value))} className="w-full border rounded-md p-2">
+                                                {PMQA_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>หน่วย</Label>
+                                            <Input value={formUnit} onChange={(e) => setFormUnit(e.target.value)} placeholder="%" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>ทิศทาง</Label>
+                                            <select value={formDirection} onChange={(e) => setFormDirection(e.target.value as any)} className="w-full border rounded-md p-2">
+                                                <option value="up">↑ ยิ่งสูงยิ่งดี</option>
+                                                <option value="down">↓ ยิ่งต่ำยิ่งดี</option>
+                                                <option value="maintain">→ รักษาระดับ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>ค่า Baseline</Label>
+                                            <Input type="number" value={formBaseline} onChange={(e) => setFormBaseline(e.target.value)} placeholder="0" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>ค่าเป้าหมาย</Label>
+                                            <Input type="number" value={formTarget} onChange={(e) => setFormTarget(e.target.value)} placeholder="100" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>ความถี่วัด</Label>
+                                            <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as any)} className="w-full border rounded-md p-2">
+                                                <option value="monthly">รายเดือน</option>
+                                                <option value="quarterly">รายไตรมาส</option>
+                                                <option value="yearly">รายปี</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>สูตรคำนวณ</Label>
+                                        <Input value={formFormula} onChange={(e) => setFormFormula(e.target.value)} placeholder="(จำนวนผู้พึงพอใจ / จำนวนผู้ตอบแบบสอบถาม) × 100" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>ผู้รับผิดชอบ</Label>
+                                        <Input value={formOwner} onChange={(e) => setFormOwner(e.target.value)} placeholder="ชื่อผู้รับผิดชอบ" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>คำอธิบาย</Label>
+                                        <Textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} placeholder="รายละเอียดเพิ่มเติม" />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>หมวด PMQA</Label>
-                                        <select value={formCategory} onChange={(e) => setFormCategory(Number(e.target.value))} className="w-full border rounded-md p-2">
-                                            {PMQA_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>หน่วย</Label>
-                                        <Input value={formUnit} onChange={(e) => setFormUnit(e.target.value)} placeholder="%" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>ทิศทาง</Label>
-                                        <select value={formDirection} onChange={(e) => setFormDirection(e.target.value as any)} className="w-full border rounded-md p-2">
-                                            <option value="up">↑ ยิ่งสูงยิ่งดี</option>
-                                            <option value="down">↓ ยิ่งต่ำยิ่งดี</option>
-                                            <option value="maintain">→ รักษาระดับ</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>ค่า Baseline</Label>
-                                        <Input type="number" value={formBaseline} onChange={(e) => setFormBaseline(e.target.value)} placeholder="0" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>ค่าเป้าหมาย</Label>
-                                        <Input type="number" value={formTarget} onChange={(e) => setFormTarget(e.target.value)} placeholder="100" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>ความถี่วัด</Label>
-                                        <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as any)} className="w-full border rounded-md p-2">
-                                            <option value="monthly">รายเดือน</option>
-                                            <option value="quarterly">รายไตรมาส</option>
-                                            <option value="yearly">รายปี</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>สูตรคำนวณ</Label>
-                                    <Input value={formFormula} onChange={(e) => setFormFormula(e.target.value)} placeholder="(จำนวนผู้พึงพอใจ / จำนวนผู้ตอบแบบสอบถาม) × 100" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>ผู้รับผิดชอบ</Label>
-                                    <Input value={formOwner} onChange={(e) => setFormOwner(e.target.value)} placeholder="ชื่อผู้รับผิดชอบ" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>คำอธิบาย</Label>
-                                    <Textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} placeholder="รายละเอียดเพิ่มเติม" />
+                                <DialogFooter>
+                                    <Button onClick={handleSave} disabled={saving}>
+                                        {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button onClick={handleSave} disabled={saving}>
-                                    {saving ? 'กำลังบันทึก...' : 'บันทึก'}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Stats by Category */}
                 <div className="grid grid-cols-7 gap-2 mb-6">

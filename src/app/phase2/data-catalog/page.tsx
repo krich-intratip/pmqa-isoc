@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Database, Plus, Trash2, Edit, ExternalLink, FileSpreadsheet, Server, Cloud } from 'lucide-react';
+import { Database, Plus, Trash2, Edit, ExternalLink, FileSpreadsheet, Server, Cloud, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 interface DataSource {
     id: string;
     unitId: string;
+    cycleId: string; // v1.6.0: Added cycle support
     name: string;
     description: string;
     type: 'database' | 'spreadsheet' | 'api' | 'manual' | 'other';
@@ -50,6 +52,7 @@ const FREQUENCIES = [
 
 export default function DataSourceCatalogPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [sources, setSources] = useState<DataSource[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -65,11 +68,28 @@ export default function DataSourceCatalogPage() {
     const [formFrequency, setFormFrequency] = useState<DataSource['frequency']>('monthly');
     const [formKPIs, setFormKPIs] = useState('');
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const fetchSources = async () => {
         if (!user?.unitId) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            setSources([]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
-            const q = query(collection(db, 'data_sources'), where('unitId', '==', user.unitId));
+            const q = query(
+                collection(db, 'data_sources'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id) // v1.6.0
+            );
             const snap = await getDocs(q);
             const data: DataSource[] = [];
             snap.forEach(d => data.push({ id: d.id, ...d.data() } as DataSource));
@@ -83,7 +103,7 @@ export default function DataSourceCatalogPage() {
 
     useEffect(() => {
         fetchSources();
-    }, [user]);
+    }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const resetForm = () => {
         setFormName('');
@@ -119,10 +139,17 @@ export default function DataSourceCatalogPage() {
             return;
         }
 
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
+
         setSaving(true);
         try {
             const sourceData = {
                 unitId: user.unitId,
+                cycleId: selectedCycle.id, // v1.6.0
                 name: formName,
                 description: formDescription,
                 type: formType,
@@ -184,58 +211,80 @@ export default function DataSourceCatalogPage() {
                         </h1>
                         <p className="text-muted-foreground">จัดทำคลังแหล่งข้อมูล (App 2.1)</p>
                     </div>
-                    <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-                        <DialogTrigger asChild>
-                            <Button className="gap-2">
-                                <Plus className="h-4 w-4" /> เพิ่มแหล่งข้อมูล
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-lg">
-                            <DialogHeader>
-                                <DialogTitle>{editingSource ? 'แก้ไขแหล่งข้อมูล' : 'เพิ่มแหล่งข้อมูลใหม่'}</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">ชื่อ</Label>
-                                    <Input value={formName} onChange={(e) => setFormName(e.target.value)} className="col-span-3" placeholder="ชื่อแหล่งข้อมูล" />
+                    <div className="flex items-center gap-4">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+                            <DialogTrigger asChild>
+                                <Button className="gap-2" disabled={!selectedCycle}>
+                                    <Plus className="h-4 w-4" /> เพิ่มแหล่งข้อมูล
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg">
+                                <DialogHeader>
+                                    <DialogTitle>{editingSource ? 'แก้ไขแหล่งข้อมูล' : 'เพิ่มแหล่งข้อมูลใหม่'}</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">ชื่อ</Label>
+                                        <Input value={formName} onChange={(e) => setFormName(e.target.value)} className="col-span-3" placeholder="ชื่อแหล่งข้อมูล" />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">ประเภท</Label>
+                                        <select value={formType} onChange={(e) => setFormType(e.target.value as DataSource['type'])} className="col-span-3 border rounded-md p-2">
+                                            {DATA_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">ที่อยู่/URL</Label>
+                                        <Input value={formLocation} onChange={(e) => setFormLocation(e.target.value)} className="col-span-3" placeholder="URL หรือ Path" />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">ผู้รับผิดชอบ</Label>
+                                        <Input value={formOwner} onChange={(e) => setFormOwner(e.target.value)} className="col-span-3" placeholder="ชื่อผู้รับผิดชอบ" />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">ความถี่</Label>
+                                        <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as DataSource['frequency'])} className="col-span-3 border rounded-md p-2">
+                                            {FREQUENCIES.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">KPIs ที่เกี่ยวข้อง</Label>
+                                        <Input value={formKPIs} onChange={(e) => setFormKPIs(e.target.value)} className="col-span-3" placeholder="KPI1, KPI2, ..." />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-start gap-4">
+                                        <Label className="text-right">คำอธิบาย</Label>
+                                        <Textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} className="col-span-3" placeholder="รายละเอียดเพิ่มเติม" />
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">ประเภท</Label>
-                                    <select value={formType} onChange={(e) => setFormType(e.target.value as DataSource['type'])} className="col-span-3 border rounded-md p-2">
-                                        {DATA_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                                    </select>
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">ที่อยู่/URL</Label>
-                                    <Input value={formLocation} onChange={(e) => setFormLocation(e.target.value)} className="col-span-3" placeholder="URL หรือ Path" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">ผู้รับผิดชอบ</Label>
-                                    <Input value={formOwner} onChange={(e) => setFormOwner(e.target.value)} className="col-span-3" placeholder="ชื่อผู้รับผิดชอบ" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">ความถี่</Label>
-                                    <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as DataSource['frequency'])} className="col-span-3 border rounded-md p-2">
-                                        {FREQUENCIES.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
-                                    </select>
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">KPIs ที่เกี่ยวข้อง</Label>
-                                    <Input value={formKPIs} onChange={(e) => setFormKPIs(e.target.value)} className="col-span-3" placeholder="KPI1, KPI2, ..." />
-                                </div>
-                                <div className="grid grid-cols-4 items-start gap-4">
-                                    <Label className="text-right">คำอธิบาย</Label>
-                                    <Textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} className="col-span-3" placeholder="รายละเอียดเพิ่มเติม" />
+                                <DialogFooter>
+                                    <Button onClick={handleSave} disabled={saving}>
+                                        {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button onClick={handleSave} disabled={saving}>
-                                    {saving ? 'กำลังบันทึก...' : 'บันทึก'}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -16,11 +16,11 @@ import { ClipboardCheck, Plus, CheckCircle2, Circle, AlertTriangle } from 'lucid
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
-import ThaiUtils from '@/lib/utils/thai-utils';
 
 interface GapItem {
     id: string;
     unitId: string;
+    cycleId: string; // v1.6.0: Added cycle support
     categoryId: number;
     criteriaId: string;
     description: string;
@@ -44,6 +44,7 @@ const PMQA_CATEGORIES = [
 
 export default function GapClosureTrackerPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [gaps, setGaps] = useState<GapItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [adding, setAdding] = useState(false);
@@ -53,11 +54,28 @@ export default function GapClosureTrackerPage() {
     const [newDescription, setNewDescription] = useState('');
     const [newCategory, setNewCategory] = useState(1);
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const fetchGaps = async () => {
         if (!user?.unitId) return;
+
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            setGaps([]);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
-            const q = query(collection(db, 'gap_items'), where('unitId', '==', user.unitId));
+            const q = query(
+                collection(db, 'gap_items'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id) // v1.6.0: Filter by cycle
+            );
             const snap = await getDocs(q);
             const data: GapItem[] = [];
             snap.forEach(d => data.push({ id: d.id, ...d.data() } as GapItem));
@@ -71,7 +89,7 @@ export default function GapClosureTrackerPage() {
 
     useEffect(() => {
         fetchGaps();
-    }, [user]);
+    }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const handleAddGap = async () => {
         if (!newCriteria || !newDescription) {
@@ -79,10 +97,17 @@ export default function GapClosureTrackerPage() {
             return;
         }
 
+        // v1.6.0: Require cycle selection
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อนเพิ่ม Gap');
+            return;
+        }
+
         setAdding(true);
         try {
             await addDoc(collection(db, 'gap_items'), {
                 unitId: user!.unitId,
+                cycleId: selectedCycle.id, // v1.6.0: Save cycle ID
                 categoryId: newCategory,
                 criteriaId: newCriteria,
                 description: newDescription,
@@ -147,47 +172,69 @@ export default function GapClosureTrackerPage() {
                         </h1>
                         <p className="text-muted-foreground">ติดตามการปิด Gap หลักฐาน (App 1.4)</p>
                     </div>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button className="gap-2">
-                                <Plus className="h-4 w-4" /> เพิ่ม Gap ใหม่
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>เพิ่มรายการ Gap</DialogTitle>
-                                <DialogDescription>ระบุเกณฑ์ที่ยังขาดหลักฐาน</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">หมวด</Label>
-                                    <select
-                                        value={newCategory}
-                                        onChange={(e) => setNewCategory(Number(e.target.value))}
-                                        className="col-span-3 border rounded-md p-2"
-                                    >
-                                        {PMQA_CATEGORIES.map(cat => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                        ))}
-                                    </select>
+                    <div className="flex items-center gap-4">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button className="gap-2" disabled={!selectedCycle}>
+                                    <Plus className="h-4 w-4" /> เพิ่ม Gap ใหม่
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>เพิ่มรายการ Gap</DialogTitle>
+                                    <DialogDescription>ระบุเกณฑ์ที่ยังขาดหลักฐาน</DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">หมวด</Label>
+                                        <select
+                                            value={newCategory}
+                                            onChange={(e) => setNewCategory(Number(e.target.value))}
+                                            className="col-span-3 border rounded-md p-2"
+                                        >
+                                            {PMQA_CATEGORIES.map(cat => (
+                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">เกณฑ์</Label>
+                                        <Input value={newCriteria} onChange={(e) => setNewCriteria(e.target.value)} className="col-span-3" placeholder="เช่น 1.1 ก(1)" />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right">รายละเอียด</Label>
+                                        <Input value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="col-span-3" placeholder="ขาดหลักฐานอะไร" />
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">เกณฑ์</Label>
-                                    <Input value={newCriteria} onChange={(e) => setNewCriteria(e.target.value)} className="col-span-3" placeholder="เช่น 1.1 ก(1)" />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right">รายละเอียด</Label>
-                                    <Input value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="col-span-3" placeholder="ขาดหลักฐานอะไร" />
+                                <DialogFooter>
+                                    <Button onClick={handleAddGap} disabled={adding}>
+                                        {adding ? 'กำลังบันทึก...' : 'บันทึก'}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button onClick={handleAddGap} disabled={adding}>
-                                    {adding ? 'กำลังบันทึก...' : 'บันทึก'}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Progress Overview */}
                 <Card className="mb-6">
@@ -231,7 +278,9 @@ export default function GapClosureTrackerPage() {
                         ) : gaps.length === 0 ? (
                             <div className="text-center py-8 text-green-600 bg-green-50 rounded-lg">
                                 <CheckCircle2 className="h-12 w-12 mx-auto mb-2" />
-                                <p className="font-medium">ไม่พบ Gap - หลักฐานครบถ้วน!</p>
+                                <p className="font-medium">
+                                    {selectedCycle ? 'ไม่พบ Gap - หลักฐานครบถ้วน!' : 'กรุณาเลือกรอบการประเมิน'}
+                                </p>
                             </div>
                         ) : (
                             <Table>

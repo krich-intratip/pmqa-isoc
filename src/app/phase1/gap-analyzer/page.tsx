@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -34,18 +35,37 @@ interface GapAnalysis {
 
 export default function EvidenceGapAnalyzerPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [analysis, setAnalysis] = useState<GapAnalysis[]>([]);
     const [loading, setLoading] = useState(true);
     const [overallStats, setOverallStats] = useState({ total: 0, submitted: 0, verified: 0, gaps: 0 });
 
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     useEffect(() => {
         const analyzeGaps = async () => {
             if (!user?.unitId) return;
+
+            // v1.6.0: Require cycle selection
+            if (!selectedCycle) {
+                setAnalysis([]);
+                setOverallStats({ total: 0, submitted: 0, verified: 0, gaps: 0 });
+                setLoading(false);
+                return;
+            }
+
             setLoading(true);
 
             try {
-                // Fetch all evidence for this unit
-                const q = query(collection(db, 'evidence'), where('unitId', '==', user.unitId));
+                // Fetch all evidence for this unit and cycle
+                const q = query(
+                    collection(db, 'evidence'),
+                    where('unitId', '==', user.unitId),
+                    where('cycleId', '==', selectedCycle.id) // v1.6.0: Filter by cycle
+                );
                 const snap = await getDocs(q);
                 const evidenceList: Evidence[] = [];
                 snap.forEach(d => evidenceList.push({ id: d.id, ...d.data() } as Evidence));
@@ -95,7 +115,7 @@ export default function EvidenceGapAnalyzerPage() {
         };
 
         analyzeGaps();
-    }, [user]);
+    }, [user, selectedCycle]); // v1.6.0: Re-run when cycle changes
 
     const getStatusColor = (rate: number) => {
         if (rate >= 80) return 'bg-green-500';
@@ -106,11 +126,35 @@ export default function EvidenceGapAnalyzerPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
-                    <BarChart3 className="h-8 w-8 text-orange-600" />
-                    Evidence Gap Analyzer
-                </h1>
-                <p className="text-muted-foreground mb-6">วิเคราะห์ช่องว่างหลักฐานตามเกณฑ์ PMQA (Phase 1.2)</p>
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-slate-800">
+                            <BarChart3 className="h-8 w-8 text-orange-600" />
+                            Evidence Gap Analyzer
+                        </h1>
+                        <p className="text-muted-foreground">วิเคราะห์ช่องว่างหลักฐานตามเกณฑ์ PMQA (Phase 1.2)</p>
+                    </div>
+                    {selectedCycle && (
+                        <Badge variant="outline" className="text-indigo-700 border-indigo-200">
+                            รอบ: {selectedCycle.name || selectedCycle.year}
+                        </Badge>
+                    )}
+                </div>
+
+                {/* v1.6.0: Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Overall Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

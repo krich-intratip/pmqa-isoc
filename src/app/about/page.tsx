@@ -32,20 +32,98 @@ export default function AboutPage() {
                 </p>
                 <div className="flex items-center justify-center gap-4">
                     <Badge variant="outline" className="text-lg px-4 py-2">
-                        Version 1.5.0
+                        Version 1.6.0
                     </Badge>
                     <Badge className="text-lg px-4 py-2 bg-green-100 text-green-800">
-                        Released: 19 มกราคม 2569
+                        Released: 20 มกราคม 2569
                     </Badge>
                 </div>
             </div>
+
+            {/* Version 1.6.0 Features */}
+            <Card className="border-emerald-200 bg-emerald-50">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-emerald-800">
+                        <Sparkles className="h-6 w-6" />
+                        ฟีเจอร์ใหม่ใน Version 1.6.0
+                    </CardTitle>
+                    <CardDescription className="text-emerald-700">
+                        File Versioning System & Extended Cycle Support
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* File Versioning System */}
+                        <div className="bg-white p-6 rounded-lg border border-emerald-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <FileText className="h-8 w-8 text-emerald-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">File Versioning System</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        จัดการเวอร์ชันไฟล์หลักฐานแบบครบวงจร
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Upload ไฟล์เวอร์ชันใหม่ได้</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>ดูประวัติไฟล์ทุกเวอร์ชัน</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Revert กลับเวอร์ชันเก่า (Admin)</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Permission-based Delete (Admin only)</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Extended Cycle Support */}
+                        <div className="bg-white p-6 rounded-lg border border-emerald-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Calendar className="h-8 w-8 text-emerald-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">Extended Cycle Support</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        รองรับ Cycle ในหน้า Phase 1-2
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Dashboard Real Data Integration</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Gap Tracker/Analyzer/Gate Checker</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Data Catalog & KPI Dictionary</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Warning UI เมื่อไม่ได้เลือก Cycle</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Version 1.5.0 Features */}
             <Card className="border-cyan-200 bg-cyan-50">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-cyan-800">
                         <Sparkles className="h-6 w-6" />
-                        ฟีเจอร์ใหม่ใน Version 1.5.0
+                        Version 1.5.0 Features
                     </CardTitle>
                     <CardDescription className="text-cyan-700">
                         Cycle Integration & Assessment Roadmap

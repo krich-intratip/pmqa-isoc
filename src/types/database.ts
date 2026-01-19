@@ -162,4 +162,28 @@ export interface Evidence {
 
     // Phase 1.2 Gap Analysis
     completeness: 'complete' | 'gap_found' | 'partial';
+
+    // Version System (v1.6.0)
+    currentVersion: number;       // เวอร์ชันปัจจุบัน (1, 2, 3...)
+    latestVersionId?: string;     // ID ของ FileVersion ล่าสุด
+    totalVersions: number;        // จำนวน version ทั้งหมด
+    lastUpdatedAt?: Timestamp;    // เวลา Update ล่าสุด
+    lastUpdatedBy?: string;       // ผู้ Update ล่าสุด
 }
+
+// File Version System (v1.6.0)
+export interface FileVersion {
+    id: string;
+    evidenceId: string;           // อ้างอิง Evidence document
+    version: number;              // 1, 2, 3...
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;             // bytes
+    mimeType: string;
+    uploadedBy: string;           // userId
+    uploadedByName: string;       // denormalized for display
+    uploadedAt: Timestamp;        // เวลาที่ Upload
+    notes?: string;               // หมายเหตุการ Update
+    isLatest: boolean;            // เป็นเวอร์ชันล่าสุดหรือไม่
+}
+

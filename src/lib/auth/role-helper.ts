@@ -36,6 +36,11 @@ export const canApproveEvidence = (role: string): boolean => {
     return (allowed as readonly string[]).includes(role);
 };
 
+// v1.6.0: File Version System - Delete permission
+export const canDeleteFiles = (role: string): boolean => {
+    return (ADMIN_ROLES as readonly string[]).includes(role);
+};
+
 export const canViewAllData = (role: string): boolean => {
     const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.READ_ONLY] as const;
     return (allowed as readonly string[]).includes(role);
