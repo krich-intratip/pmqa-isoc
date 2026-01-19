@@ -2,6 +2,77 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [1.5.0] - 2026-01-19
+
+### Added - Cycle Integration Features
+
+#### 🔄 Assessment Roadmap Page
+- เพิ่มหน้า `/roadmap` - Interactive PMQA Assessment Flow Visualization
+  - แสดง 8 Phases และ 18 Tools ของกระบวนการประเมิน PMQA
+  - 2 โหมดการแสดงผล: Flow Chart และ Detailed View
+  - ลิงก์ไปยังเครื่องมือแต่ละตัวได้โดยตรง
+  - แสดงระยะเวลาและ deliverables ของแต่ละ Phase
+  - Responsive design สำหรับทุกขนาดหน้าจอ
+
+#### 🎯 Cycle Selector Component
+- เพิ่ม `CycleSelector.tsx` component แบบ reusable
+  - แสดงรายการรอบการประเมินทั้งหมด
+  - Compact mode สำหรับแสดงใน Header
+  - Status badges (ร่าง, ใช้งาน, เสร็จสิ้น, เก็บถาวร)
+  - Persistent selection ด้วย Zustand + localStorage
+  - Auto-select active cycle on first load
+  - เพิ่ม Cycle Selector ใน Header และ Dashboard
+
+#### 📁 Evidence Page - Cycle Support
+- อัปเดตหน้า `/phase1/evidence` ให้รองรับ Assessment Cycles
+  - เพิ่ม `useCycleStore` integration
+  - กรองหลักฐานตาม `cycleId`
+  - บันทึก `cycleId` เมื่ออัปโหลดหลักฐานใหม่
+  - แสดง warning UI เมื่อยังไม่ได้เลือกรอบการประเมิน
+  - ป้องกันการเพิ่มหลักฐานโดยไม่มี cycle context
+
+#### 📊 Data Collector - Cycle Support
+- อัปเดตหน้า `/phase2/data-collector` ให้รองรับ Assessment Cycles
+  - เพิ่ม `cycleId` ใน KPIData interface
+  - กรองข้อมูล KPI ตาม `cycleId`
+  - บันทึก `cycleId` เมื่อบันทึกข้อมูล KPI
+  - แสดง warning UI เมื่อยังไม่ได้เลือกรอบการประเมิน
+  - Validate cycle selection ก่อนบันทึกข้อมูล
+  - ล้างข้อมูลเมื่อไม่มี cycle ที่เลือก
+
+### Changed
+
+#### 🗄️ Cycle Store Enhancement
+- ปรับปรุง `src/stores/cycle-store.ts`
+  - เพิ่ม `selectedCycle` state
+  - เพิ่ม `fetchCycles()` function
+  - Auto-fetch cycles และ auto-select active cycle
+  - Persist `selectedCycle` ด้วย localStorage
+  - Query cycles จาก Firestore เรียงตามปี
+
+#### 🎨 UI/UX Improvements
+- เพิ่ม warning cards เมื่อไม่มี cycle selected (สีเหลือง)
+- ปรับปรุง navigation ใน Dashboard
+- เพิ่มลิงก์ไปหน้า Roadmap ใน Dashboard
+
+### Technical
+
+#### 🔧 Build & TypeScript
+- Build สำเร็จโดยไม่มี TypeScript errors
+- ทดสอบ Evidence และ Data Collector pages
+- Verify cycle context ทำงานถูกต้อง
+
+#### 📝 Database Schema
+- `evidence` collection: เพิ่ม `cycleId` field
+- `kpi_data` collection: เพิ่ม `cycleId` field
+
+### Notes
+- v1.5.0 มุ่งเน้นการ integrate Cycle Management เข้ากับ core data entry pages
+- Pages อื่นๆ จะได้รับ cycle support ในเวอร์ชันถัดไป
+- Cycle Management ช่วยแยกข้อมูลระหว่างรอบการประเมินต่างๆ อย่างชัดเจน
+
+---
+
 ## [1.4.0] - 2026-01-19
 
 ### Added - Major Features
