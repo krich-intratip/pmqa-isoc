@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
 import CycleSelector from '@/components/cycles/CycleSelector';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 export default function AppHeader() {
     const { user, logout } = useAuth();
@@ -53,6 +54,7 @@ export default function AppHeader() {
 
                     {user ? (
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                            {user.status === 'approved' && <NotificationBell />}
                             <button
                                 onClick={handleProfileClick}
                                 className="flex items-center gap-2 hover:bg-slate-50 rounded-lg p-2 transition-colors group"

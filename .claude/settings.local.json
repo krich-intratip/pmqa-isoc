@@ -21,7 +21,8 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(xargs ls:*)"
     ]
   }
 }

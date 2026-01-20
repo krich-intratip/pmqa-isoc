@@ -187,3 +187,22 @@ export interface FileVersion {
     isLatest: boolean;            // เป็นเวอร์ชันล่าสุดหรือไม่
 }
 
+// Notification System (v1.7.2)
+export type NotificationType = 'approval' | 'rejection' | 'reminder' | 'system' | 'evidence' | 'cycle';
+
+export interface Notification {
+    id: string;
+    userId: string;              // ผู้รับ notification
+    type: NotificationType;
+    title: string;
+    message: string;
+    source?: {
+        type: 'user' | 'system' | 'cycle' | 'evidence';
+        id?: string;
+        name?: string;
+    };
+    link?: string;               // ลิงก์ที่เกี่ยวข้อง (เช่น /dashboard, /admin/users)
+    read: boolean;
+    readAt?: Timestamp;
+    createdAt: Timestamp;
+}

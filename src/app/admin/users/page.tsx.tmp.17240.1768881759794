@@ -23,7 +23,6 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
 import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown } from 'lucide-react';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
-import { sendApprovalNotification, sendRejectionNotification } from '@/lib/notification/notification-helper';
 
 function UsersManagementContent() {
     const searchParams = useSearchParams();
@@ -244,9 +243,6 @@ function UsersManagementContent() {
 
             await logApproveAction('user', targetUser.uid, targetUser.displayName);
 
-            // Send notification to user
-            await sendApprovalNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ');
-
             toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
             fetchUsers();
         } catch (error) {
@@ -266,9 +262,6 @@ function UsersManagementContent() {
             });
 
             await logRejectAction('user', targetUser.uid, targetUser.displayName, reason || undefined);
-
-            // Send notification to user
-            await sendRejectionNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ', reason || undefined);
 
             toast.success('ปฏิเสธผู้ใช้งานเรียบร้อยแล้ว');
             fetchUsers();
@@ -395,7 +388,7 @@ function UsersManagementContent() {
 
     // Export to CSV
     const handleExport = () => {
-        const csvHeaders = ['ชื่อ-นามสกุล', 'อีเมล', 'บทบาท', 'หน่วยงาน', 'สถานะ', 'วันที่สมัคร', 'เข้าใช้งานล่าสุด'];
+        const csvHeaders = ['ชื่อ-นามสกุล', 'อีเมล', 'บทบาท', 'หน่วยงาน', 'สถานะ', 'วันที่สมัคร'];
         const csvRows = filteredUsers.map(u => [
             u.displayName,
             u.email,
@@ -403,7 +396,6 @@ function UsersManagementContent() {
             u.unitId || '-',
             getStatusText(u.status),
             u.createdAt ? u.createdAt.toDate().toLocaleDateString('th-TH') : '-',
-            u.lastLoginAt ? u.lastLoginAt.toDate().toLocaleDateString('th-TH') : '-',
         ]);
 
         const csvContent = [
@@ -636,7 +628,6 @@ function UsersManagementContent() {
                                         <TableHead>บทบาท</TableHead>
                                         <TableHead>หน่วยงาน</TableHead>
                                         <TableHead>วันที่สมัคร</TableHead>
-                                        <TableHead>เข้าใช้งานล่าสุด</TableHead>
                                         <TableHead>สถานะ</TableHead>
                                         <TableHead className="text-right">จัดการ</TableHead>
                                     </TableRow>
@@ -667,17 +658,6 @@ function UsersManagementContent() {
                                             <TableCell className="text-sm text-muted-foreground">
                                                 {u.createdAt
                                                     ? u.createdAt.toDate().toLocaleDateString('th-TH')
-                                                    : '-'}
-                                            </TableCell>
-                                            <TableCell className="text-sm text-muted-foreground">
-                                                {u.lastLoginAt
-                                                    ? u.lastLoginAt.toDate().toLocaleDateString('th-TH', {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                    })
                                                     : '-'}
                                             </TableCell>
                                             <TableCell>{getStatusBadge(u.status)}</TableCell>

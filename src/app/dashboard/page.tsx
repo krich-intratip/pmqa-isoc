@@ -37,6 +37,8 @@ export default function Dashboard() {
     const [evidenceCount, setEvidenceCount] = useState(0);
     const [categoryProgress, setCategoryProgress] = useState(0);
     const [verifiedCount, setVerifiedCount] = useState(0);
+    const [kpiDataCount, setKpiDataCount] = useState(0);
+    const [pendingUsersCount, setPendingUsersCount] = useState(0);
 
     // Role-based permissions
     const isAdmin = user ? canManageUsers(user.role) : false;
@@ -63,35 +65,57 @@ export default function Dashboard() {
     // Fetch real dashboard stats
     useEffect(() => {
         const fetchDashboardStats = async () => {
-            if (!user?.unitId || !selectedCycle?.id) {
+            if (!user) {
                 setStatsLoading(false);
                 return;
             }
 
             setStatsLoading(true);
             try {
-                // Count total evidence for this cycle
-                const evidenceQuery = query(
-                    collection(db, 'evidence'),
-                    where('unitId', '==', user.unitId),
-                    where('cycleId', '==', selectedCycle.id)
-                );
-                const evidenceSnap = await getDocs(evidenceQuery);
-                const totalEvidence = evidenceSnap.size;
-                setEvidenceCount(totalEvidence);
+                // Only fetch evidence/KPI if user has unitId and cycle selected
+                if (user.unitId && selectedCycle?.id) {
+                    // Count total evidence for this cycle
+                    const evidenceQuery = query(
+                        collection(db, 'evidence'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const evidenceSnap = await getDocs(evidenceQuery);
+                    const totalEvidence = evidenceSnap.size;
+                    setEvidenceCount(totalEvidence);
 
-                // Count verified evidence
-                let verified = 0;
-                evidenceSnap.forEach(doc => {
-                    if (doc.data().verificationStatus === 'verified') {
-                        verified++;
-                    }
-                });
-                setVerifiedCount(verified);
+                    // Count verified evidence
+                    let verified = 0;
+                    evidenceSnap.forEach(doc => {
+                        if (doc.data().verificationStatus === 'verified') {
+                            verified++;
+                        }
+                    });
+                    setVerifiedCount(verified);
 
-                // Calculate progress (verified / total * 100)
-                const progress = totalEvidence > 0 ? Math.round((verified / totalEvidence) * 100) : 0;
-                setCategoryProgress(progress);
+                    // Calculate progress (verified / total * 100)
+                    const progress = totalEvidence > 0 ? Math.round((verified / totalEvidence) * 100) : 0;
+                    setCategoryProgress(progress);
+
+                    // Count KPI data entries for this cycle
+                    const kpiQuery = query(
+                        collection(db, 'kpi_data'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const kpiSnap = await getDocs(kpiQuery);
+                    setKpiDataCount(kpiSnap.size);
+                }
+
+                // Admin stats: pending users (only for admins)
+                if (canManageUsers(user.role)) {
+                    const pendingQuery = query(
+                        collection(db, 'users'),
+                        where('status', '==', 'pending')
+                    );
+                    const pendingSnap = await getDocs(pendingQuery);
+                    setPendingUsersCount(pendingSnap.size);
+                }
 
             } catch (error) {
                 console.error('Error fetching dashboard stats:', error);
@@ -155,7 +179,7 @@ export default function Dashboard() {
 
                     {/* Tab 1: Overview */}
                     <TabsContent value="overview" className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium">ความคืบหน้าหลักฐาน</CardTitle>
@@ -172,11 +196,16 @@ export default function Dashboard() {
                             </Card>
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">คะแนนประเมินตนเอง</CardTitle>
+                                    <CardTitle className="text-sm font-medium">ข้อมูล KPI</CardTitle>
+                                    {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">-</div>
-                                    <p className="text-xs text-muted-foreground">รอการประเมิน</p>
+                                    <div className="text-2xl font-bold text-blue-600">
+                                        {statsLoading ? '-' : kpiDataCount}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {statsLoading ? 'กำลังโหลด...' : 'รายการข้อมูลที่บันทึก'}
+                                    </p>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -190,6 +219,20 @@ export default function Dashboard() {
                                     </div>
                                     <p className="text-xs text-muted-foreground">
                                         {statsLoading ? 'กำลังโหลด...' : 'ไฟล์ที่อัปโหลดแล้ว'}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                            <Card className="border-amber-200 bg-amber-50/50">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium text-amber-700">รอการอนุมัติ</CardTitle>
+                                    {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold text-amber-600">
+                                        {statsLoading ? '-' : pendingUsersCount}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        {statsLoading ? 'กำลังโหลด...' : 'ผู้ใช้รอการอนุมัติ'}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -367,11 +410,16 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">คะแนนประเมินตนเอง</CardTitle>
+                        <CardTitle className="text-sm font-medium">ข้อมูล KPI</CardTitle>
+                        {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">-</div>
-                        <p className="text-xs text-muted-foreground">รอการประเมิน</p>
+                        <div className="text-2xl font-bold text-blue-600">
+                            {statsLoading ? '-' : kpiDataCount}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            {statsLoading ? 'กำลังโหลด...' : 'รายการข้อมูลที่บันทึก'}
+                        </p>
                     </CardContent>
                 </Card>
                 <Card>

@@ -6,55 +6,12 @@
  */
 
 export const APP_VERSION = {
-  version: '1.7.2',
+  version: '1.7.0',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
-    'v1.7.2': {
-      date: '20 มกราคม 2569',
-      title: 'Dashboard Real Data & Notification System',
-      features: [
-        {
-          category: 'Dashboard Real Data Integration',
-          icon: 'LayoutDashboard',
-          description: 'Dashboard แสดงข้อมูลจริงจากระบบ',
-          items: [
-            'แสดงจำนวน KPI ที่บันทึกในรอบประเมิน',
-            'แสดงจำนวน User รอการอนุมัติ (Admin)',
-            'สถิติ Evidence และ Verified count จริง',
-            'Progress คำนวณจากข้อมูลจริง',
-          ],
-        },
-        {
-          category: 'In-App Notification System',
-          icon: 'Bell',
-          description: 'ระบบแจ้งเตือนภายใน App',
-          items: [
-            'NotificationBell บน Header',
-            'แสดง Unread count badge',
-            'Notification เมื่อถูก Approve/Reject',
-            'Mark as Read และ Mark All as Read',
-          ],
-        },
-      ],
-    },
-    'v1.7.1': {
-      date: '20 มกราคม 2569',
-      title: 'Version Sync & Minor Fixes',
-      features: [
-        {
-          category: 'Version Synchronization',
-          icon: 'RefreshCw',
-          description: 'Sync version ใน package.json และ version.ts',
-          items: [
-            'แก้ไข version mismatch',
-            'อัปเดต lastUpdate date',
-          ],
-        },
-      ],
-    },
     'v1.7.0': {
       date: '20 มกราคม 2569',
       title: 'Role-Based Dashboard with Tabs & Enhanced Permissions',
