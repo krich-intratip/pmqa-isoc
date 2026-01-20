@@ -7,7 +7,7 @@ import {
     BarChart3, PenTool, CheckCircle2, ShieldCheck,
     Users, Presentation, Sparkles, AlertCircle, HelpCircle,
     ClipboardList, Network, Calendar,
-    Calculator, MessageSquare, TrendingUp, Eye
+    Calculator, MessageSquare, TrendingUp, Eye, Activity
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { APP_VERSION } from '@/config/version';
@@ -611,76 +611,123 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* FAQ SECTION */}
                 {/* ============================================ */}
-                <Card className="border-l-4 border-l-amber-500 shadow-sm mt-4">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <HelpCircle className="h-6 w-6 text-amber-600" />
-                            คำถามที่พบบ่อย (FAQ)
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-slate-600">
-                        <div className="space-y-2">
-                            <h4 className="font-semibold text-slate-800">Q: ต้องทำตามลำดับ Phase หรือไม่?</h4>
-                            <p className="text-sm pl-4">A: แนะนำให้ทำตามลำดับ Phase 0 → 7 เพื่อให้ข้อมูลเชื่อมโยงกัน แต่สามารถข้ามไปทำ Phase อื่นก่อนได้ถ้าจำเป็น</p>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="font-semibold text-slate-800">Q: API Key Gemini หาได้จากไหน?</h4>
-                            <p className="text-sm pl-4">A: ไปที่ <a href="https://aistudio.google.com/apikey" target="_blank" className="text-indigo-600 underline">Google AI Studio</a> → สร้าง API Key → คัดลอกมาใส่ในระบบ (ฟรี)</p>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="font-semibold text-slate-800">Q: ใช้ Model Gemini ตัวไหนดี?</h4>
-                            <p className="text-sm pl-4">A: แนะนำ <strong>Gemini 3.0 Flash</strong> (เร็วและฉลาดที่สุด) หรือ <strong>Gemini 2.5 Pro</strong> (สำหรับงานซับซ้อน)</p>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="font-semibold text-slate-800">Q: ข้อมูลเก็บที่ไหน ปลอดภัยหรือไม่?</h4>
-                            <p className="text-sm pl-4">A: ข้อมูลเก็บใน Firebase Cloud (Google) มีการเข้ารหัส และกำหนดสิทธิ์การเข้าถึงตาม Role</p>
-                        </div>
-                    </CardContent>
-                </Card>
+                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                    <HelpCircle className="h-6 w-6 text-amber-600" />
+                    คำถามที่พบบ่อย (FAQ)
+                </h2>
+
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                    <AccordionItem value="faq1" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-amber-100 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">ต้องทำตามลำดับ Phase หรือไม่?</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <p className="pl-4">แนะนำให้ทำตามลำดับ Phase 0 → 7 เพื่อให้ข้อมูลเชื่อมโยงกัน แต่สามารถข้ามไปทำ Phase อื่นก่อนได้ถ้าจำเป็น</p>
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="faq2" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-amber-100 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">API Key Gemini หาได้จากไหน?</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <p className="pl-4">ไปที่ <a href="https://aistudio.google.com/apikey" target="_blank" className="text-indigo-600 underline">Google AI Studio</a> → สร้าง API Key → คัดลอกมาใส่ในระบบ (ฟรี)</p>
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="faq3" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-amber-100 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">ใช้ Model Gemini ตัวไหนดี?</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <p className="pl-4">แนะนำ <strong>Gemini 3.0 Flash</strong> (เร็วและฉลาดที่สุด) หรือ <strong>Gemini 2.5 Pro</strong> (สำหรับงานซับซ้อน)</p>
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="faq4" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-amber-100 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">ข้อมูลเก็บที่ไหน ปลอดภัยหรือไม่?</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <p className="pl-4">ข้อมูลเก็บใน Firebase Cloud (Google) มีการเข้ารหัส และกำหนดสิทธิ์การเข้าถึงตาม Role</p>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
 
                 {/* ============================================ */}
                 {/* WHAT'S NEW IN CURRENT VERSION */}
                 {/* ============================================ */}
-                <Card className="border-l-4 border-l-blue-500 shadow-sm bg-blue-50">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl text-blue-800">
-                            <Sparkles className="h-6 w-6" />
-                            มีอะไรใหม่ใน Version {APP_VERSION.version}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-slate-600">
-                        {APP_VERSION.releases[`v${APP_VERSION.version}`] && APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
-                            <div key={idx} className="bg-white p-4 rounded-lg border border-blue-200">
-                                <h4 className="font-semibold text-slate-800 mb-2">{feature.category}</h4>
-                                <p className="text-sm text-slate-500 mb-2">{feature.description}</p>
-                                <ul className="list-disc pl-5 space-y-1 text-sm">
+                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                    <Sparkles className="h-6 w-6 text-blue-600" />
+                    มีอะไรใหม่ใน Version {APP_VERSION.version}
+                </h2>
+
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                    {APP_VERSION.releases[`v${APP_VERSION.version}`] && APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
+                        <AccordionItem key={idx} value={`feature-${idx}`} className="bg-white border rounded-lg px-4">
+                            <AccordionTrigger className="hover:no-underline">
+                                <div className="flex items-center gap-3 text-left">
+                                    <div className="bg-blue-100 p-2 rounded-lg">
+                                        <Sparkles className="h-5 w-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-slate-800">{feature.category}</div>
+                                        <div className="text-sm text-slate-500 font-normal">{feature.description}</div>
+                                    </div>
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="pt-4 pb-6 text-slate-600">
+                                <ul className="list-disc pl-10 space-y-2 text-sm">
                                     {feature.items.map((item, itemIdx) => (
                                         <li key={itemIdx}>{item}</li>
                                     ))}
                                 </ul>
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
 
                 {/* ============================================ */}
                 {/* ADMIN FEATURES */}
                 {/* ============================================ */}
-                <Card className="border-l-4 border-l-purple-500 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <ShieldCheck className="h-6 w-6 text-purple-600" />
-                            ฟีเจอร์สำหรับ Admin
-                        </CardTitle>
-                        <CardDescription>การจัดการผู้ใช้งานและระบบ (เฉพาะ Admin เท่านั้น)</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 text-slate-600">
-                        <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
-                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
-                                การจัดการผู้ใช้งาน (User Management) & ประกาศ (Announcements)
-                            </h4>
-                            <ul className="list-disc pl-10 space-y-2">
+                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                    <ShieldCheck className="h-6 w-6 text-purple-600" />
+                    ฟีเจอร์สำหรับ Admin
+                </h2>
+                <p className="text-slate-500 -mt-4">การจัดการผู้ใช้งานและระบบ (เฉพาะ Admin เท่านั้น)</p>
+
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                    <AccordionItem value="admin1" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-purple-100 p-2 rounded-lg">
+                                    <Users className="h-5 w-5 text-purple-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">การจัดการผู้ใช้งาน & ประกาศ</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li><strong>จัดการประกาศ (Announcements):</strong> สร้าง แก้ไข หรือลบประกาศบน Dashboard (v1.7.0)</li>
                                 <li>อนุมัติ/ปฏิเสธคำขอเข้าใช้งาน</li>
                                 <li>แก้ไขข้อมูล User: บทบาท, หน่วยงาน, ข้อมูลส่วนตัว</li>
@@ -690,69 +737,96 @@ export default function GuidePage() {
                                 <li>Export ข้อมูลผู้ใช้เป็น CSV</li>
                                 <li>กรองตามสถานะ, หน่วยงาน, ภูมิภาค</li>
                             </ul>
-                        </div>
+                        </AccordionContent>
+                    </AccordionItem>
 
-                        <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
-                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
-                                Activity Logs
-                            </h4>
-                            <ul className="list-disc pl-10 space-y-2">
+                    <AccordionItem value="admin2" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-purple-100 p-2 rounded-lg">
+                                    <Activity className="h-5 w-5 text-purple-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">Activity Logs</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>ดูประวัติการทำงานทั้งหมดในระบบ</li>
                                 <li>กรองตามประเภท: Login, Create, Update, Delete, Upload, Download</li>
                                 <li>Export Activity Logs เป็น CSV</li>
                                 <li>ติดตามความผิดปกติและความปลอดภัย</li>
                             </ul>
-                        </div>
+                        </AccordionContent>
+                    </AccordionItem>
 
-                        <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
-                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span>
-                                File Versioning (v1.6.0+)
-                            </h4>
-                            <ul className="list-disc pl-10 space-y-2">
+                    <AccordionItem value="admin3" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-purple-100 p-2 rounded-lg">
+                                    <FileText className="h-5 w-5 text-purple-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">File Versioning (v1.6.0+)</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>Delete ไฟล์หลักฐาน (Admin only)</li>
                                 <li>Revert ไฟล์กลับเวอร์ชันเก่า (Admin only)</li>
                                 <li>ดูประวัติการแก้ไขทุกเวอร์ชัน</li>
                             </ul>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
 
                 {/* ============================================ */}
                 {/* CYCLE MANAGEMENT */}
                 {/* ============================================ */}
-                <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <Calendar className="h-6 w-6 text-emerald-600" />
-                            การจัดการรอบการประเมิน (Cycle Management)
-                        </CardTitle>
-                        <CardDescription>รองรับการทำงานหลายรอบการประเมิน (v1.5.0+)</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 text-slate-600">
-                        <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800">การใช้งาน Cycle</h4>
-                            <ul className="list-disc pl-10 space-y-2">
+                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                    <Calendar className="h-6 w-6 text-emerald-600" />
+                    การจัดการรอบการประเมิน (Cycle Management)
+                </h2>
+                <p className="text-slate-500 -mt-4">รองรับการทำงานหลายรอบการประเมิน (v1.5.0+)</p>
+
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                    <AccordionItem value="cycle1" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-emerald-100 p-2 rounded-lg">
+                                    <Calendar className="h-5 w-5 text-emerald-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">การใช้งาน Cycle</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>เลือก Cycle จาก Dropdown ใน Header</li>
                                 <li>ระบบจะกรองข้อมูลตาม Cycle ที่เลือก</li>
                                 <li>Evidence, KPI Data, SAR แยกตามรอบ</li>
                                 <li>Dashboard แสดงข้อมูลตาม Active Cycle</li>
                                 <li>Warning UI เมื่อไม่ได้เลือก Cycle</li>
                             </ul>
-                        </div>
+                        </AccordionContent>
+                    </AccordionItem>
 
-                        <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800">หน้าที่รองรับ Cycle</h4>
-                            <ul className="list-disc pl-10 space-y-2">
+                    <AccordionItem value="cycle2" className="bg-white border rounded-lg px-4">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center gap-3 text-left">
+                                <div className="bg-emerald-100 p-2 rounded-lg">
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                </div>
+                                <div className="font-semibold text-slate-800">หน้าที่รองรับ Cycle</div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>Phase 1: Evidence, Gap Tracker, Gap Analyzer, Gate Checker</li>
                                 <li>Phase 2: Data Collector, Data Cleaning, Baseline Analyzer, Data Catalog, KPI Dictionary</li>
                                 <li>Phase 4: SAR Outline, SAR Writer</li>
                                 <li>Dashboard: ข้อมูลทั้งหมดแสดงตาม Active Cycle</li>
                             </ul>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
 
                 {/* ============================================ */}
                 {/* FOOTER */}

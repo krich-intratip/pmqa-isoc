@@ -7,6 +7,7 @@ import { useEffect, useState, memo, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import {
     Users, Settings, Map, Calendar as CalendarIcon, FileText, CheckCircle2,
@@ -349,6 +350,16 @@ export default function Dashboard() {
                         >
                             <FileText className="h-4 w-4" />
                             Export HTML
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => usePresenceStore.getState().toggleSidebar()}
+                            className="gap-2"
+                        >
+                            <Users className="h-4 w-4" />
+                            ผู้ใช้ออนไลน์
+                            <Badge className="ml-1 bg-green-500 text-white">{usePresenceStore.getState().getFilteredUsers().length}</Badge>
                         </Button>
                         <div className="text-right">
                             <p className="text-sm text-slate-500">
@@ -695,6 +706,16 @@ export default function Dashboard() {
                     >
                         <FileText className="h-4 w-4" />
                         Export HTML
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => usePresenceStore.getState().toggleSidebar()}
+                        className="gap-2"
+                    >
+                        <Users className="h-4 w-4" />
+                        ผู้ใช้ออนไลน์
+                        <Badge className="ml-1 bg-green-500 text-white">{usePresenceStore.getState().getFilteredUsers().length}</Badge>
                     </Button>
                     <div className="text-right">
                         <p className="text-sm text-slate-500">

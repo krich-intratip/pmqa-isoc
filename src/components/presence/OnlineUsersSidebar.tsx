@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { UserAvatar } from './UserAvatar';
 import { usePresenceStore } from '@/stores/presence-store';
-import { Users, Search, Filter, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Users, Search, Filter, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -76,20 +76,6 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
 
     return (
         <>
-            {/* Toggle Button */}
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleSidebar}
-                className={cn(
-                    'fixed top-20 z-40 transition-all duration-300 shadow-lg hover:shadow-xl',
-                    isSidebarOpen ? 'right-[320px]' : 'right-4'
-                )}
-                title={isSidebarOpen ? 'ซ่อนผู้ใช้ออนไลน์' : 'แสดงผู้ใช้ออนไลน์'}
-            >
-                {isSidebarOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-
             {/* Sidebar */}
             <div
                 className={cn(
