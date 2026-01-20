@@ -10,6 +10,7 @@ import {
     MessageSquare, CheckCircle2, ArrowRight, Info, Play
 } from 'lucide-react';
 import Link from 'next/link';
+import { APP_VERSION } from '@/config/version';
 
 const phases = [
     {
@@ -182,7 +183,12 @@ export default function AssessmentRoadmapPage() {
         <div className="container mx-auto py-8 px-4 max-w-7xl">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2">Assessment Roadmap</h1>
+                <div className="flex items-center justify-between mb-4">
+                    <h1 className="text-3xl font-bold">Assessment Roadmap</h1>
+                    <Badge variant="outline" className="text-sm">
+                        Version {APP_VERSION.version}
+                    </Badge>
+                </div>
                 <p className="text-muted-foreground">
                     แผนที่เส้นทางการประเมิน PMQA แบบ Interactive - ทุก Phase มีเครื่องมือช่วยงานพร้อมใช้
                 </p>
@@ -195,9 +201,10 @@ export default function AssessmentRoadmapPage() {
                         <Info className="h-5 w-5" />
                         ภาพรวมกระบวนการ
                     </CardTitle>
+                    <CardDescription>อัปเดตล่าสุด: {APP_VERSION.releaseDate}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <p className="text-sm text-muted-foreground">ระยะเวลารวม</p>
                             <p className="text-2xl font-bold text-indigo-700">16-32 สัปดาห์</p>
@@ -213,6 +220,22 @@ export default function AssessmentRoadmapPage() {
                             <p className="text-2xl font-bold text-indigo-700">18 Tools</p>
                             <p className="text-xs text-muted-foreground">พร้อมใช้งานทันที</p>
                         </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground">รองรับ Cycle</p>
+                            <p className="text-2xl font-bold text-indigo-700">✓ หลายรอบ</p>
+                            <p className="text-xs text-muted-foreground">แยกข้อมูลแต่ละรอบ</p>
+                        </div>
+                    </div>
+
+                    {/* New Features Highlight */}
+                    <div className="mt-6 p-4 bg-white rounded-lg border border-indigo-200">
+                        <h4 className="font-semibold text-sm text-indigo-800 mb-2">✨ ฟีเจอร์ใหม่ใน v{APP_VERSION.version}</h4>
+                        <ul className="text-xs text-slate-600 space-y-1">
+                            <li>• ระบบจัดการ User ที่ปรับปรุงใหม่ - แก้ไขข้อมูลก่อนอนุมัติได้</li>
+                            <li>• แสดงเวลาเข้าใช้งานล่าสุดในตาราง User Management</li>
+                            <li>• File Versioning - จัดการเวอร์ชันไฟล์หลักฐานแบบครบวงจร (v1.6.0)</li>
+                            <li>• รองรับ Cycle ใน Phase 1-2 และ Phase 4 (v1.6.0-v1.6.1)</li>
+                        </ul>
                     </div>
                 </CardContent>
             </Card>

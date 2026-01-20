@@ -11,6 +11,7 @@ import {
     Calculator, MessageSquare, TrendingUp, Eye
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { APP_VERSION } from '@/config/version';
 
 export default function GuidePage() {
     return (
@@ -21,7 +22,7 @@ export default function GuidePage() {
                     คู่มือการใช้งานระบบ PMQA 4.0 Web Application สำหรับ กอ.รมน. ฉบับสมบูรณ์
                     ครอบคลุมทุกขั้นตอนตั้งแต่เริ่มต้นจนถึงการเตรียมรับการตรวจประเมิน
                 </p>
-                <Badge className="mt-4 bg-indigo-100 text-indigo-700">Version 1.5.0 | อัปเดต 19 มกราคม 2569</Badge>
+                <Badge className="mt-4 bg-indigo-100 text-indigo-700">Version {APP_VERSION.version} | อัปเดต {APP_VERSION.releaseDate}</Badge>
             </div>
 
             <div className="grid gap-8">
@@ -639,11 +640,126 @@ export default function GuidePage() {
                 </Card>
 
                 {/* ============================================ */}
+                {/* WHAT'S NEW IN v1.6.2 */}
+                {/* ============================================ */}
+                <Card className="border-l-4 border-l-blue-500 shadow-sm bg-blue-50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl text-blue-800">
+                            <Sparkles className="h-6 w-6" />
+                            มีอะไรใหม่ใน Version {APP_VERSION.version}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4 text-slate-600">
+                        {APP_VERSION.releases['v1.6.2'] && APP_VERSION.releases['v1.6.2'].features.map((feature, idx) => (
+                            <div key={idx} className="bg-white p-4 rounded-lg border border-blue-200">
+                                <h4 className="font-semibold text-slate-800 mb-2">{feature.category}</h4>
+                                <p className="text-sm text-slate-500 mb-2">{feature.description}</p>
+                                <ul className="list-disc pl-5 space-y-1 text-sm">
+                                    {feature.items.map((item, itemIdx) => (
+                                        <li key={itemIdx}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+
+                {/* ============================================ */}
+                {/* ADMIN FEATURES */}
+                {/* ============================================ */}
+                <Card className="border-l-4 border-l-purple-500 shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <ShieldCheck className="h-6 w-6 text-purple-600" />
+                            ฟีเจอร์สำหรับ Admin
+                        </CardTitle>
+                        <CardDescription>การจัดการผู้ใช้งานและระบบ (เฉพาะ Admin เท่านั้น)</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6 text-slate-600">
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
+                                การจัดการผู้ใช้งาน (User Management)
+                            </h4>
+                            <ul className="list-disc pl-10 space-y-2">
+                                <li>อนุมัติ/ปฏิเสธคำขอเข้าใช้งาน</li>
+                                <li>แก้ไขข้อมูล User: บทบาท, หน่วยงาน, ข้อมูลส่วนตัว</li>
+                                <li>แก้ไขข้อมูลก่อนอนุมัติได้ (v1.6.2)</li>
+                                <li>ดูประวัติการเข้าใช้งานล่าสุด (v1.6.2)</li>
+                                <li>Bulk Actions: อนุมัติ/ปฏิเสธหลายคนพร้อมกัน</li>
+                                <li>Export ข้อมูลผู้ใช้เป็น CSV</li>
+                                <li>กรองตามสถานะ, หน่วยงาน, ภูมิภาค</li>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
+                                Activity Logs
+                            </h4>
+                            <ul className="list-disc pl-10 space-y-2">
+                                <li>ดูประวัติการทำงานทั้งหมดในระบบ</li>
+                                <li>กรองตามประเภท: Login, Create, Update, Delete, Upload, Download</li>
+                                <li>Export Activity Logs เป็น CSV</li>
+                                <li>ติดตามความผิดปกติและความปลอดภัย</li>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span>
+                                File Versioning (v1.6.0+)
+                            </h4>
+                            <ul className="list-disc pl-10 space-y-2">
+                                <li>Delete ไฟล์หลักฐาน (Admin only)</li>
+                                <li>Revert ไฟล์กลับเวอร์ชันเก่า (Admin only)</li>
+                                <li>ดูประวัติการแก้ไขทุกเวอร์ชัน</li>
+                            </ul>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* ============================================ */}
+                {/* CYCLE MANAGEMENT */}
+                {/* ============================================ */}
+                <Card className="border-l-4 border-l-emerald-500 shadow-sm">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <Calendar className="h-6 w-6 text-emerald-600" />
+                            การจัดการรอบการประเมิน (Cycle Management)
+                        </CardTitle>
+                        <CardDescription>รองรับการทำงานหลายรอบการประเมิน (v1.5.0+)</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6 text-slate-600">
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-800">การใช้งาน Cycle</h4>
+                            <ul className="list-disc pl-10 space-y-2">
+                                <li>เลือก Cycle จาก Dropdown ใน Header</li>
+                                <li>ระบบจะกรองข้อมูลตาม Cycle ที่เลือก</li>
+                                <li>Evidence, KPI Data, SAR แยกตามรอบ</li>
+                                <li>Dashboard แสดงข้อมูลตาม Active Cycle</li>
+                                <li>Warning UI เมื่อไม่ได้เลือก Cycle</li>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-800">หน้าที่รองรับ Cycle</h4>
+                            <ul className="list-disc pl-10 space-y-2">
+                                <li>Phase 1: Evidence, Gap Tracker, Gap Analyzer, Gate Checker</li>
+                                <li>Phase 2: Data Collector, Data Cleaning, Baseline Analyzer, Data Catalog, KPI Dictionary</li>
+                                <li>Phase 4: SAR Outline, SAR Writer</li>
+                                <li>Dashboard: ข้อมูลทั้งหมดแสดงตาม Active Cycle</li>
+                            </ul>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* ============================================ */}
                 {/* FOOTER */}
                 {/* ============================================ */}
                 <div className="text-center mt-8 space-y-2 py-6 border-t">
                     <p className="text-lg font-semibold text-slate-700">PMQA 4.0 Web Application</p>
-                    <p className="text-sm text-slate-500">Version 1.5.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
+                    <p className="text-sm text-slate-500">Version {APP_VERSION.version} | อัปเดตล่าสุด: {APP_VERSION.releaseDate}</p>
                     <p className="text-sm text-slate-400">Internal Security Operations Command (กอ.รมน.)</p>
                     <p className="text-xs text-slate-400 mt-2">
                         พัฒนาโดย{' '}
