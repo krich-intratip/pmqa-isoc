@@ -158,6 +158,9 @@ export default function Dashboard() {
                     </div>
                 </section>
 
+                {/* Announcement Cards - Visible to Admin too */}
+                <AnnouncementCards />
+
                 {/* Admin Tabs */}
                 <Tabs defaultValue="overview" className="w-full">
                     <TabsList className="grid w-full grid-cols-5">
@@ -404,6 +407,9 @@ export default function Dashboard() {
                 </div>
             </section>
 
+            {/* Announcement Cards - Visible to all users */}
+            <AnnouncementCards />
+
             {/* Main Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
@@ -472,9 +478,6 @@ function PhaseToolsSection({
 }) {
     return (
         <>
-            {/* Announcement Cards - Visible to all users */}
-            <AnnouncementCards />
-
             <h2 className="text-xl font-semibold mb-4 text-slate-800">เครื่องมือของฉัน</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Roadmap - Available to all users */}
