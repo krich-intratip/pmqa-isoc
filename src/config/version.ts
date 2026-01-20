@@ -6,12 +6,41 @@
  */
 
 export const APP_VERSION = {
-  version: '1.7.4',
+  version: '1.8.0',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v1.8.0': {
+      date: '20 มกราคม 2569',
+      title: 'Code Quality & Type Safety Improvements',
+      features: [
+        {
+          category: 'Code Quality',
+          icon: 'Code',
+          description: 'ปรับปรุงคุณภาพโค้ดและความปลอดภัยของ Type',
+          items: [
+            'แก้ไข ESLint errors จาก 105+ รายการ เหลือ 0 errors',
+            'เปลี่ยนจาก any types เป็น proper TypeScript types',
+            'ลบ unused imports ทั้งหมด',
+            'แก้ไข useEffect dependencies warnings',
+            'ปรับปรุง Type coverage เป็น >95%',
+          ],
+        },
+        {
+          category: 'Technical Improvements',
+          icon: 'Settings',
+          description: 'การปรับปรุงทางเทคนิค',
+          items: [
+            'ActivityLog.details ใช้ Record<string, unknown>',
+            'User role/status ใช้ union types',
+            'เพิ่ม useCallback สำหรับ performance',
+            'Build สำเร็จโดยไม่มี errors',
+          ],
+        },
+      ],
+    },
     'v1.7.4': {
       date: '20 มกราคม 2569',
       title: 'Dashboard Announcements UI Refinement',
