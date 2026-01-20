@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import { useAIConfigStore } from '@/stores/ai-config-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BookOpen, Sparkles, Copy, Save, Loader2, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { BookOpen, Sparkles, Copy, Save, Loader2, TrendingUp, TrendingDown, AlertCircle, AlertTriangle } from 'lucide-react';
 import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -36,6 +37,7 @@ const NARRATIVE_TYPES = [
 
 export default function RecoveryNarrativePage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const { apiKey, selectedModel } = useAIConfigStore();
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
@@ -45,34 +47,49 @@ export default function RecoveryNarrativePage() {
     const [generatedNarrative, setGeneratedNarrative] = useState('');
 
     useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
+    useEffect(() => {
         fetchKPIData();
-    }, [user?.unitId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.unitId, selectedCycle]);
 
     const fetchKPIData = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            setKpiSummaries([]);
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         try {
-            const kpiQ = query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId));
+            const kpiQ = query(
+                collection(db, 'kpi_definitions'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id)
+            );
             const kpiSnap = await getDocs(kpiQ);
-            const kpiDefs: any[] = [];
+            const kpiDefs: Array<Record<string, unknown> & { id: string }> = [];
             kpiSnap.forEach(d => kpiDefs.push({ id: d.id, ...d.data() }));
 
             const dataQ = query(collection(db, 'kpi_data'), where('unitId', '==', user.unitId));
             const dataSnap = await getDocs(dataQ);
-            const dataMap = new Map();
+            const dataMap = new Map<string, Record<string, unknown>>();
             dataSnap.forEach(d => {
                 const data = d.data();
                 const key = data.kpiId;
-                if (!dataMap.has(key) || data.period > dataMap.get(key).period) {
+                const existing = dataMap.get(key);
+                if (!existing || (data.period && existing.period && data.period > existing.period)) {
                     dataMap.set(key, data);
                 }
             });
 
             const summaries: KPISummary[] = kpiDefs.map(kpi => {
                 const latestData = dataMap.get(kpi.id);
-                const current = latestData?.value || 0;
-                const baseline = kpi.baseline || 0;
-                const target = kpi.target || 0;
+                const current = typeof latestData?.value === 'number' ? latestData.value : 0;
+                const baseline = typeof kpi.baseline === 'number' ? kpi.baseline : 0;
+                const target = typeof kpi.target === 'number' ? kpi.target : 0;
 
                 let trend: 'improving' | 'declining' | 'stable' = 'stable';
                 if (kpi.direction === 'up') {
@@ -84,12 +101,12 @@ export default function RecoveryNarrativePage() {
                 const gap = target - current;
 
                 return {
-                    kpiCode: kpi.code,
-                    kpiName: kpi.name,
+                    kpiCode: typeof kpi.code === 'string' ? kpi.code : '',
+                    kpiName: typeof kpi.name === 'string' ? kpi.name : '',
                     baseline,
                     target,
                     current,
-                    unit: kpi.unit || '',
+                    unit: typeof kpi.unit === 'string' ? kpi.unit : '',
                     trend,
                     gap,
                 };
@@ -106,6 +123,11 @@ export default function RecoveryNarrativePage() {
     const handleGenerate = async () => {
         if (!apiKey) {
             toast.error('กรุณาตั้งค่า Gemini API Key ที่ Settings > AI Config');
+            return;
+        }
+
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
             return;
         }
 
@@ -163,9 +185,10 @@ ${selectedNarrativeType === 'success' ? `
             const content = await generateSARContent(apiKey, selectedModel, prompt);
             setGeneratedNarrative(content);
             toast.success('สร้างบทวิเคราะห์สำเร็จ');
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(error.message || 'เกิดข้อผิดพลาด');
+            const errorMessage = error instanceof Error ? error.message : 'เกิดข้อผิดพลาด';
+            toast.error(errorMessage);
         } finally {
             setGenerating(false);
         }
@@ -176,10 +199,15 @@ ${selectedNarrativeType === 'success' ? `
             toast.error('ไม่มีบทวิเคราะห์ที่จะบันทึก');
             return;
         }
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
 
         try {
             await addDoc(collection(db, 'recovery_narratives'), {
                 unitId: user!.unitId,
+                cycleId: selectedCycle.id,
                 narrativeType: selectedNarrativeType,
                 content: generatedNarrative,
                 createdAt: serverTimestamp(),
@@ -202,7 +230,7 @@ ${selectedNarrativeType === 'success' ? `
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <BookOpen className="h-8 w-8 text-amber-600" />
@@ -210,10 +238,32 @@ ${selectedNarrativeType === 'success' ? `
                         </h1>
                         <p className="text-muted-foreground">สร้างบทวิเคราะห์ผลลัพธ์ด้วย AI (App 5.2)</p>
                     </div>
-                    <Badge variant="outline" className="text-sm">
-                        Model: {selectedModel || 'ไม่ได้ตั้งค่า'}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-amber-700 border-amber-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Badge variant="outline" className="text-sm">
+                            Model: {selectedModel || 'ไม่ได้ตั้งค่า'}
+                        </Badge>
+                    </div>
                 </div>
+
+                {/* Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left: Configuration */}
@@ -333,7 +383,7 @@ ${selectedNarrativeType === 'success' ? `
                                 ) : (
                                     <div className="text-center py-20 text-muted-foreground">
                                         <AlertCircle className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                        <p>เลือกประเภทบทวิเคราะห์และคลิก "สร้างบทวิเคราะห์"</p>
+                                        <p>เลือกประเภทบทวิเคราะห์และคลิก &ldquo;สร้างบทวิเคราะห์&rdquo;</p>
                                     </div>
                                 )}
                             </CardContent>

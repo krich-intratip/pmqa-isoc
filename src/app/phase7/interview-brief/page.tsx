@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import { useAIConfigStore } from '@/stores/ai-config-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Presentation, Sparkles, Copy, Download, Loader2, FileText } from 'lucide-react';
+import { Presentation, Sparkles, Copy, Download, Loader2, FileText, AlertTriangle } from 'lucide-react';
 import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -27,17 +28,26 @@ const BRIEF_SECTIONS = [
 
 export default function InterviewBriefPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const { apiKey, selectedModel } = useAIConfigStore();
-    const [loading, setLoading] = useState(false);
     const [generating, setGenerating] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [selectedSections, setSelectedSections] = useState<string[]>(BRIEF_SECTIONS.map(s => s.id));
     const [additionalNotes, setAdditionalNotes] = useState('');
     const [generatedBrief, setGeneratedBrief] = useState('');
-    const [orgData, setOrgData] = useState<any>(null);
+    const [orgData, setOrgData] = useState<{
+        context: Record<string, unknown> | null;
+        kpis: Record<string, unknown>[];
+    } | null>(null);
+
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
 
     useEffect(() => {
         fetchOrgData();
-    }, [user?.unitId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.unitId, selectedCycle]);
 
     const fetchOrgData = async () => {
         if (!user?.unitId) return;
@@ -45,12 +55,12 @@ export default function InterviewBriefPage() {
         try {
             // Fetch context pack
             const contextSnap = await getDocs(query(collection(db, 'context_packs'), where('unitId', '==', user.unitId)));
-            let contextData: any = null;
+            let contextData: Record<string, unknown> | null = null;
             contextSnap.forEach(d => contextData = d.data());
 
             // Fetch KPI summary
             const kpiSnap = await getDocs(query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId)));
-            const kpis: any[] = [];
+            const kpis: Record<string, unknown>[] = [];
             kpiSnap.forEach(d => kpis.push(d.data()));
 
             setOrgData({ context: contextData, kpis });
@@ -77,14 +87,18 @@ export default function InterviewBriefPage() {
         try {
             const selectedLabels = BRIEF_SECTIONS.filter(s => selectedSections.includes(s.id)).map(s => s.label);
 
+            const orgName = orgData?.context && typeof orgData.context.orgName === 'string' ? orgData.context.orgName : 'ไม่ระบุ';
+            const vision = orgData?.context && typeof orgData.context.vision === 'string' ? orgData.context.vision : 'ไม่ระบุ';
+            const mission = orgData?.context && typeof orgData.context.mission === 'string' ? orgData.context.mission : 'ไม่ระบุ';
+
             const contextInfo = orgData?.context ? `
 ข้อมูลองค์กร:
-- ชื่อ: ${orgData.context.orgName || 'ไม่ระบุ'}
-- วิสัยทัศน์: ${orgData.context.vision || 'ไม่ระบุ'}
-- พันธกิจ: ${orgData.context.mission || 'ไม่ระบุ'}
+- ชื่อ: ${orgName}
+- วิสัยทัศน์: ${vision}
+- พันธกิจ: ${mission}
 ` : 'ไม่มีข้อมูล Context Pack';
 
-            const kpiInfo = orgData?.kpis?.length > 0 ? `
+            const kpiInfo = orgData?.kpis && orgData.kpis.length > 0 ? `
 KPI จำนวน ${orgData.kpis.length} ตัว
 ` : 'ไม่มีข้อมูล KPI';
 
@@ -109,9 +123,10 @@ ${additionalNotes ? `หมายเหตุเพิ่มเติม: ${addi
             const content = await generateSARContent(apiKey, selectedModel, prompt);
             setGeneratedBrief(content);
             toast.success('สร้าง Interview Brief สำเร็จ');
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(error.message || 'เกิดข้อผิดพลาด');
+            const errorMessage = error instanceof Error ? error.message : 'เกิดข้อผิดพลาด';
+            toast.error(errorMessage);
         } finally {
             setGenerating(false);
         }
@@ -136,7 +151,7 @@ ${additionalNotes ? `หมายเหตุเพิ่มเติม: ${addi
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <Presentation className="h-8 w-8 text-rose-600" />
@@ -144,8 +159,30 @@ ${additionalNotes ? `หมายเหตุเพิ่มเติม: ${addi
                         </h1>
                         <p className="text-muted-foreground">สร้างเอกสารเตรียมรับการตรวจประเมิน (App 7.1)</p>
                     </div>
-                    <Badge variant="outline">Model: {selectedModel || 'ไม่ได้ตั้งค่า'}</Badge>
+                    <div className="flex items-center gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-rose-700 border-rose-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Badge variant="outline">Model: {selectedModel || 'ไม่ได้ตั้งค่า'}</Badge>
+                    </div>
                 </div>
+
+                {/* Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left: Configuration */}
@@ -230,7 +267,7 @@ ${additionalNotes ? `หมายเหตุเพิ่มเติม: ${addi
                             ) : (
                                 <div className="text-center py-20 text-muted-foreground">
                                     <FileText className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                    <p>เลือกหัวข้อและคลิก "สร้าง Interview Brief"</p>
+                                    <p>เลือกหัวข้อและคลิก &ldquo;สร้าง Interview Brief&rdquo;</p>
                                 </div>
                             )}
                         </CardContent>

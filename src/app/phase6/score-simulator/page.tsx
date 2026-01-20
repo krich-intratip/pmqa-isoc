@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,8 +38,13 @@ const PMQA_STRUCTURE = [
 
 export default function ScoreSimulatorPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [scores, setScores] = useState<CategoryScore[]>([]);
     const [targetTotalScore, setTargetTotalScore] = useState(350);
+
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
 
     useEffect(() => {
         // Initialize with default scores
@@ -112,7 +118,7 @@ export default function ScoreSimulatorPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <Calculator className="h-8 w-8 text-teal-600" />
@@ -121,6 +127,11 @@ export default function ScoreSimulatorPage() {
                         <p className="text-muted-foreground">จำลองคะแนนและวางแผนปรับปรุง (App 6.2)</p>
                     </div>
                     <div className="flex items-center gap-4">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-teal-700 border-teal-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
                         <div className="text-right">
                             <div className="text-sm text-muted-foreground">เป้าหมาย</div>
                             <Input

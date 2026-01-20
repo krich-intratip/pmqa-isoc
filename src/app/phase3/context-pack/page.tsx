@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Save, Loader2, Building2, Target, Users, Lightbulb } from 'lucide-react';
+import { FileText, Save, Loader2, Building2, Target, Users, Lightbulb, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -57,9 +58,15 @@ const TABS = [
 
 export default function ContextPackPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeTab, setActiveTab] = useState('profile');
+
+    // Fetch cycles on mount
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
 
     // Form state
     const [orgProfile, setOrgProfile] = useState({
@@ -90,9 +97,15 @@ export default function ContextPackPage() {
 
     const fetchData = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         try {
-            const docRef = doc(db, 'context_packs', user.unitId);
+            // Use composite key: unitId_cycleId
+            const docId = `${user.unitId}_${selectedCycle.id}`;
+            const docRef = doc(db, 'context_packs', docId);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const data = docSnap.data() as ContextPack;
@@ -111,14 +124,20 @@ export default function ContextPackPage() {
     useEffect(() => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, selectedCycle]);
 
     const handleSave = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อนบันทึก');
+            return;
+        }
         setSaving(true);
         try {
-            await setDoc(doc(db, 'context_packs', user.unitId), {
+            const docId = `${user.unitId}_${selectedCycle.id}`;
+            await setDoc(doc(db, 'context_packs', docId), {
                 unitId: user.unitId,
+                cycleId: selectedCycle.id,
                 orgProfile,
                 stakeholders,
                 strategicContext,
@@ -148,7 +167,7 @@ export default function ContextPackPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <FileText className="h-8 w-8 text-sky-600" />
@@ -156,16 +175,38 @@ export default function ContextPackPage() {
                         </h1>
                         <p className="text-muted-foreground">รวบรวมบริบทองค์กรสำหรับ SAR (App 3.1)</p>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <Badge variant="outline" className="text-lg px-3 py-1">
-                            {getCompletionRate()}% สมบูรณ์
-                        </Badge>
-                        <Button onClick={handleSave} disabled={saving}>
-                            {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                            บันทึก
-                        </Button>
+                    <div className="flex flex-col items-end gap-2">
+                        {selectedCycle && (
+                            <div className="text-right">
+                                <p className="text-sm text-muted-foreground">รอบการประเมิน</p>
+                                <p className="font-semibold text-sky-700">{selectedCycle.name || `ปี ${selectedCycle.year}`}</p>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-4">
+                            <Badge variant="outline" className="text-lg px-3 py-1">
+                                {getCompletionRate()}% สมบูรณ์
+                            </Badge>
+                            <Button onClick={handleSave} disabled={saving || !selectedCycle}>
+                                {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                                บันทึก
+                            </Button>
+                        </div>
                     </div>
                 </div>
+
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {loading ? (
                     <div className="text-center py-12">กำลังโหลด...</div>

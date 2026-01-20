@@ -59,10 +59,11 @@ export default function SARWriterPage() {
         if (currentCategory && currentCategory.subsections.length > 0) {
             setSelectedSubsection(currentCategory.subsections[0]);
         }
-    }, [selectedCategory]);
+    }, [selectedCategory, currentCategory]);
 
     useEffect(() => {
         fetchSavedContents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.unitId, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const fetchSavedContents = async () => {
@@ -127,9 +128,10 @@ ${contextInput}
             const content = await generateSARContent(apiKey, selectedModel, prompt);
             setGeneratedContent(content);
             toast.success('สร้างเนื้อหาสำเร็จ');
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
-            toast.error(error.message || 'เกิดข้อผิดพลาดในการสร้างเนื้อหา');
+            const errorMessage = error instanceof Error ? error.message : 'เกิดข้อผิดพลาดในการสร้างเนื้อหา';
+            toast.error(errorMessage);
         } finally {
             setGenerating(false);
         }
@@ -184,9 +186,6 @@ ${contextInput}
         }
     };
 
-    const savedForCurrentSection = savedContents.filter(
-        c => c.category === selectedCategory && c.subsection === selectedSubsection
-    );
 
     return (
         <ProtectedRoute>
@@ -341,7 +340,7 @@ ${contextInput}
                                         ) : (
                                             <div className="text-center py-20 text-muted-foreground">
                                                 <Sparkles className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                                <p>กรอกข้อมูลบริบทและคลิก "สร้างเนื้อหา"</p>
+                                                <p>กรอกข้อมูลบริบทและคลิก &ldquo;สร้างเนื้อหา&rdquo;</p>
                                             </div>
                                         )}
                                     </CardContent>

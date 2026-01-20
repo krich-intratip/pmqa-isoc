@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FileText, Download, Sparkles, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 
 
@@ -149,7 +149,7 @@ export default function SAROutlinePage() {
 
             selectedOutlines.forEach(section => {
                 markdown += `### ${section.title}\n`;
-                section.subsections.forEach((sub, idx) => {
+                section.subsections.forEach((sub) => {
                     markdown += `- ${sub}\n`;
                 });
                 markdown += `\n`;

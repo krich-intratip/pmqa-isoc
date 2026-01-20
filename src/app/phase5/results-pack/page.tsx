@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { BarChart3, TrendingUp, TrendingDown, Download, FileSpreadsheet, Package } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, Download, FileSpreadsheet, Package, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -37,32 +38,48 @@ const RESULT_CATEGORIES = [
 
 export default function ResultsDataPackPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [loading, setLoading] = useState(true);
     const [kpiData, setKpiData] = useState<KPIData[]>([]);
     const [selectedCategory, setSelectedCategory] = useState('7.1');
 
     useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
+    useEffect(() => {
         fetchKPIData();
-    }, [user?.unitId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.unitId, selectedCycle]);
 
     const fetchKPIData = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            setKpiData([]);
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         try {
-            // Fetch KPI definitions
-            const kpiQ = query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId));
+            // Fetch KPI definitions with cycle filter
+            const kpiQ = query(
+                collection(db, 'kpi_definitions'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id)
+            );
             const kpiSnap = await getDocs(kpiQ);
-            const kpiDefs: any[] = [];
+            const kpiDefs: Array<Record<string, unknown> & { id: string }> = [];
             kpiSnap.forEach(d => kpiDefs.push({ id: d.id, ...d.data() }));
 
             // Fetch actual data
             const dataQ = query(collection(db, 'kpi_data'), where('unitId', '==', user.unitId));
             const dataSnap = await getDocs(dataQ);
-            const dataMap = new Map();
+            const dataMap = new Map<string, Record<string, unknown>>();
             dataSnap.forEach(d => {
                 const data = d.data();
                 const key = data.kpiId;
-                if (!dataMap.has(key) || data.period > dataMap.get(key).period) {
+                const existing = dataMap.get(key);
+                if (!existing || (data.period && existing.period && data.period > existing.period)) {
                     dataMap.set(key, data);
                 }
             });
@@ -70,9 +87,9 @@ export default function ResultsDataPackPage() {
             // Combine and calculate
             const combined: KPIData[] = kpiDefs.map(kpi => {
                 const latestData = dataMap.get(kpi.id);
-                const current = latestData?.value || 0;
-                const baseline = kpi.baseline || 0;
-                const target = kpi.target || 0;
+                const current = typeof latestData?.value === 'number' ? latestData.value : 0;
+                const baseline = typeof kpi.baseline === 'number' ? kpi.baseline : 0;
+                const target = typeof kpi.target === 'number' ? kpi.target : 0;
 
                 // Calculate achievement
                 let achievement = 0;
@@ -96,14 +113,14 @@ export default function ResultsDataPackPage() {
 
                 return {
                     id: kpi.id,
-                    kpiCode: kpi.code,
-                    kpiName: kpi.name,
-                    category: kpi.pmqaCategory || '7.1',
+                    kpiCode: typeof kpi.code === 'string' ? kpi.code : '',
+                    kpiName: typeof kpi.name === 'string' ? kpi.name : '',
+                    category: typeof kpi.pmqaCategory === 'string' ? kpi.pmqaCategory : '7.1',
                     baseline,
                     target,
                     current,
-                    unit: kpi.unit || '',
-                    direction: kpi.direction,
+                    unit: typeof kpi.unit === 'string' ? kpi.unit : '',
+                    direction: kpi.direction as 'up' | 'down' | 'maintain',
                     trend,
                     achievement: Math.round(achievement),
                 };
@@ -157,7 +174,7 @@ export default function ResultsDataPackPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <Package className="h-8 w-8 text-emerald-600" />
@@ -165,11 +182,33 @@ export default function ResultsDataPackPage() {
                         </h1>
                         <p className="text-muted-foreground">รวบรวมผลลัพธ์หมวด 7 (App 5.1)</p>
                     </div>
-                    <Button onClick={exportToCSV} className="gap-2">
-                        <Download className="h-4 w-4" />
-                        ส่งออก CSV
-                    </Button>
+                    <div className="flex flex-col items-end gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-emerald-700 border-emerald-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Button onClick={exportToCSV} className="gap-2" disabled={!selectedCycle}>
+                            <Download className="h-4 w-4" />
+                            ส่งออก CSV
+                        </Button>
+                    </div>
                 </div>
+
+                {/* Warning if no cycle selected */}
+                {!selectedCycle && (
+                    <Card className="mb-6 border-yellow-200 bg-yellow-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center gap-3">
+                                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                                <div>
+                                    <p className="font-medium text-yellow-800">ยังไม่ได้เลือกรอบการประเมิน</p>
+                                    <p className="text-sm text-yellow-700">กรุณาเลือกรอบการประเมินจาก Header ด้านบน</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Category Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
@@ -177,8 +216,8 @@ export default function ResultsDataPackPage() {
                         <Card
                             key={cat.id}
                             className={`cursor-pointer transition-all ${selectedCategory === cat.id
-                                    ? 'border-emerald-500 bg-emerald-50'
-                                    : 'hover:border-slate-300'
+                                ? 'border-emerald-500 bg-emerald-50'
+                                : 'hover:border-slate-300'
                                 }`}
                             onClick={() => setSelectedCategory(cat.id)}
                         >

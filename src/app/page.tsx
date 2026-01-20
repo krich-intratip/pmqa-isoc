@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { APP_VERSION } from '@/config/version';
 
 export default function Home() {
   const { user, loading, initialize } = useAuthStore();
@@ -77,7 +78,7 @@ export default function Home() {
 
       <footer className="py-6 text-center text-slate-400 text-sm">
         <p>© 2026 Internal Security Operations Command. All rights reserved.</p>
-        <p className="mt-1 text-xs">Version 1.5.0 | อัปเดตล่าสุด: 19 มกราคม 2569</p>
+        <p className="mt-1 text-xs">Version {APP_VERSION.version} | อัปเดตล่าสุด: {APP_VERSION.releaseDate}</p>
       </footer>
     </div>
   );

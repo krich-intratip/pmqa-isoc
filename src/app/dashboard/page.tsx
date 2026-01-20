@@ -14,7 +14,7 @@ import {
     BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart,
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
     Presentation, HelpCircle, Calendar, UserCog, Activity, MapPin, Loader2,
-    LayoutDashboard, UserCheck, FileSearch, Megaphone
+    LayoutDashboard, UserCheck, FileSearch, Megaphone, Download
 } from 'lucide-react';
 import {
     canManageUsers,
@@ -23,13 +23,18 @@ import {
     getAvailablePhaseTools
 } from '@/lib/auth/role-helper';
 import { db } from '@/lib/firebase/config';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { AnnouncementCards } from '@/components/dashboard/AnnouncementCards';
 import { AnnouncementManager } from '@/components/dashboard/AnnouncementManager';
+import { CycleComparison } from '@/components/dashboard/CycleComparison';
+import { exportDashboardSummary, exportDashboardHTML } from '@/lib/export/data-export';
+import { OnlineUsersSidebar } from '@/components/presence/OnlineUsersSidebar';
+import { usePresenceStore } from '@/stores/presence-store';
 
 export default function Dashboard() {
     const { user, loading, initialize } = useAuthStore();
     const { selectedCycle, fetchCycles } = useCycleStore();
+    const { startPresenceTracking, stopPresenceTracking } = usePresenceStore();
     const router = useRouter();
 
     // Dashboard Stats State
@@ -38,7 +43,17 @@ export default function Dashboard() {
     const [categoryProgress, setCategoryProgress] = useState(0);
     const [verifiedCount, setVerifiedCount] = useState(0);
     const [kpiDataCount, setKpiDataCount] = useState(0);
+    const [kpiDefinitionsCount, setKpiDefinitionsCount] = useState(0);
     const [pendingUsersCount, setPendingUsersCount] = useState(0);
+    // New stats
+    const [sarContentsCount, setSarContentsCount] = useState(0);
+    const [risksCount, setRisksCount] = useState(0);
+    const [qaCount, setQaCount] = useState(0);
+    const [strategyLinksCount, setStrategyLinksCount] = useState(0);
+    const [contextPackExists, setContextPackExists] = useState(false);
+    // Unit information
+    const [unitName, setUnitName] = useState<string>('');
+    const [unitCategory, setUnitCategory] = useState<string>('');
 
     // Role-based permissions (memoized to prevent recalculation)
     const isReviewer = useMemo(() =>
@@ -68,6 +83,43 @@ export default function Dashboard() {
             router.push('/auth/login');
         }
     }, [user, loading, router]);
+
+    // Fetch unit information when user is loaded
+    useEffect(() => {
+        const fetchUnitInfo = async () => {
+            if (user && user.unitId) {
+                try {
+                    const unitDoc = await getDoc(doc(db, 'units', user.unitId));
+                    if (unitDoc.exists()) {
+                        const unitData = unitDoc.data();
+                        setUnitName(unitData.name || '');
+                        setUnitCategory(unitData.category || '');
+                    }
+                } catch (error) {
+                    console.error('Error fetching unit info:', error);
+                }
+            }
+        };
+
+        fetchUnitInfo();
+    }, [user]);
+
+    // Start presence tracking when user is authenticated
+    useEffect(() => {
+        if (user && user.uid && unitName) {
+            startPresenceTracking(user.uid, {
+                displayName: user.displayName || 'ไม่ระบุชื่อ',
+                email: user.email || '',
+                role: user.role || 'viewer',
+                unitName: unitName,
+                unitCategory: unitCategory,
+            });
+
+            return () => {
+                stopPresenceTracking();
+            };
+        }
+    }, [user, unitName, unitCategory, startPresenceTracking, stopPresenceTracking]);
 
     // Fetch real dashboard stats
     useEffect(() => {
@@ -112,6 +164,59 @@ export default function Dashboard() {
                     );
                     const kpiSnap = await getDocs(kpiQuery);
                     setKpiDataCount(kpiSnap.size);
+
+                    // Count KPI definitions for this cycle
+                    const kpiDefsQuery = query(
+                        collection(db, 'kpi_definitions'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const kpiDefsSnap = await getDocs(kpiDefsQuery);
+                    setKpiDefinitionsCount(kpiDefsSnap.size);
+
+                    // Count SAR contents for this cycle
+                    const sarQuery = query(
+                        collection(db, 'sar_contents'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const sarSnap = await getDocs(sarQuery);
+                    setSarContentsCount(sarSnap.size);
+
+                    // Count risks for this cycle
+                    const risksQuery = query(
+                        collection(db, 'risks'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const risksSnap = await getDocs(risksQuery);
+                    setRisksCount(risksSnap.size);
+
+                    // Count Q&A bank items for this cycle
+                    const qaQuery = query(
+                        collection(db, 'qa_bank'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const qaSnap = await getDocs(qaQuery);
+                    setQaCount(qaSnap.size);
+
+                    // Count strategy links for this cycle
+                    const strategyQuery = query(
+                        collection(db, 'strategy_links'),
+                        where('unitId', '==', user.unitId),
+                        where('cycleId', '==', selectedCycle.id)
+                    );
+                    const strategySnap = await getDocs(strategyQuery);
+                    setStrategyLinksCount(strategySnap.size);
+
+                    // Check context pack exists
+                    const contextQuery = query(
+                        collection(db, 'context_packs'),
+                        where('unitId', '==', user.unitId)
+                    );
+                    const contextSnap = await getDocs(contextQuery);
+                    setContextPackExists(contextSnap.size > 0);
                 }
 
                 // Admin stats: pending users (only for admins)
@@ -142,6 +247,75 @@ export default function Dashboard() {
         return null;
     }
 
+    // Helper function to calculate phase progress data
+    const getPhaseProgress = () => {
+        return [
+            {
+                phase: 0,
+                name: 'การเตรียมการ',
+                completion: 100 // Assuming preparation is complete when accessing dashboard
+            },
+            {
+                phase: 1,
+                name: 'จัดการหลักฐาน',
+                completion: categoryProgress
+            },
+            {
+                phase: 2,
+                name: 'จัดการข้อมูล',
+                completion: kpiDefinitionsCount > 0 ? Math.min(100, Math.round((kpiDataCount / kpiDefinitionsCount) * 100)) : 0
+            },
+            {
+                phase: 3,
+                name: 'วิเคราะห์และเล่าเรื่อง',
+                completion: contextPackExists ? Math.min(100, Math.round(((risksCount > 0 ? 50 : 0) + (strategyLinksCount > 0 ? 50 : 0)))) : 0
+            },
+            {
+                phase: 4,
+                name: 'เขียน SAR',
+                completion: sarContentsCount > 0 ? Math.min(100, Math.round((sarContentsCount / 7) * 100)) : 0 // Assuming 7 categories
+            },
+            {
+                phase: 5,
+                name: 'รายงานผลลัพธ์',
+                completion: kpiDataCount > 0 ? Math.min(100, Math.round((kpiDataCount / (kpiDefinitionsCount || 1)) * 100)) : 0
+            },
+            {
+                phase: 6,
+                name: 'ตรวจสอบคุณภาพ',
+                completion: strategyLinksCount > 0 ? Math.min(100, strategyLinksCount * 10) : 0 // Rough estimate
+            },
+            {
+                phase: 7,
+                name: 'เตรียมสัมภาษณ์',
+                completion: qaCount > 0 ? Math.min(100, qaCount * 5) : 0 // Rough estimate based on Q&A count
+            }
+        ];
+    };
+
+    // Handler for exporting dashboard to HTML
+    const handleExportHTML = () => {
+        if (!selectedCycle || !user) return;
+
+        const phaseProgress = getPhaseProgress();
+
+        exportDashboardHTML(
+            selectedCycle.name || String(selectedCycle.year),
+            unitName || 'ไม่ระบุหน่วยงาน',
+            {
+                evidenceCount,
+                verifiedCount,
+                kpiDataCount,
+                sarContentsCount,
+                risksCount,
+                qaCount,
+                strategyLinksCount,
+                categoryProgress
+            },
+            phaseProgress
+        );
+    };
+
     // Admin Dashboard with Tabs
     if (showAdminTabs) {
         return (
@@ -152,13 +326,38 @@ export default function Dashboard() {
                         <h1 className="text-3xl font-bold text-slate-800">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
                         <p className="text-slate-500 mt-2">แดชบอร์ดผู้ดูแลระบบ PMQA 4.0</p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-sm text-slate-500">
-                            {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
-                        </p>
-                        <div className="flex items-center gap-2 text-emerald-600 font-medium">
-                            <CheckCircle2 size={18} />
-                            <span>กำลังดำเนินการ</span>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => selectedCycle && exportDashboardSummary(
+                                selectedCycle.name || String(selectedCycle.year),
+                                { evidenceCount, verifiedCount, kpiDataCount, sarContentsCount, risksCount, qaCount, strategyLinksCount }
+                            )}
+                            disabled={!selectedCycle || statsLoading}
+                            className="gap-2"
+                        >
+                            <Download className="h-4 w-4" />
+                            Export CSV
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleExportHTML}
+                            disabled={!selectedCycle || statsLoading}
+                            className="gap-2"
+                        >
+                            <FileText className="h-4 w-4" />
+                            Export HTML
+                        </Button>
+                        <div className="text-right">
+                            <p className="text-sm text-slate-500">
+                                {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
+                            </p>
+                            <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                                <CheckCircle2 size={18} />
+                                <span>กำลังดำเนินการ</span>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -251,6 +450,79 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
                         </div>
+
+                        {/* Phase Progress Section */}
+                        <h3 className="text-lg font-semibold text-slate-800 mt-6">ความคืบหน้าตาม Phase</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                            <PhaseProgressCard
+                                phase={1}
+                                title="Evidence"
+                                value={evidenceCount}
+                                subValue={`${verifiedCount} ผ่าน`}
+                                loading={statsLoading}
+                                color="green"
+                            />
+                            <PhaseProgressCard
+                                phase={2}
+                                title="Data"
+                                value={kpiDefinitionsCount}
+                                subValue={`${kpiDataCount} ข้อมูล`}
+                                loading={statsLoading}
+                                color="blue"
+                            />
+                            <PhaseProgressCard
+                                phase={3}
+                                title="Analysis"
+                                value={contextPackExists ? 1 : 0}
+                                subValue={`${risksCount} ความเสี่ยง`}
+                                loading={statsLoading}
+                                color="orange"
+                            />
+                            <PhaseProgressCard
+                                phase={4}
+                                title="SAR"
+                                value={sarContentsCount}
+                                subValue="เนื้อหา"
+                                loading={statsLoading}
+                                color="indigo"
+                            />
+                            <PhaseProgressCard
+                                phase={5}
+                                title="Results"
+                                value={kpiDataCount}
+                                subValue="ผลลัพธ์"
+                                loading={statsLoading}
+                                color="emerald"
+                            />
+                            <PhaseProgressCard
+                                phase={6}
+                                title="QA"
+                                value={strategyLinksCount}
+                                subValue="เชื่อมโยง"
+                                loading={statsLoading}
+                                color="teal"
+                            />
+                            <PhaseProgressCard
+                                phase={7}
+                                title="Interview"
+                                value={qaCount}
+                                subValue="คำถาม"
+                                loading={statsLoading}
+                                color="violet"
+                            />
+                            <PhaseProgressCard
+                                phase={8}
+                                title="ภาพรวม"
+                                value={categoryProgress}
+                                subValue="%"
+                                loading={statsLoading}
+                                color="purple"
+                                isPercentage
+                            />
+                        </div>
+
+                        {/* Cycle Comparison */}
+                        <CycleComparison />
 
                         <h3 className="text-lg font-semibold text-slate-800">ระบบหลัก</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -400,13 +672,38 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-bold text-slate-800">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
                     <p className="text-slate-500 mt-2">ติดตามความคืบหน้าการประเมิน PMQA 4.0 ของหน่วยงานคุณ</p>
                 </div>
-                <div className="text-right">
-                    <p className="text-sm text-slate-500">
-                        {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
-                    </p>
-                    <div className="flex items-center gap-2 text-emerald-600 font-medium">
-                        <CheckCircle2 size={18} />
-                        <span>กำลังดำเนินการ</span>
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => selectedCycle && exportDashboardSummary(
+                            selectedCycle.name || String(selectedCycle.year),
+                            { evidenceCount, verifiedCount, kpiDataCount, sarContentsCount, risksCount, qaCount, strategyLinksCount }
+                        )}
+                        disabled={!selectedCycle || statsLoading}
+                        className="gap-2"
+                    >
+                        <Download className="h-4 w-4" />
+                        Export CSV
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleExportHTML}
+                        disabled={!selectedCycle || statsLoading}
+                        className="gap-2"
+                    >
+                        <FileText className="h-4 w-4" />
+                        Export HTML
+                    </Button>
+                    <div className="text-right">
+                        <p className="text-sm text-slate-500">
+                            {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
+                        </p>
+                        <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                            <CheckCircle2 size={18} />
+                            <span>กำลังดำเนินการ</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -460,6 +757,24 @@ export default function Dashboard() {
                 </Card>
             </div>
 
+            {/* Phase Progress Section for Regular Users */}
+            <div>
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">ความคืบหน้าตาม Phase</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                    <PhaseProgressCard phase={1} title="Evidence" value={evidenceCount} subValue={`${verifiedCount} ผ่าน`} loading={statsLoading} color="green" />
+                    <PhaseProgressCard phase={2} title="Data" value={kpiDefinitionsCount} subValue={`${kpiDataCount} ข้อมูล`} loading={statsLoading} color="blue" />
+                    <PhaseProgressCard phase={3} title="Analysis" value={contextPackExists ? 1 : 0} subValue={`${risksCount} ความเสี่ยง`} loading={statsLoading} color="orange" />
+                    <PhaseProgressCard phase={4} title="SAR" value={sarContentsCount} subValue="เนื้อหา" loading={statsLoading} color="indigo" />
+                    <PhaseProgressCard phase={5} title="Results" value={kpiDataCount} subValue="ผลลัพธ์" loading={statsLoading} color="emerald" />
+                    <PhaseProgressCard phase={6} title="QA" value={strategyLinksCount} subValue="เชื่อมโยง" loading={statsLoading} color="teal" />
+                    <PhaseProgressCard phase={7} title="Interview" value={qaCount} subValue="คำถาม" loading={statsLoading} color="violet" />
+                    <PhaseProgressCard phase={8} title="ภาพรวม" value={categoryProgress} subValue="%" loading={statsLoading} color="purple" isPercentage />
+                </div>
+            </div>
+
+            {/* Cycle Comparison for Regular Users */}
+            <CycleComparison />
+
             {/* Phase Tools for Regular Users */}
             <PhaseToolsSection
                 isReviewer={isReviewer}
@@ -468,6 +783,52 @@ export default function Dashboard() {
         </div>
     );
 }
+
+// Phase Progress Card Component
+const PhaseProgressCard = memo(function PhaseProgressCard({
+    phase,
+    title,
+    value,
+    subValue,
+    loading,
+    color,
+    isPercentage = false
+}: {
+    phase: number;
+    title: string;
+    value: number;
+    subValue: string;
+    loading: boolean;
+    color: string;
+    isPercentage?: boolean;
+}) {
+    const colorClasses: Record<string, string> = {
+        green: 'bg-green-50 border-green-200 text-green-700',
+        blue: 'bg-blue-50 border-blue-200 text-blue-700',
+        orange: 'bg-orange-50 border-orange-200 text-orange-700',
+        indigo: 'bg-indigo-50 border-indigo-200 text-indigo-700',
+        emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+        teal: 'bg-teal-50 border-teal-200 text-teal-700',
+        violet: 'bg-violet-50 border-violet-200 text-violet-700',
+        purple: 'bg-purple-50 border-purple-200 text-purple-700',
+    };
+
+    return (
+        <Card className={`${colorClasses[color] || colorClasses.blue} border transition-all hover:shadow-sm`}>
+            <CardContent className="p-3 text-center">
+                <div className="text-xs font-medium opacity-70 mb-1">
+                    {phase <= 7 ? `P${phase}` : ''} {title}
+                </div>
+                <div className="text-xl font-bold">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (
+                        isPercentage ? `${value}%` : value
+                    )}
+                </div>
+                <div className="text-xs opacity-60">{subValue}</div>
+            </CardContent>
+        </Card>
+    );
+});
 
 // Separate component for Phase Tools to avoid duplication
 // Memoized to prevent re-renders when parent dashboard updates stats
@@ -921,6 +1282,9 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                     </div>
                 </>
             )}
+
+            {/* Online Users Sidebar */}
+            <OnlineUsersSidebar />
         </>
     );
 });

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import { useAIConfigStore } from '@/stores/ai-config-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { HelpCircle, Plus, Sparkles, Trash2, Edit, Loader2, Save, MessageSquare } from 'lucide-react';
+import { HelpCircle, Plus, Sparkles, Trash2, Edit, Loader2, Save, MessageSquare, AlertTriangle } from 'lucide-react';
 import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -40,6 +41,7 @@ const CATEGORIES = [
 
 export default function QABankPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const { apiKey, selectedModel } = useAIConfigStore();
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
@@ -52,14 +54,27 @@ export default function QABankPage() {
     const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
 
     useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
+    useEffect(() => {
         fetchQAItems();
-    }, [user?.unitId]);
+    }, [user?.unitId, selectedCycle]);
 
     const fetchQAItems = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            setQaItems([]);
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         try {
-            const q = query(collection(db, 'qa_bank'), where('unitId', '==', user.unitId));
+            const q = query(
+                collection(db, 'qa_bank'),
+                where('unitId', '==', user.unitId),
+                where('cycleId', '==', selectedCycle.id)
+            );
             const snap = await getDocs(q);
             const items: QAItem[] = [];
             snap.forEach(d => items.push({ id: d.id, ...d.data() } as QAItem));
@@ -113,6 +128,7 @@ export default function QABankPage() {
             for (const item of generated) {
                 await addDoc(collection(db, 'qa_bank'), {
                     unitId: user!.unitId,
+                    cycleId: selectedCycle!.id,
                     category: selectedCategory,
                     question: item.question,
                     answer: item.answer,
@@ -140,6 +156,7 @@ export default function QABankPage() {
         try {
             await addDoc(collection(db, 'qa_bank'), {
                 unitId: user!.unitId,
+                cycleId: selectedCycle!.id,
                 category: selectedCategory,
                 question: newQuestion,
                 answer: newAnswer,
@@ -185,7 +202,7 @@ export default function QABankPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <HelpCircle className="h-8 w-8 text-violet-600" />
@@ -193,60 +210,67 @@ export default function QABankPage() {
                         </h1>
                         <p className="text-muted-foreground">คลังคำถาม-คำตอบสำหรับการตรวจประเมิน (App 7.2)</p>
                     </div>
-                    <div className="flex gap-2">
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="gap-2">
-                                    <Plus className="h-4 w-4" />
-                                    เพิ่มเอง
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-lg">
-                                <DialogHeader>
-                                    <DialogTitle>เพิ่มคำถาม-คำตอบ</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>หมวด</Label>
-                                        <Select value={selectedCategory.toString()} onValueChange={(v) => setSelectedCategory(Number(v))}>
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {CATEGORIES.map(c => (
-                                                    <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>ระดับความยาก</Label>
-                                        <Select value={difficulty} onValueChange={(v: 'easy' | 'medium' | 'hard') => setDifficulty(v)}>
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="easy">ง่าย</SelectItem>
-                                                <SelectItem value="medium">ปานกลาง</SelectItem>
-                                                <SelectItem value="hard">ยาก</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>คำถาม</Label>
-                                        <Textarea value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)} rows={3} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>คำตอบ</Label>
-                                        <Textarea value={newAnswer} onChange={(e) => setNewAnswer(e.target.value)} rows={5} />
-                                    </div>
-                                    <Button onClick={handleAddManual} className="w-full gap-2">
-                                        <Save className="h-4 w-4" />
-                                        บันทึก
+                    <div className="flex flex-col items-end gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-violet-700 border-violet-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <div className="flex gap-2">
+                            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className="gap-2">
+                                        <Plus className="h-4 w-4" />
+                                        เพิ่มเอง
                                     </Button>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-lg">
+                                    <DialogHeader>
+                                        <DialogTitle>เพิ่มคำถาม-คำตอบ</DialogTitle>
+                                    </DialogHeader>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>หมวด</Label>
+                                            <Select value={selectedCategory.toString()} onValueChange={(v) => setSelectedCategory(Number(v))}>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {CATEGORIES.map(c => (
+                                                        <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>ระดับความยาก</Label>
+                                            <Select value={difficulty} onValueChange={(v: 'easy' | 'medium' | 'hard') => setDifficulty(v)}>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="easy">ง่าย</SelectItem>
+                                                    <SelectItem value="medium">ปานกลาง</SelectItem>
+                                                    <SelectItem value="hard">ยาก</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>คำถาม</Label>
+                                            <Textarea value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)} rows={3} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>คำตอบ</Label>
+                                            <Textarea value={newAnswer} onChange={(e) => setNewAnswer(e.target.value)} rows={5} />
+                                        </div>
+                                        <Button onClick={handleAddManual} className="w-full gap-2">
+                                            <Save className="h-4 w-4" />
+                                            บันทึก
+                                        </Button>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     </div>
                 </div>
 

@@ -1,44 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PMQA ISOC - ระบบสนับสนุนการประเมินตนเอง PMQA 4.0
 
-## Getting Started
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange)
 
-First, run the development server:
+ระบบสนับสนุนการประเมินตนเอง (ISOC - Integrated Self-Assessment Online Companion) สำหรับกระบวนการประเมินคุณภาพการบริหารจัดการภาครัฐ PMQA 4.0
+
+## ✨ Features
+
+### 🗂️ Phase 0: Foundation Setup
+- **Owner Matrix** - มอบหมายผู้รับผิดชอบหมวด 1-7
+- **Repository Setup** - สร้างโฟลเดอร์เก็บหลักฐาน
+- **Submission Calendar** - ตารางกำหนดการส่งงาน
+
+### 📋 Phase 1: Evidence Management
+- **Evidence Register** - นำเข้าและทะเบียนหลักฐาน
+- **Gap Analyzer** - วิเคราะห์ช่องว่างหลักฐาน
+- **Gate Checker** - ตรวจสอบและอนุมัติหลักฐาน
+- **Gap Tracker** - ติดตามการปิด Gap
+
+### 📊 Phase 2: Data Management
+- **Data Source Catalog** - จัดทำคลังแหล่งข้อมูล
+- **KPI Dictionary** - พจนานุกรม KPI
+- **Excel Templates** - สร้าง Template
+- **Data Collector** - กรอกข้อมูล KPI
+- **Data Cleaning** - ทำความสะอาดข้อมูล
+- **Baseline Analyzer** - วิเคราะห์ผลลัพธ์
+
+### 🔍 Phase 3: Analysis & Narrative
+- **Context Pack** - รวบรวมบริบทองค์กร
+- **Risk Analyzer** - วิเคราะห์ความเสี่ยง
+- **Strategy Linker** - เชื่อมโยงยุทธศาสตร์กับ KPI
+
+### ✍️ Phase 4: SAR Writing (AI-Powered)
+- **SAR Outline** - สร้างโครงร่าง SAR
+- **SAR Writer** - เขียนเนื้อหาด้วย AI (Google Gemini)
+
+### 📈 Phase 5: Results & Analysis
+- **Results Pack** - รวบรวมผลลัพธ์และ Export
+- **Recovery Narrative** - สร้างเนื้อหาแก้ไขปรับปรุง
+
+### ✅ Phase 6: Quality Assurance
+- **Consistency Auditor** - ตรวจสอบความสอดคล้อง
+- **Score Simulator** - จำลองคะแนนและวางแผนปรับปรุง
+
+### 🎤 Phase 7: Interview Preparation
+- **Interview Brief** - สร้างเอกสารเตรียมรับการตรวจประเมิน
+- **Q&A Bank** - คลังคำถาม-คำตอบสำหรับการสัมภาษณ์
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Firebase account
+
+### Installation
 
 ```bash
+# Clone repository
+git clone https://github.com/your-org/pmqa-isoc.git
+cd pmqa-isoc
+
+# Install dependencies
+npm install
+
+# Setup environment
+cp .env.example .env.local
+# Edit .env.local with your Firebase config
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Firebase Configuration
+## ⚙️ Configuration
 
-This project is configured to use Firebase (Project: `pmqa-isoc-db`).
+### Firebase Setup
+1. Create a Firebase project
+2. Enable Firestore Database
+3. Enable Firebase Authentication (Email/Password)
+4. Copy your Firebase config to `.env.local`
 
-- **Configuration File**: `src/lib/firebase.ts`
-- **Environment Variables**: `.env.local`
-- **Test Page**: Open [http://localhost:3000/firebase-test](http://localhost:3000/firebase-test) to verify connection.
+### AI Configuration
+1. Get Google Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+2. Configure in Dashboard > Settings > AI Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── phase0-7/          # Phase-specific pages
+│   ├── admin/             # Admin pages
+│   └── dashboard/         # Main dashboard
+├── components/            # Reusable UI components
+├── lib/                   # Utilities and configs
+│   ├── firebase/          # Firebase configuration
+│   ├── google/            # Google AI API
+│   └── export/            # Data export utilities
+└── stores/                # Zustand state management
+```
 
-## Learn More
+## 🔐 Role-Based Access
 
-To learn more about Next.js, take a look at the following resources:
+| Role | Description |
+|------|-------------|
+| `super_admin` | Full system access |
+| `unit_admin` | Unit management |
+| `reviewer` | Evidence approval |
+| `editor` | Content editing |
+| `viewer` | Read-only access |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📤 Data Export
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Dashboard Summary** - Export สถิติภาพรวมเป็น CSV
+- **Evidence List** - Export รายการหลักฐาน
+- **KPI Data** - Export ข้อมูล KPI
+- **SAR Document** - Export รายงาน SAR เป็น HTML
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: Next.js 15 (App Router)
+- **UI**: shadcn/ui + Tailwind CSS
+- **Database**: Firebase Firestore
+- **Authentication**: Firebase Auth
+- **State**: Zustand
+- **AI**: Google Gemini API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 License
+
+Copyright © 2569 PMQA ISOC Team
+
+## 👥 Contributors
+
+- Development Team

@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES } from '@/lib/auth/role-helper';
@@ -167,13 +166,7 @@ export default function OwnerMatrixPage() {
                                                         <SelectContent>
                                                             {unitUsers.map((u) => (
                                                                 <SelectItem key={u.uid} value={u.uid}>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Avatar className="h-6 w-6">
-                                                                            <AvatarImage src={u.photoURL} />
-                                                                            <AvatarFallback>{u.displayName?.substring(0, 2)}</AvatarFallback>
-                                                                        </Avatar>
-                                                                        {u.displayName}
-                                                                    </div>
+                                                                    {u.displayName}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>

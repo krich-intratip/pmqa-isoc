@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,25 +24,24 @@ interface AuditCheck {
     linkedItems: string[];
 }
 
-const AUDIT_CHECKS = [
-    { id: 'org-profile', category: 'หมวด 1', checkName: 'ความครบถ้วนของข้อมูลองค์กร', description: 'ตรวจสอบ Context Pack มีข้อมูลครบถ้วน' },
-    { id: 'strategy-kpi', category: 'หมวด 2', checkName: 'ความเชื่อมโยง Strategy-KPI', description: 'ทุก Strategy ต้องมี KPI รองรับ' },
-    { id: 'kpi-data', category: 'หมวด 4', checkName: 'ข้อมูล KPI ครบถ้วน', description: 'ทุก KPI ต้องมีข้อมูล Baseline และ Target' },
-    { id: 'evidence-complete', category: 'หมวด 1-6', checkName: 'หลักฐานครบทุกหมวด', description: 'มีหลักฐานอ้างอิงครบทุกหมวด' },
-    { id: 'results-trend', category: 'หมวด 7', checkName: 'ผลลัพธ์มีแนวโน้ม', description: 'ข้อมูลผลลัพธ์แสดงแนวโน้มและเปรียบเทียบ' },
-    { id: 'risk-mitigation', category: 'หมวด 6', checkName: 'ความเสี่ยงมีแผนจัดการ', description: 'ทุกความเสี่ยงต้องมีแผนตอบสนอง' },
-    { id: 'sar-coverage', category: 'SAR', checkName: 'เนื้อหา SAR ครบถ้วน', description: 'มีเนื้อหา SAR สำหรับทุกหัวข้อย่อย' },
-    { id: 'owner-assigned', category: 'การกำกับ', checkName: 'มีผู้รับผิดชอบทุกหมวด', description: 'ทุกหมวดต้องมี Owner กำหนด' },
-];
 
 export default function ConsistencyAuditorPage() {
     const { user } = useAuthStore();
+    const { selectedCycle, fetchCycles } = useCycleStore();
     const [loading, setLoading] = useState(false);
     const [auditResults, setAuditResults] = useState<AuditCheck[]>([]);
     const [lastAuditTime, setLastAuditTime] = useState<Date | null>(null);
 
+    useEffect(() => {
+        fetchCycles();
+    }, [fetchCycles]);
+
     const runAudit = async () => {
         if (!user?.unitId) return;
+        if (!selectedCycle) {
+            toast.error('กรุณาเลือกรอบการประเมินก่อน');
+            return;
+        }
         setLoading(true);
 
         try {
@@ -182,7 +182,7 @@ export default function ConsistencyAuditorPage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex justify-between items-start mb-6">
                     <div>
                         <h1 className="text-3xl font-bold flex items-center gap-2 text-slate-800">
                             <ShieldCheck className="h-8 w-8 text-blue-600" />
@@ -190,10 +190,17 @@ export default function ConsistencyAuditorPage() {
                         </h1>
                         <p className="text-muted-foreground">ตรวจสอบความสอดคล้องข้ามหมวด (App 6.1)</p>
                     </div>
-                    <Button onClick={runAudit} disabled={loading} className="gap-2">
-                        <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                        {loading ? 'กำลังตรวจสอบ...' : 'เริ่มตรวจสอบ'}
-                    </Button>
+                    <div className="flex flex-col items-end gap-2">
+                        {selectedCycle && (
+                            <Badge variant="outline" className="text-blue-700 border-blue-200">
+                                รอบ: {selectedCycle.name || selectedCycle.year}
+                            </Badge>
+                        )}
+                        <Button onClick={runAudit} disabled={loading || !selectedCycle} className="gap-2">
+                            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                            {loading ? 'กำลังตรวจสอบ...' : 'เริ่มตรวจสอบ'}
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Summary Cards */}
@@ -251,7 +258,7 @@ export default function ConsistencyAuditorPage() {
                         {auditResults.length === 0 ? (
                             <div className="text-center py-12 text-muted-foreground">
                                 <ShieldCheck className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                <p>คลิกปุ่ม "เริ่มตรวจสอบ" เพื่อวิเคราะห์ความสอดคล้อง</p>
+                                <p>คลิกปุ่ม &ldquo;เริ่มตรวจสอบ&rdquo; เพื่อวิเคราะห์ความสอดคล้อง</p>
                             </div>
                         ) : (
                             <Table>

@@ -16,10 +16,54 @@ import {
     Database,
     Sparkles,
     LayoutDashboard,
+    Zap,
+    Code,
+    Bell,
+    RefreshCw,
+    Layout,
+    Megaphone,
+    Download,
 } from 'lucide-react';
 import { APP_VERSION } from '@/config/version';
 
+// Icon mapping for dynamic rendering
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    'Users': Users,
+    'ShieldCheck': ShieldCheck,
+    'LayoutDashboard': LayoutDashboard,
+    'Calendar': Calendar,
+    'Activity': Activity,
+    'FileText': FileText,
+    'Map': Map,
+    'Settings': Settings,
+    'Sparkles': Sparkles,
+    'Code': Code,
+    'Zap': Zap,
+    'Bell': Bell,
+    'RefreshCw': RefreshCw,
+    'Layout': Layout,
+    'Megaphone': Megaphone,
+    'Download': Download,
+};
+
+// Color schemes for version cards
+const versionColors = [
+    { border: 'border-blue-200', bg: 'bg-blue-50', title: 'text-blue-800', desc: 'text-blue-700', card: 'border-blue-200', icon: 'text-blue-600' },
+    { border: 'border-slate-200', bg: 'bg-slate-50', title: 'text-slate-800', desc: 'text-slate-700', card: 'border-slate-200', icon: 'text-slate-600' },
+    { border: 'border-purple-200', bg: 'bg-purple-50', title: 'text-purple-800', desc: 'text-purple-700', card: 'border-purple-200', icon: 'text-purple-600' },
+    { border: 'border-emerald-200', bg: 'bg-emerald-50', title: 'text-emerald-800', desc: 'text-emerald-700', card: 'border-emerald-200', icon: 'text-emerald-600' },
+    { border: 'border-cyan-200', bg: 'bg-cyan-50', title: 'text-cyan-800', desc: 'text-cyan-700', card: 'border-cyan-200', icon: 'text-cyan-600' },
+    { border: 'border-indigo-200', bg: 'bg-indigo-50', title: 'text-indigo-800', desc: 'text-indigo-700', card: 'border-indigo-200', icon: 'text-indigo-600' },
+];
+
 export default function AboutPage() {
+    // Get version keys sorted descending
+    const versionKeys = Object.keys(APP_VERSION.releases).sort((a, b) => {
+        const aNum = parseFloat(a.replace('v', ''));
+        const bNum = parseFloat(b.replace('v', ''));
+        return bNum - aNum;
+    });
+
     return (
         <div className="container mx-auto py-8 space-y-8">
             {/* Header */}
@@ -42,533 +86,54 @@ export default function AboutPage() {
                 </div>
             </div>
 
-            {/* Current Version Features - Dynamically rendered from config */}
-            {APP_VERSION.releases[`v${APP_VERSION.version}`] && (
-                <Card className="border-blue-200 bg-blue-50">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-blue-800">
-                            <Sparkles className="h-6 w-6" />
-                            ฟีเจอร์ใหม่ใน Version {APP_VERSION.version}
-                        </CardTitle>
-                        <CardDescription className="text-blue-700">
-                            {APP_VERSION.releases[`v${APP_VERSION.version}`].title}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => {
-                                // Map icon names to components
-                                const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-                                    'Users': Users,
-                                    'ShieldCheck': ShieldCheck,
-                                    'LayoutDashboard': LayoutDashboard,
-                                };
-                                const IconComponent = iconMap[feature.icon] || ShieldCheck;
+            {/* Dynamic Version Features Cards */}
+            {versionKeys.map((versionKey, idx) => {
+                const release = APP_VERSION.releases[versionKey as keyof typeof APP_VERSION.releases];
+                const colors = versionColors[idx % versionColors.length];
+                const isCurrentVersion = versionKey === `v${APP_VERSION.version}`;
 
-                                return (
-                                    <div key={idx} className="bg-white p-6 rounded-lg border border-blue-200">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <IconComponent className="h-8 w-8 text-blue-600" />
-                                            <div>
-                                                <h3 className="font-semibold text-lg">{feature.category}</h3>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {feature.description}
-                                                </p>
+                return (
+                    <Card key={versionKey} className={`${colors.border} ${colors.bg}`}>
+                        <CardHeader>
+                            <CardTitle className={`flex items-center gap-2 ${colors.title}`}>
+                                <Sparkles className="h-6 w-6" />
+                                {isCurrentVersion ? `ฟีเจอร์ใหม่ใน ${versionKey}` : `${versionKey} Features`}
+                            </CardTitle>
+                            <CardDescription className={colors.desc}>
+                                {release.title}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {release.features.map((feature, featureIdx) => {
+                                    const IconComponent = iconMap[feature.icon] || ShieldCheck;
+                                    return (
+                                        <div key={featureIdx} className={`bg-white p-6 rounded-lg border ${colors.card}`}>
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <IconComponent className={`h-8 w-8 ${colors.icon}`} />
+                                                <div>
+                                                    <h3 className="font-semibold text-lg">{feature.category}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {feature.description}
+                                                    </p>
+                                                </div>
                                             </div>
+                                            <ul className="space-y-2 text-sm">
+                                                {feature.items.map((item, itemIdx) => (
+                                                    <li key={itemIdx} className="flex items-start gap-2">
+                                                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
-                                        <ul className="space-y-2 text-sm">
-                                            {feature.items.map((item, itemIdx) => (
-                                                <li key={itemIdx} className="flex items-start gap-2">
-                                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                                    <span>{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
-
-            {/* Version 1.8.0 Features */}
-            <Card className="border-slate-200 bg-slate-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-slate-800">
-                        <Sparkles className="h-6 w-6" />
-                        Version 1.8.0 Features
-                    </CardTitle>
-                    <CardDescription className="text-slate-700">
-                        Code Quality & Type Safety Improvements
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Code Quality */}
-                        <div className="bg-white p-6 rounded-lg border border-slate-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <FileText className="h-8 w-8 text-slate-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Code Quality</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        ปรับปรุงคุณภาพโค้ดและความปลอดภัยของ Type
-                                    </p>
-                                </div>
+                                    );
+                                })}
                             </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>แก้ไข ESLint errors เหลือ 0 (Clean Code)</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>เปลี่ยน ANY types เป็น Strict Types &gt;95%</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Performance Optimization (useCallback)</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Technical Improvements */}
-                        <div className="bg-white p-6 rounded-lg border border-slate-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Settings className="h-8 w-8 text-slate-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Technical Improvements</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        ความเสถียรและประสิทธิภาพ
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Build System เสถียรและรวดเร็วขึ้น</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>User Role & Status Types Definition</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Activity Log Structure Improvement</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Version 1.7.0 Features */}
-            <Card className="border-purple-200 bg-purple-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-purple-800">
-                        <Sparkles className="h-6 w-6" />
-                        Version 1.7.0 Features
-                    </CardTitle>
-                    <CardDescription className="text-purple-700">
-                        Dashboard Announcements & Role-Based UI
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Announcements System */}
-                        <div className="bg-white p-6 rounded-lg border border-purple-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <LayoutDashboard className="h-8 w-8 text-purple-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Announcements System</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        ระบบประกาศข่าวสารและประชาสัมพันธ์
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Dashboard Announcement Cards</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Admin Announcement Manager</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Responsive Grid Layout & Animations</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Adaptive Dashboard */}
-                        <div className="bg-white p-6 rounded-lg border border-purple-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <ShieldCheck className="h-8 w-8 text-purple-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Adaptive Dashboard</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        ปรับปรุงหน้าจอตามสิทธิ์การใช้งาน
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Admin Dashboard Tabs แยกหมวดหมู่</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Real-time Data Integration</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Notification System (Bell Icon)</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Version 1.6.0 Features */}
-            <Card className="border-emerald-200 bg-emerald-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-emerald-800">
-                        <Sparkles className="h-6 w-6" />
-                        Version 1.6.0 Features
-                    </CardTitle>
-                    <CardDescription className="text-emerald-700">
-                        File Versioning System & Extended Cycle Support
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* File Versioning System */}
-                        <div className="bg-white p-6 rounded-lg border border-emerald-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <FileText className="h-8 w-8 text-emerald-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">File Versioning System</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        จัดการเวอร์ชันไฟล์หลักฐานแบบครบวงจร
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Upload ไฟล์เวอร์ชันใหม่ได้</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>ดูประวัติไฟล์ทุกเวอร์ชัน</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Revert กลับเวอร์ชันเก่า (Admin)</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Permission-based Delete (Admin only)</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Extended Cycle Support */}
-                        <div className="bg-white p-6 rounded-lg border border-emerald-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Calendar className="h-8 w-8 text-emerald-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Extended Cycle Support</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        รองรับ Cycle ในหน้า Phase 1-2
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Dashboard Real Data Integration</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Gap Tracker/Analyzer/Gate Checker</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Data Catalog & KPI Dictionary</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Warning UI เมื่อไม่ได้เลือก Cycle</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Version 1.5.0 Features */}
-            <Card className="border-cyan-200 bg-cyan-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-cyan-800">
-                        <Sparkles className="h-6 w-6" />
-                        Version 1.5.0 Features
-                    </CardTitle>
-                    <CardDescription className="text-cyan-700">
-                        Cycle Integration & Assessment Roadmap
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Assessment Roadmap */}
-                        <div className="bg-white p-6 rounded-lg border border-cyan-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Map className="h-8 w-8 text-cyan-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Assessment Roadmap</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        แผนที่กระบวนการประเมิน PMQA แบบ Interactive
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>แสดง 8 Phases และ 18 Tools</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Flow Chart และ Detailed View</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>ลิงก์ไปยังเครื่องมือได้โดยตรง</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Responsive design</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Cycle Integration */}
-                        <div className="bg-white p-6 rounded-lg border border-cyan-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Calendar className="h-8 w-8 text-cyan-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Cycle Integration</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        รองรับการทำงานแบบหลายรอบการประเมิน
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Cycle Selector ใน Header/Dashboard</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Evidence & KPI Data แยกตามรอบ</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Auto-select active cycle</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Warning UI เมื่อไม่มี cycle</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Version 1.4.0 Features */}
-            <Card className="border-indigo-200 bg-indigo-50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-indigo-800">
-                        <Activity className="h-6 w-6" />
-                        Version 1.4.0 - Activity Logging
-                    </CardTitle>
-                    <CardDescription className="text-indigo-700">
-                        ระบบจัดการผู้ใช้งานขั้นสูงและการบันทึกกิจกรรม
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Activity Logging */}
-                        <div className="bg-white p-6 rounded-lg border border-indigo-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Activity className="h-8 w-8 text-indigo-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Activity Logging System</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        ระบบบันทึกกิจกรรมแบบครอบคลุม
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>บันทึก Login/Logout อัตโนมัติ</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>ติดตาม CRUD operations ทุกประเภท</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>บันทึก File Upload/Download</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>ดูประวัติ Activity พร้อม Filters ขั้นสูง</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Export Activity Logs เป็น CSV</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Enhanced User Management */}
-                        <div className="bg-white p-6 rounded-lg border border-indigo-200">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Users className="h-8 w-8 text-indigo-600" />
-                                <div>
-                                    <h3 className="font-semibold text-lg">Enhanced User Management</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        จัดการผู้ใช้งานแบบขั้นสูง
-                                    </p>
-                                </div>
-                            </div>
-                            <ul className="space-y-2 text-sm">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Tabs แยกตามสถานะ (Pending, Approved, Disabled, Rejected)</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Filters ขั้นสูง (Unit Category, Unit Name, Region)</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Bulk Approve/Reject หลายคนพร้อมกัน</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Sorting ตามชื่อหรือวันที่สมัคร</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                    <span>Export ข้อมูลผู้ใช้เป็น CSV</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Version 1.3.0 Features */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Calendar className="h-6 w-6 text-blue-600" />
-                        ฟีเจอร์หลักของระบบ (v1.3.0+)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Assessment Cycle Management */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Calendar className="h-6 w-6 text-blue-600" />
-                                <h3 className="font-semibold">Assessment Cycle Management</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• สร้างรอบการประเมินตามปี พ.ศ.</li>
-                                <li>• เลือกหมวดที่ต้องการประเมิน (1-7)</li>
-                                <li>• กำหนดคะแนนเป้าหมาย</li>
-                                <li>• มีเพียง 1 รอบ Active พร้อมกัน</li>
-                            </ul>
-                        </div>
-
-                        {/* User Profile & Account Management */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Users className="h-6 w-6 text-green-600" />
-                                <h3 className="font-semibold">User Profile Management</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• แก้ไขข้อมูลโปรไฟล์ส่วนตัว</li>
-                                <li>• Soft Delete Account (ปิดการใช้งาน)</li>
-                                <li>• Admin เปิดใช้งานใหม่ได้</li>
-                                <li>• Avatar clickable → Profile page</li>
-                            </ul>
-                        </div>
-
-                        {/* Network Mapper */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Map className="h-6 w-6 text-purple-600" />
-                                <h3 className="font-semibold">Network Mapper</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• จัดการโครงสร้างหน่วยงาน</li>
-                                <li>• รองรับ 5 ประเภทหน่วยงาน</li>
-                                <li>• 4 ภูมิภาค (GORMN)</li>
-                                <li>• Aggregation rules</li>
-                            </ul>
-                        </div>
-
-                        {/* Owner Matrix */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <FileText className="h-6 w-6 text-orange-600" />
-                                <h3 className="font-semibold">Owner Matrix</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• มอบหมายผู้รับผิดชอบหมวด 1-7</li>
-                                <li>• กำหนด Data Owner</li>
-                                <li>• ติดตาม ownership matrix</li>
-                            </ul>
-                        </div>
-
-                        {/* RBAC System */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <ShieldCheck className="h-6 w-6 text-red-600" />
-                                <h3 className="font-semibold">RBAC System</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• 7 บทบาท (Super Admin → Read Only)</li>
-                                <li>• ProtectedRoute components</li>
-                                <li>• Permission-based access control</li>
-                                <li>• Hierarchical permissions</li>
-                            </ul>
-                        </div>
-
-                        {/* AI Configuration */}
-                        <div className="p-4 border rounded-lg">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Settings className="h-6 w-6 text-pink-600" />
-                                <h3 className="font-semibold">AI Configuration</h3>
-                            </div>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
-                                <li>• ตั้งค่า Google Gemini AI</li>
-                                <li>• เลือกโมเดล AI</li>
-                                <li>• Test AI connection</li>
-                                <li>• Encrypted API key storage</li>
-                            </ul>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                        </CardContent>
+                    </Card>
+                );
+            })}
 
             {/* Tech Stack */}
             <Card>
@@ -583,7 +148,7 @@ export default function AboutPage() {
                         <div className="p-4 bg-slate-50 rounded-lg text-center">
                             <h4 className="font-semibold mb-2">Frontend</h4>
                             <ul className="text-sm text-muted-foreground space-y-1">
-                                <li>Next.js 16.1.3</li>
+                                <li>Next.js 16</li>
                                 <li>React 19</li>
                                 <li>TypeScript 5</li>
                                 <li>Tailwind CSS 4</li>
@@ -678,10 +243,9 @@ export default function AboutPage() {
                         <div className="flex items-start gap-2">
                             <span className="text-yellow-600 font-semibold min-w-[80px]">Phase ถัดไป:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• Export/Import Data (Excel, PDF)</li>
-                                <li>• Version Control สำหรับเนื้อหา SAR</li>
                                 <li>• Dark Mode Support</li>
                                 <li>• Cross-Consistency Check (ตรวจสอบความสอดคล้องข้ามเกณฑ์)</li>
+                                <li>• Advanced Analytics Dashboard</li>
                             </ul>
                         </div>
                         <div className="flex items-start gap-2">

@@ -6,52 +6,107 @@
  */
 
 export const APP_VERSION = {
-  version: '1.9.0',
+  version: '2.1.0',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
-    'v1.9.0': {
+    'v2.1.0': {
       date: '20 มกราคม 2569',
-      title: 'UX Enhancement & Performance Optimization',
+      title: 'Real-time Collaboration & Advanced Export System',
       features: [
         {
-          category: 'User Experience',
-          icon: 'Sparkles',
-          description: 'ปรับปรุง UX ด้วย Loading & Error States',
+          category: 'Real-time Collaboration',
+          icon: 'Users',
+          description: 'ระบบติดตามผู้ใช้ออนไลน์แบบ Real-time',
           items: [
-            'Skeleton Loaders (11 components): Card, Table, Stats, List, Form, etc.',
-            'Error Boundaries: ErrorBoundary class + ErrorDisplay component',
-            'Empty States: 4 components (EmptyState, NoData, NoCycle, NoPermission)',
-            'Loading Spinners: 4 sizes พร้อม PageLoading, InlineLoading, OverlayLoading',
+            'Online Users Sidebar - แสดงผู้ใช้ที่ออนไลน์ด้านขวา',
+            'Real-time Presence Tracking ด้วย Firestore',
+            'User Avatar พร้อม Online Indicator (เขียว/เทา)',
+            'Search และ Filter ตาม Role และ Unit',
+            'แสดงเวลา Active ล่าสุดของผู้ใช้',
+            'Auto-detect Online/Offline status',
           ],
         },
         {
-          category: 'Performance',
-          icon: 'Zap',
-          description: 'เพิ่มประสิทธิภาพด้วย React.memo & Hooks',
+          category: 'Advanced Export System',
+          icon: 'FileText',
+          description: 'ส่งออกรายงานหลายรูปแบบพร้อมกราฟสวยงาม',
           items: [
-            'React.memo(): PhaseToolsSection, AnnouncementCard, CycleSelector',
-            'useMemo: Role permissions, computed values',
-            'useCallback: Event handlers, formatters',
-            'ลด re-renders ที่ไม่จำเป็น 30-50%',
+            'Export Dashboard เป็น HTML พร้อมกราฟสวยงาม',
+            'แสดง Phase Progress ทั้ง 8 Phase พร้อม Bar Chart',
+            'รองรับภาษาไทยทุก Export (CSV, HTML)',
+            'Print-ready HTML Report (Ctrl+P)',
+            'Gradient Design และ Responsive Layout',
           ],
         },
         {
-          category: 'Code Quality',
+          category: 'Code Quality Improvements',
           icon: 'Code',
-          description: 'รักษาคุณภาพโค้ดระดับสูง',
+          description: 'ปรับปรุงคุณภาพโค้ดและความปลอดภัย',
           items: [
-            'TypeScript: 0 errors, >95% coverage',
-            'ESLint: ลดเหลือ 86 warnings (ไม่มี errors)',
-            'Build: สำเร็จทุกครั้ง',
-            'Components: Reusable, Typed, Documented',
+            'แก้ไข ESLint errors ทั้งหมด',
+            'ปรับปรุง TypeScript types (ลบ any types)',
+            'แก้ไข React Hook dependencies',
+            'ลบ unused imports และ variables',
+            'Build สำเร็จ 100% ไม่มี errors',
+          ],
+        },
+        {
+          category: 'Security Enhancement',
+          icon: 'Shield',
+          description: 'เพิ่มความปลอดภัยของข้อมูล',
+          items: [
+            'Firestore Security Rules ครบทุก Collection',
+            'Role-based Access Control (Admin/Reviewer/Editor/Viewer)',
+            'Presence Collection Security Rules',
+            'Authentication-based Read/Write permissions',
+            'Immutable Activity Log protection',
           ],
         },
       ],
     },
-    'v1.8.0': {
+    'v2.0.0': {
+      date: '20 มกราคม 2569',
+      title: 'Complete Cycle Integration & Dashboard Enhancement',
+      features: [
+        {
+          category: 'Cycle Integration',
+          icon: 'Calendar',
+          description: 'รองรับ Cycle ครบทุก Phase',
+          items: [
+            'Phase 3-7 รองรับ Cycle ID filtering',
+            'Cycle Badge แสดงบนทุกหน้า',
+            'Warning UI เมื่อไม่ได้เลือกรอบ',
+            'Auto-refresh เมื่อเปลี่ยนรอบ',
+          ],
+        },
+        {
+          category: 'Dashboard Enhancement',
+          icon: 'LayoutDashboard',
+          description: 'Dashboard แสดงข้อมูลจริง',
+          items: [
+            'Phase Progress Section แสดงความคืบหน้า 8 Phase',
+            'Real-time Stats จาก Firestore',
+            'Cycle Comparison Widget เปรียบเทียบรอบ',
+            'Export Dashboard Summary เป็น CSV',
+          ],
+        },
+        {
+          category: 'Data Export',
+          icon: 'Download',
+          description: 'ส่งออกข้อมูลหลายรูปแบบ',
+          items: [
+            'Dashboard Summary CSV',
+            'Evidence List CSV',
+            'KPI Data CSV',
+            'SAR Document HTML',
+          ],
+        },
+      ],
+    },
+    'v1.9.0': {
       date: '20 มกราคม 2569',
       title: 'Code Quality & Type Safety Improvements',
       features: [

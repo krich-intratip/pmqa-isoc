@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { APP_VERSION } from '@/config/version';
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +95,7 @@ export default function LoginPage() {
                         สำหรับเจ้าหน้าที่ กอ.รมน. ที่ได้รับอนุญาตเท่านั้น
                     </p>
                     <p className="opacity-50">
-                        Version 0.1.0 (MVP)
+                        Version {APP_VERSION.version}
                     </p>
                 </CardFooter>
             </Card>
