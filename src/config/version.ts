@@ -6,12 +6,30 @@
  */
 
 export const APP_VERSION = {
-  version: '1.7.2',
+  version: '1.7.3',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v1.7.3': {
+      date: '20 มกราคม 2569',
+      title: 'Dashboard Announcements Feature',
+      features: [
+        {
+          category: 'Dashboard Enhancements',
+          icon: 'Megaphone',
+          description: 'ระบบประกาศข่าวสารบน Dashboard',
+          items: [
+            'เพิ่ม 3 slot announcements (PMQA คืออะไร, ความสำคัญ, ประกาศ)',
+            'แสดงผลแบบ Card Grid พร้อม Animation',
+            'รองรับการปรับแต่ง Title, Content และ Link',
+            'Admin Dashboard Tab สำหรับจัดการข้อมูลประกาศ',
+            'แสดงผล responsive บนทุกอุปกรณ์',
+          ],
+        },
+      ],
+    },
     'v1.7.2': {
       date: '20 มกราคม 2569',
       title: 'Dashboard Real Data & Notification System',

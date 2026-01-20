@@ -206,3 +206,21 @@ export interface Notification {
     readAt?: Timestamp;
     createdAt: Timestamp;
 }
+
+// Dashboard Announcements (v1.7.3)
+export type AnnouncementSlot = 'what_is_pmqa' | 'why_important' | 'announcement';
+
+export interface Announcement {
+    id: string;
+    slot: AnnouncementSlot;
+    title: string;
+    content: string;
+    link?: string;
+    linkText?: string;
+    icon?: string;
+    isActive: boolean;
+    updatedAt: Timestamp;
+    updatedBy: string;
+    updatedByName: string;
+}
+

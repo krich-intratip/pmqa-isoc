@@ -2,6 +2,18 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [1.7.3] - 2026-01-20
+
+### Added - Dashboard Announcements
+- เพิ่มระบบประกาศ 3 ส่วนบนหน้า Dashboard
+  - PMQA 4.0 คืออะไร
+  - ความสำคัญของ PMQA
+  - ประกาศสำคัญ (นโยบายผู้บังคับบัญชา)
+- เพิ่ม `AnnouncementCards` component สำหรับแสดงผล User ทั่วไป
+- เพิ่ม Tab "ประกาศ" ใน Admin Dashboard
+- เพิ่ม `AnnouncementManager` component สำหรับ Admin จัดการข้อมูล
+- เพิ่ม Animation (Fade-in/Slide-up)
+
 ## [1.7.2] - 2026-01-20
 
 ### Added - Dashboard Real Data & Notification System

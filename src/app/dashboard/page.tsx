@@ -14,7 +14,7 @@ import {
     BookOpen, FileSpreadsheet, ClipboardEdit, Sparkles, LineChart,
     AlertTriangle, GitBranch, PenTool, Package, Calculator,
     Presentation, HelpCircle, Calendar, UserCog, Activity, MapPin, Loader2,
-    LayoutDashboard, UserCheck, FileSearch
+    LayoutDashboard, UserCheck, FileSearch, Megaphone
 } from 'lucide-react';
 import {
     canManageUsers,
@@ -26,6 +26,8 @@ import {
 } from '@/lib/auth/role-helper';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { AnnouncementCards } from '@/components/dashboard/AnnouncementCards';
+import { AnnouncementManager } from '@/components/dashboard/AnnouncementManager';
 
 export default function Dashboard() {
     const { user, loading, initialize } = useAuthStore();
@@ -158,10 +160,14 @@ export default function Dashboard() {
 
                 {/* Admin Tabs */}
                 <Tabs defaultValue="overview" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="overview">
                             <LayoutDashboard className="h-4 w-4 mr-2" />
                             ภาพรวม
+                        </TabsTrigger>
+                        <TabsTrigger value="announcements">
+                            <Megaphone className="h-4 w-4 mr-2" />
+                            ประกาศ
                         </TabsTrigger>
                         <TabsTrigger value="users">
                             <Users className="h-4 w-4 mr-2" />
@@ -338,6 +344,12 @@ export default function Dashboard() {
                         </div>
                     </TabsContent>
 
+                    {/* Tab 2: Announcements Management */}
+                    <TabsContent value="announcements" className="space-y-6">
+                        <h3 className="text-lg font-semibold text-slate-800">จัดการประกาศหน้า Dashboard</h3>
+                        <AnnouncementManager />
+                    </TabsContent>
+
                     {/* Tab 3: Activity Logs */}
                     <TabsContent value="activity" className="space-y-6">
                         <h3 className="text-lg font-semibold text-slate-800">ประวัติการใช้งานระบบ</h3>
@@ -460,6 +472,9 @@ function PhaseToolsSection({
 }) {
     return (
         <>
+            {/* Announcement Cards - Visible to all users */}
+            <AnnouncementCards />
+
             <h2 className="text-xl font-semibold mb-4 text-slate-800">เครื่องมือของฉัน</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Roadmap - Available to all users */}
