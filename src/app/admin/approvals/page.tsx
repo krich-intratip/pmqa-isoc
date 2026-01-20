@@ -17,9 +17,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { getUnitLabel } from '@/lib/hierarchy/unit-helper';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { ROLES, canManageUsers, getRoleDisplay } from '@/lib/auth/role-helper';
+import { ROLES, canManageUsers } from '@/lib/auth/role-helper';
 import { Edit, UserCheck, XSquare } from 'lucide-react';
 
 export default function AdminApprovalsPage() {
@@ -99,12 +98,12 @@ export default function AdminApprovalsPage() {
 
         try {
             // Build metadata object without undefined values
-            const metadataUpdate: any = {};
+            const metadataUpdate: Record<string, string> = {};
             if (editPosition && editPosition.trim()) metadataUpdate.position = editPosition.trim();
             if (editDepartment && editDepartment.trim()) metadataUpdate.department = editDepartment.trim();
             if (editPhone && editPhone.trim()) metadataUpdate.phone = editPhone.trim();
 
-            const updateData: any = {
+            const updateData: Record<string, unknown> = {
                 status: 'approved',
                 role: editRole,
                 isActive: true,
@@ -137,7 +136,7 @@ export default function AdminApprovalsPage() {
         try {
             await updateDoc(doc(db, 'users', userId), {
                 status: 'approved',
-                role: requestedRole as any,
+                role: requestedRole as User['role'],
                 unitId: requestedUnitId || null,
                 isActive: true,
                 updatedAt: serverTimestamp(),
@@ -263,7 +262,7 @@ export default function AdminApprovalsPage() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label>บทบาท *</Label>
-                                            <Select value={editRole} onValueChange={(v: any) => setEditRole(v)}>
+                                            <Select value={editRole} onValueChange={(v: User['role']) => setEditRole(v)}>
                                                 <SelectTrigger>
                                                     <SelectValue />
                                                 </SelectTrigger>

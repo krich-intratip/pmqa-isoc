@@ -6,7 +6,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
-import { collection, getDocs, updateDoc, doc, serverTimestamp, query, where, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, serverTimestamp, writeBatch } from 'firebase/firestore';
 import { User, Unit, UnitCategory } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -195,12 +195,12 @@ function UsersManagementContent() {
 
         try {
             // Build metadata object without undefined values
-            const metadataUpdate: any = {};
+            const metadataUpdate: Record<string, string> = {};
             if (position && position.trim()) metadataUpdate.position = position.trim();
             if (department && department.trim()) metadataUpdate.department = department.trim();
             if (phone && phone.trim()) metadataUpdate.phone = phone.trim();
 
-            const updateData: any = {
+            const updateData: Record<string, unknown> = {
                 displayName: displayName.trim(),
                 role,
                 status,
@@ -520,7 +520,7 @@ function UsersManagementContent() {
                                     />
                                 </div>
 
-                                <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+                                <Select value={sortBy} onValueChange={(v: 'name' | 'date') => setSortBy(v)}>
                                     <SelectTrigger className="w-48">
                                         <ArrowUpDown className="h-4 w-4 mr-2" />
                                         <SelectValue />
@@ -752,7 +752,7 @@ function UsersManagementContent() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <Label>บทบาท</Label>
-                                    <Select value={role} onValueChange={(v: any) => setRole(v)}>
+                                    <Select value={role} onValueChange={(v: User['role']) => setRole(v)}>
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>
@@ -771,7 +771,7 @@ function UsersManagementContent() {
                                 </div>
                                 <div>
                                     <Label>สถานะ</Label>
-                                    <Select value={status} onValueChange={(v: any) => setStatus(v)}>
+                                    <Select value={status} onValueChange={(v: User['status']) => setStatus(v)}>
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>

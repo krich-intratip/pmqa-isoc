@@ -27,11 +27,21 @@ const formSchema = z.object({
     phone: z.string().min(9, 'กรุณาระบุเกอร์โทรศัพท์'),
 });
 
+interface RegionOption {
+    id: string;
+    name: string;
+}
+
+interface UnitOption {
+    id: string;
+    name: string;
+}
+
 export default function RegisterPage() {
     const { user, loading } = useAuthStore();
     const router = useRouter();
-    const [regions, setRegions] = useState<any[]>([]);
-    const [units, setUnits] = useState<any[]>([]);
+    const [regions, setRegions] = useState<RegionOption[]>([]);
+    const [units, setUnits] = useState<UnitOption[]>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -169,7 +179,7 @@ export default function RegisterPage() {
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl><SelectTrigger><SelectValue placeholder="เลือกภาค..." /></SelectTrigger></FormControl>
                                                 <SelectContent>
-                                                    {regions.map((r: any) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+                                                    {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -186,7 +196,7 @@ export default function RegisterPage() {
                                         <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!units.length}>
                                             <FormControl><SelectTrigger><SelectValue placeholder="เลือกหน่วยงาน..." /></SelectTrigger></FormControl>
                                             <SelectContent>
-                                                {units.map((u: any) => <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>)}
+                                                {units.map((u) => <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

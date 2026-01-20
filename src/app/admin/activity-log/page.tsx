@@ -2,20 +2,20 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import { ActivityLog, ActivityAction, ActivityResourceType, User } from '@/types/database';
+import { ActivityLog, ActivityAction, ActivityResourceType } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES } from '@/lib/auth/role-helper';
-import { Activity, Search, Download, Filter, Calendar } from 'lucide-react';
+import { Activity, Search, Download, Filter } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 import {
     getActivityLogs,
     exportActivityLogsToCSV,
@@ -42,7 +42,7 @@ export default function ActivityLogPage() {
     const [pageSize] = useState(50);
     const [totalPages, setTotalPages] = useState(1);
 
-    const fetchLogs = async () => {
+    const fetchLogs = useCallback(async () => {
         setLoading(true);
         try {
             const options: ActivityLogQueryOptions = {
@@ -77,13 +77,13 @@ export default function ActivityLogPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filterAction, filterResourceType, filterDateFrom, filterDateTo]);
 
     useEffect(() => {
         if (user && (user.role === ROLES.SUPER_ADMIN || user.role === ROLES.CENTRAL_ADMIN)) {
             fetchLogs();
         }
-    }, [user, filterAction, filterResourceType, filterDateFrom, filterDateTo]);
+    }, [user, fetchLogs]);
 
     // Client-side filtering and pagination
     useEffect(() => {
@@ -152,7 +152,7 @@ export default function ActivityLogPage() {
         return <Badge variant="outline">{getResourceTypeLabel(resourceType)}</Badge>;
     };
 
-    const formatTimestamp = (timestamp: any): string => {
+    const formatTimestamp = (timestamp: Timestamp | undefined): string => {
         if (!timestamp) return '-';
         return timestamp.toDate().toLocaleString('th-TH', {
             year: 'numeric',

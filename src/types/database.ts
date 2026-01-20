@@ -96,9 +96,9 @@ export interface ActivityLog {
 
     details: {
         // Additional details based on action
-        changes?: any; // for update operations
-        oldValue?: any;
-        newValue?: any;
+        changes?: Record<string, unknown>; // for update operations
+        oldValue?: string | number | boolean | null;
+        newValue?: string | number | boolean | null;
 
         // File operations
         filename?: string;

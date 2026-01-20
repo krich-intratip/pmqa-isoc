@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import Image from 'next/image';
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -40,11 +39,12 @@ export default function LoginPage() {
                 // Fallback
                 router.push('/dashboard');
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error('Login error:', error);
-            const errorMessage = error?.code === 'auth/popup-closed-by-user'
+            const err = error as { code?: string };
+            const errorMessage = err?.code === 'auth/popup-closed-by-user'
                 ? 'คุณปิด popup ก่อนเข้าสู่ระบบ'
-                : error?.code === 'auth/unauthorized-domain'
+                : err?.code === 'auth/unauthorized-domain'
                     ? 'Domain ไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ'
                     : 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
             toast.error(errorMessage);

@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
-import { collection, addDoc, updateDoc, doc, serverTimestamp, Timestamp, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { AssessmentCycle } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -189,7 +189,7 @@ export default function CyclesManagementPage() {
                                         </div>
                                         <div>
                                             <Label>สถานะ</Label>
-                                            <Select value={status} onValueChange={(v: any) => setStatus(v)}>
+                                            <Select value={status} onValueChange={(v: AssessmentCycle['status']) => setStatus(v)}>
                                                 <SelectTrigger>
                                                     <SelectValue />
                                                 </SelectTrigger>

@@ -2,6 +2,29 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [1.8.0] - 2026-01-20
+
+### Fixed - Code Quality & Type Safety
+- แก้ไข ESLint errors จาก 105 รายการ เหลือเพียง warnings เท่านั้น
+- ปรับปรุง Type Safety ทั้งหมด - เปลี่ยนจาก `any` เป็น proper types
+  - `ActivityLog.details` ใช้ `Record<string, unknown>`
+  - `User` role และ status ใช้ union types
+  - `AssessmentCycle` status ใช้ union types
+  - Form handlers ใช้ typed parameters
+- ลบ unused imports ทั้งหมด
+  - ลบ `User`, `Label`, `Calendar` ที่ไม่ได้ใช้ใน activity-log
+  - ลบ `getUnitLabel`, `getRoleDisplay` ที่ไม่ได้ใช้ใน approvals
+  - ลบ `query`, `where`, `getDocs` ที่ไม่ได้ใช้ใน cycles และ users
+  - ลบ `Image` ที่ไม่ได้ใช้ใน login page
+- แก้ไข useEffect dependencies warnings
+  - เพิ่ม `useCallback` สำหรับ `fetchLogs` ใน activity-log
+  - เพิ่ม dependencies ที่จำเป็น
+
+### Technical Improvements
+- ปรับปรุง TypeScript type coverage > 95%
+- Compile สำเร็จโดยไม่มี errors
+- Build สำเร็จ - พร้อม deploy
+
 ## [1.7.4] - 2026-01-20
 
 ### Changed - Dashboard Announcements UI
