@@ -2,6 +2,37 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [1.7.2] - 2026-01-20
+
+### Added - Dashboard Real Data & Notification System
+
+#### 📊 Dashboard Real Data Integration
+- Dashboard แสดงข้อมูลจริงจากระบบ
+  - แสดงจำนวน KPI ที่บันทึกในรอบประเมิน
+  - Admin Dashboard แสดงจำนวน User รอการอนุมัติ
+  - สถิติ Evidence และ Verified count จากข้อมูลจริง
+  - Progress คำนวณจากข้อมูลจริง
+
+#### 🔔 In-App Notification System
+- สร้างระบบแจ้งเตือนภายใน App
+  - `NotificationBell` component บน Header
+  - แสดง Unread count badge
+  - Notification เมื่อ User ถูก Approve/Reject
+  - Mark as Read และ Mark All as Read
+  - Real-time updates ด้วย Firestore onSnapshot
+
+### Technical
+- เพิ่ม `Notification` interface ใน database.ts
+- สร้าง `notification-store.ts` (Zustand)
+- สร้าง `notification-helper.ts` สำหรับสร้าง notifications
+- เพิ่ม shadcn Popover และ ScrollArea components
+
+## [1.7.1] - 2026-01-20
+
+### Fixed
+- แก้ไข version mismatch ระหว่าง package.json และ version.ts
+- อัปเดต lastUpdate date
+
 ## [1.5.0] - 2026-01-19
 
 ### Added - Cycle Integration Features
