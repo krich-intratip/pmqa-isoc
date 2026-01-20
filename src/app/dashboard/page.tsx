@@ -41,7 +41,6 @@ export default function Dashboard() {
     const [pendingUsersCount, setPendingUsersCount] = useState(0);
 
     // Role-based permissions
-    const isAdmin = user ? canManageUsers(user.role) : false;
     const isReviewer = user ? canApproveEvidence(user.role) : false;
     const showAdminTabs = user ? shouldShowAdminTabs(user.role) : false;
     const availablePhases = user ? getAvailablePhaseTools(user.role) : [0];

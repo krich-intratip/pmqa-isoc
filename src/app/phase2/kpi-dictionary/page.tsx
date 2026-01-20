@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { BookOpen, Plus, Trash2, Edit, Target, TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -103,6 +103,7 @@ export default function KPIDictionaryPage() {
 
     useEffect(() => {
         fetchKPIs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const resetForm = () => {
@@ -264,7 +265,7 @@ export default function KPIDictionaryPage() {
                                         </div>
                                         <div className="space-y-2">
                                             <Label>ทิศทาง</Label>
-                                            <select value={formDirection} onChange={(e) => setFormDirection(e.target.value as any)} className="w-full border rounded-md p-2">
+                                            <select value={formDirection} onChange={(e) => setFormDirection(e.target.value as 'up' | 'down' | 'maintain')} className="w-full border rounded-md p-2">
                                                 <option value="up">↑ ยิ่งสูงยิ่งดี</option>
                                                 <option value="down">↓ ยิ่งต่ำยิ่งดี</option>
                                                 <option value="maintain">→ รักษาระดับ</option>
@@ -282,7 +283,7 @@ export default function KPIDictionaryPage() {
                                         </div>
                                         <div className="space-y-2">
                                             <Label>ความถี่วัด</Label>
-                                            <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as any)} className="w-full border rounded-md p-2">
+                                            <select value={formFrequency} onChange={(e) => setFormFrequency(e.target.value as 'monthly' | 'quarterly' | 'yearly')} className="w-full border rounded-md p-2">
                                                 <option value="monthly">รายเดือน</option>
                                                 <option value="quarterly">รายไตรมาส</option>
                                                 <option value="yearly">รายปี</option>
@@ -350,7 +351,7 @@ export default function KPIDictionaryPage() {
                         ) : kpis.length === 0 ? (
                             <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg">
                                 <Target className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                <p>ยังไม่มี KPI - คลิก "เพิ่ม KPI" เพื่อเริ่มต้น</p>
+                                <p>ยังไม่มี KPI - คลิก &quot;เพิ่ม KPI&quot; เพื่อเริ่มต้น</p>
                             </div>
                         ) : (
                             <Table>

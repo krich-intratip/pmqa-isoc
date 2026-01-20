@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ClipboardEdit, Save, AlertCircle, CheckCircle2, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { ClipboardEdit, Save, AlertCircle, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -39,7 +39,7 @@ const MONTHS = [
 export default function DataCollectorPage() {
     const { user } = useAuthStore();
     const { selectedCycle, fetchCycles } = useCycleStore();
-    const [kpiList, setKpiList] = useState<any[]>([]);
+    const [kpiList, setKpiList] = useState<Record<string, unknown>[]>([]);
     const [dataEntries, setDataEntries] = useState<KPIData[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -71,7 +71,7 @@ export default function DataCollectorPage() {
             // Fetch KPI definitions
             const kpiQ = query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId));
             const kpiSnap = await getDocs(kpiQ);
-            const kpis: any[] = [];
+            const kpis: Record<string, unknown>[] = [];
             kpiSnap.forEach(d => kpis.push({ id: d.id, ...d.data() }));
             setKpiList(kpis);
 
@@ -91,8 +91,8 @@ export default function DataCollectorPage() {
             // Initialize form values
             const values: Record<string, string> = {};
             kpis.forEach(kpi => {
-                const existing = entries.find(e => e.kpiId === kpi.id);
-                values[kpi.id] = existing ? existing.value.toString() : '';
+                const existing = entries.find(e => e.kpiId === (kpi.id as string));
+                values[kpi.id as string] = existing ? existing.value.toString() : '';
             });
             setFormValues(values);
         } catch (error) {
@@ -104,6 +104,7 @@ export default function DataCollectorPage() {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedYear, selectedMonth, selectedCycle]);
 
     const handleValueChange = (kpiId: string, value: string) => {
@@ -132,19 +133,20 @@ export default function DataCollectorPage() {
 
         try {
             for (const kpi of kpiList) {
-                const value = parseFloat(formValues[kpi.id]);
+                const kpiId = kpi.id as string;
+                const value = parseFloat(formValues[kpiId]);
                 if (isNaN(value)) continue;
 
-                const existing = dataEntries.find(e => e.kpiId === kpi.id);
+                const existing = dataEntries.find(e => e.kpiId === kpiId);
                 const entryData = {
-                    kpiId: kpi.id,
-                    kpiCode: kpi.code,
-                    kpiName: kpi.name,
+                    kpiId: kpiId,
+                    kpiCode: kpi.code as string,
+                    kpiName: kpi.name as string,
                     unitId: user!.unitId,
                     cycleId: selectedCycle.id, // Add cycleId
                     period,
                     value,
-                    target: kpi.targetValue,
+                    target: kpi.targetValue as number,
                     status: 'draft' as const,
                 };
 
@@ -301,34 +303,39 @@ export default function DataCollectorPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {kpiList.map((kpi) => {
-                                        const value = parseFloat(formValues[kpi.id]);
-                                        const validation = !isNaN(value) ? getValidationStatus(value, kpi.targetValue, kpi.direction) : null;
-                                        const entry = dataEntries.find(e => e.kpiId === kpi.id);
+                                        const kpiId = kpi.id as string;
+                                        const kpiCode = kpi.code as string;
+                                        const kpiName = kpi.name as string;
+                                        const kpiDirection = kpi.direction as string;
+                                        const kpiTargetValue = kpi.targetValue as number;
+                                        const value = parseFloat(formValues[kpiId]);
+                                        const validation = !isNaN(value) ? getValidationStatus(value, kpiTargetValue, kpiDirection) : null;
+                                        const entry = dataEntries.find(e => e.kpiId === kpiId);
 
                                         return (
-                                            <TableRow key={kpi.id}>
-                                                <TableCell className="font-mono font-medium">{kpi.code}</TableCell>
+                                            <TableRow key={kpiId}>
+                                                <TableCell className="font-mono font-medium">{kpiCode}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">
-                                                        {kpi.direction === 'up' ? (
+                                                        {kpiDirection === 'up' ? (
                                                             <TrendingUp className="h-4 w-4 text-green-600" />
-                                                        ) : kpi.direction === 'down' ? (
+                                                        ) : kpiDirection === 'down' ? (
                                                             <TrendingDown className="h-4 w-4 text-red-600" />
                                                         ) : null}
-                                                        {kpi.name}
+                                                        {kpiName}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
                                                         type="number"
-                                                        value={formValues[kpi.id]}
-                                                        onChange={(e) => handleValueChange(kpi.id, e.target.value)}
+                                                        value={formValues[kpiId]}
+                                                        onChange={(e) => handleValueChange(kpiId, e.target.value)}
                                                         className="w-full"
                                                         disabled={entry?.status === 'submitted' || entry?.status === 'validated'}
                                                     />
                                                 </TableCell>
-                                                <TableCell className="text-right font-medium">{kpi.targetValue}</TableCell>
-                                                <TableCell>{kpi.unit}</TableCell>
+                                                <TableCell className="text-right font-medium">{kpiTargetValue}</TableCell>
+                                                <TableCell>{kpi.unit as string}</TableCell>
                                                 <TableCell>
                                                     {entry?.status === 'submitted' ? (
                                                         <Badge className="bg-blue-100 text-blue-800">ส่งแล้ว</Badge>

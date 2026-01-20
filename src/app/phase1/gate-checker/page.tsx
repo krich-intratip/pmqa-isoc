@@ -151,7 +151,7 @@ export default function EvidenceGateCheckerPage() {
                     <CardHeader>
                         <CardTitle>หลักฐานที่รอการตรวจสอบ ({pendingEvidence.length})</CardTitle>
                         <CardDescription>
-                            คลิก "ตรวจสอบ" เพื่อดูรายละเอียดและอนุมัติหรือปฏิเสธ
+                            คลิก &quot;ตรวจสอบ&quot; เพื่อดูรายละเอียดและอนุมัติหรือปฏิเสธ
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

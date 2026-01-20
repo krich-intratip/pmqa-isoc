@@ -44,7 +44,7 @@ export default function GuidePage() {
                                 การเข้าสู่ระบบ (Login)
                             </h4>
                             <ul className="list-disc pl-10 space-y-2">
-                                <li>เปิดเว็บไซต์และคลิกปุ่ม <strong>"เข้าสู่ระบบ"</strong></li>
+                                <li>เปิดเว็บไซต์และคลิกปุ่ม <strong>&quot;เข้าสู่ระบบ&quot;</strong></li>
                                 <li>ใช้อีเมล Google Account (Gmail) เพื่อความปลอดภัยและสะดวกในการเข้าถึง Google Services</li>
                                 <li>หากเป็นผู้ใช้ใหม่ ระบบจะนำไปหน้าลงทะเบียนเพื่อกรอกข้อมูลเพิ่มเติม</li>
                                 <li>รอผู้ดูแลระบบอนุมัติการเข้าใช้งาน (สำหรับผู้ใช้ใหม่)</li>
@@ -88,7 +88,7 @@ export default function GuidePage() {
                                         <li><strong>Gemini 2.0 Flash</strong> - เวอร์ชันเสถียร</li>
                                     </ul>
                                 </li>
-                                <li>คลิก <strong>"ทดสอบการเชื่อมต่อ"</strong> และ <strong>"บันทึก"</strong></li>
+                                <li>คลิก <strong>&quot;ทดสอบการเชื่อมต่อ&quot;</strong> และ <strong>&quot;บันทึก&quot;</strong></li>
                             </ul>
                         </div>
                     </CardContent>
@@ -217,7 +217,7 @@ export default function GuidePage() {
                                     <p className="text-sm text-slate-500 mb-2">ระบบทะเบียนคุมหลักฐาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 1 → Evidence</strong></li>
-                                        <li>คลิก "เพิ่มหลักฐาน" เพื่อนำเข้าไฟล์ (PDF/Word/Excel/รูปภาพ)</li>
+                                        <li>คลิก &quot;เพิ่มหลักฐาน&quot; เพื่อนำเข้าไฟล์ (PDF/Word/Excel/รูปภาพ)</li>
                                         <li>ระบบสร้างรหัสหลักฐานอัตโนมัติ (E-{"{Phase}"}-{"{Item}"}-{"{Year}"}-{"{Unit}"})</li>
                                         <li>กรอกข้อมูล: ชื่อ, อธิบาย, หมวด, เจ้าของ, ชั้นความลับ</li>
                                         <li>ดู/ค้นหา/กรองหลักฐานตามหมวด/หน่วย/สถานะ</li>
@@ -448,7 +448,7 @@ export default function GuidePage() {
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหัวข้อที่ต้องการเขียน</li>
                                         <li>ระบบดึงข้อมูล Context + Evidence + KPI</li>
-                                        <li>คลิก "Generate" เพื่อให้ AI ร่างเนื้อหาตามรูปแบบ ADLR:
+                                        <li>คลิก &quot;Generate&quot; เพื่อให้ AI ร่างเนื้อหาตามรูปแบบ ADLR:
                                             <ul className="list-disc pl-5 mt-1 text-xs">
                                                 <li><strong>A</strong>pproach: วิธีการ/มาตรฐาน</li>
                                                 <li><strong>D</strong>eployment: ขอบเขตการใช้งาน</li>
@@ -532,7 +532,7 @@ export default function GuidePage() {
                                     <h4 className="font-semibold text-slate-800">Cross-Consistency Auditor</h4>
                                     <p className="text-sm text-slate-500 mb-2">ตรวจสอบความสอดคล้องข้ามหมวด</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
-                                        <li>คลิก "เริ่มตรวจสอบ"</li>
+                                        <li>คลิก &quot;เริ่มตรวจสอบ&quot;</li>
                                         <li>ระบบตรวจ 8 เกณฑ์: Context, Strategy-KPI, Evidence, SAR, Owner</li>
                                         <li>แสดงผล: ผ่าน / ควรปรับปรุง / ต้องดำเนินการ</li>
                                         <li>คลิกลิงก์เพื่อไปแก้ไขที่หน้าที่เกี่ยวข้อง</li>
@@ -583,7 +583,7 @@ export default function GuidePage() {
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหัวข้อที่ต้องการรวม (ภาพรวม, ไฮไลท์, KPI, ความท้าทาย)</li>
                                         <li>ระบุหมายเหตุเพิ่มเติม (ถ้ามี)</li>
-                                        <li>คลิก "สร้าง Interview Brief"</li>
+                                        <li>คลิก &quot;สร้าง Interview Brief&quot;</li>
                                         <li>AI สร้าง: Executive Summary + Talking Points + คำถามที่อาจถูกถาม</li>
                                         <li>คัดลอก หรือ Download เป็น Markdown</li>
                                     </ol>
@@ -596,8 +596,8 @@ export default function GuidePage() {
                                     <p className="text-sm text-slate-500 mb-2">คลังคำถาม-คำตอบ</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหมวดที่ต้องการสร้างคำถาม</li>
-                                        <li>คลิก "Generate" เพื่อให้ AI สร้าง 3 คำถาม/คำตอบ</li>
-                                        <li>หรือคลิก "เพิ่มเอง" เพื่อกรอกคำถาม/คำตอบ Manual</li>
+                                        <li>คลิก &quot;Generate&quot; เพื่อให้ AI สร้าง 3 คำถาม/คำตอบ</li>
+                                        <li>หรือคลิก &quot;เพิ่มเอง&quot; เพื่อกรอกคำถาม/คำตอบ Manual</li>
                                         <li>กรองดูตามหมวดและระดับความยาก (ง่าย/ปานกลาง/ยาก)</li>
                                         <li>ใช้ซ้อมตอบคำถามก่อนรับการตรวจจริง</li>
                                     </ol>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuthStore } from '@/stores/auth-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FileSpreadsheet, Download, Settings, CheckCircle2 } from 'lucide-react';
+import { FileSpreadsheet, Download, CheckCircle2, Settings } from 'lucide-react';
 import { toast } from 'sonner';
-import ThaiUtils from '@/lib/utils/thai-utils';
 
 const TEMPLATE_TYPES = [
     {
@@ -68,7 +66,6 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function ExcelTemplatePage() {
-    const { user } = useAuthStore();
     const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
     const [unitName, setUnitName] = useState('');
     const [year, setYear] = useState((new Date().getFullYear() + 543).toString());

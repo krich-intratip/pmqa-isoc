@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AlertTriangle, Plus, Trash2, Edit, Shield, TrendingUp, TrendingDown } from 'lucide-react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertTriangle, Plus, Trash2, Edit, Shield } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -79,6 +79,7 @@ export default function RiskAnalyzerPage() {
 
     useEffect(() => {
         fetchRisks();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const resetForm = () => {
@@ -294,7 +295,7 @@ export default function RiskAnalyzerPage() {
                         ) : risks.length === 0 ? (
                             <div className="text-center py-12 text-muted-foreground">
                                 <AlertTriangle className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                <p>ยังไม่มีความเสี่ยง - คลิก "เพิ่มความเสี่ยง" เพื่อเริ่มต้น</p>
+                                <p>ยังไม่มีความเสี่ยง - คลิก &quot;เพิ่มความเสี่ยง&quot; เพื่อเริ่มต้น</p>
                             </div>
                         ) : (
                             <Table>

@@ -31,7 +31,6 @@ export default function DataCleaningPage() {
     const { user } = useAuthStore();
     const { selectedCycle, fetchCycles } = useCycleStore();
     const [issues, setIssues] = useState<DataIssue[]>([]);
-    const [loading, setLoading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
 
     // v1.6.0: Fetch cycles on mount
@@ -58,7 +57,7 @@ export default function DataCleaningPage() {
                 where('cycleId', '==', selectedCycle.id) // v1.6.0
             );
             const dataSnap = await getDocs(dataQ);
-            const allData: any[] = [];
+            const allData: Record<string, unknown>[] = [];
             dataSnap.forEach(d => allData.push({ id: d.id, ...d.data() }));
 
             // Analyze for issues
@@ -66,43 +65,46 @@ export default function DataCleaningPage() {
 
             // Check for outliers (values that are too far from target)
             allData.forEach(data => {
-                if (!data.value && data.value !== 0) {
+                const value = data.value as number;
+                const target = data.target as number;
+
+                if (!value && value !== 0) {
                     foundIssues.push({
-                        id: data.id,
-                        kpiId: data.kpiId,
-                        kpiCode: data.kpiCode,
-                        kpiName: data.kpiName,
-                        period: data.period,
-                        value: data.value,
-                        target: data.target,
+                        id: data.id as string,
+                        kpiId: data.kpiId as string,
+                        kpiCode: data.kpiCode as string,
+                        kpiName: data.kpiName as string,
+                        period: data.period as string,
+                        value: value,
+                        target: target,
                         issueType: 'missing',
                         severity: 'high',
                         suggestion: 'กรุณากรอกค่าข้อมูล',
                         resolved: false,
                     });
-                } else if (data.value > data.target * 10 || data.value < data.target * 0.01) {
+                } else if (value > target * 10 || value < target * 0.01) {
                     foundIssues.push({
-                        id: data.id,
-                        kpiId: data.kpiId,
-                        kpiCode: data.kpiCode,
-                        kpiName: data.kpiName,
-                        period: data.period,
-                        value: data.value,
-                        target: data.target,
+                        id: data.id as string,
+                        kpiId: data.kpiId as string,
+                        kpiCode: data.kpiCode as string,
+                        kpiName: data.kpiName as string,
+                        period: data.period as string,
+                        value: value,
+                        target: target,
                         issueType: 'outlier',
                         severity: 'medium',
-                        suggestion: `ค่า ${data.value} อาจผิดปกติ ควรตรวจสอบอีกครั้ง`,
+                        suggestion: `ค่า ${value} อาจผิดปกติ ควรตรวจสอบอีกครั้ง`,
                         resolved: false,
                     });
-                } else if (data.value < 0) {
+                } else if (value < 0) {
                     foundIssues.push({
-                        id: data.id,
-                        kpiId: data.kpiId,
-                        kpiCode: data.kpiCode,
-                        kpiName: data.kpiName,
-                        period: data.period,
-                        value: data.value,
-                        target: data.target,
+                        id: data.id as string,
+                        kpiId: data.kpiId as string,
+                        kpiCode: data.kpiCode as string,
+                        kpiName: data.kpiName as string,
+                        period: data.period as string,
+                        value: value,
+                        target: target,
                         issueType: 'invalid',
                         severity: 'high',
                         suggestion: 'ค่าติดลบไม่ถูกต้อง',
@@ -112,24 +114,24 @@ export default function DataCleaningPage() {
             });
 
             // Check for duplicates
-            const periodMap = new Map<string, any[]>();
+            const periodMap = new Map<string, Record<string, unknown>[]>();
             allData.forEach(data => {
-                const key = `${data.kpiId}-${data.period}`;
+                const key = `${data.kpiId as string}-${data.period as string}`;
                 if (!periodMap.has(key)) periodMap.set(key, []);
                 periodMap.get(key)!.push(data);
             });
 
-            periodMap.forEach((entries, key) => {
+            periodMap.forEach((entries) => {
                 if (entries.length > 1) {
                     entries.slice(1).forEach(dup => {
                         foundIssues.push({
-                            id: dup.id,
-                            kpiId: dup.kpiId,
-                            kpiCode: dup.kpiCode,
-                            kpiName: dup.kpiName,
-                            period: dup.period,
-                            value: dup.value,
-                            target: dup.target,
+                            id: dup.id as string,
+                            kpiId: dup.kpiId as string,
+                            kpiCode: dup.kpiCode as string,
+                            kpiName: dup.kpiName as string,
+                            period: dup.period as string,
+                            value: dup.value as number,
+                            target: dup.target as number,
                             issueType: 'duplicate',
                             severity: 'medium',
                             suggestion: 'ข้อมูลซ้ำซ้อน ควรลบออก',
@@ -262,7 +264,7 @@ export default function DataCleaningPage() {
                         {issues.length === 0 ? (
                             <div className="text-center py-12 text-muted-foreground">
                                 <Sparkles className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                <p className="text-lg">คลิก "วิเคราะห์ข้อมูล" เพื่อเริ่มตรวจสอบ</p>
+                                <p className="text-lg">คลิก &quot;วิเคราะห์ข้อมูล&quot; เพื่อเริ่มตรวจสอบ</p>
                             </div>
                         ) : (
                             <Table>

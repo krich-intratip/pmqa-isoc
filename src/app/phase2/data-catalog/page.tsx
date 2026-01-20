@@ -326,7 +326,7 @@ export default function DataSourceCatalogPage() {
                         ) : sources.length === 0 ? (
                             <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg">
                                 <Database className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                <p>ยังไม่มีแหล่งข้อมูล - คลิก "เพิ่มแหล่งข้อมูล" เพื่อเริ่มต้น</p>
+                                <p>ยังไม่มีแหล่งข้อมูล - คลิก &quot;เพิ่มแหล่งข้อมูล&quot; เพื่อเริ่มต้น</p>
                             </div>
                         ) : (
                             <Table>

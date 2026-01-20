@@ -6,11 +6,10 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Plus, Save, Loader2, Building2, Target, Users, Lightbulb } from 'lucide-react';
+import { FileText, Save, Loader2, Building2, Target, Users, Lightbulb } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -111,6 +110,7 @@ export default function ContextPackPage() {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const handleSave = async () => {

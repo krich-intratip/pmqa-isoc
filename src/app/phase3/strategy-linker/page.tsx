@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { GitBranch, Plus, Trash2, Edit, Target, ArrowRight, Link2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { GitBranch, Plus, Trash2, Edit, Link2 } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
@@ -53,7 +53,7 @@ const PMQA_CATEGORIES = [
 export default function StrategyLinkerPage() {
     const { user } = useAuthStore();
     const [links, setLinks] = useState<StrategyLink[]>([]);
-    const [kpiList, setKpiList] = useState<any[]>([]);
+    const [kpiList, setKpiList] = useState<Record<string, unknown>[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -81,7 +81,7 @@ export default function StrategyLinkerPage() {
             // Fetch KPIs for linking
             const kpiQ = query(collection(db, 'kpi_definitions'), where('unitId', '==', user.unitId));
             const kpiSnap = await getDocs(kpiQ);
-            const kpis: any[] = [];
+            const kpis: Record<string, unknown>[] = [];
             kpiSnap.forEach(d => kpis.push({ id: d.id, ...d.data() }));
             setKpiList(kpis);
         } catch (error) {
@@ -258,21 +258,26 @@ export default function StrategyLinkerPage() {
                                             <p className="text-muted-foreground text-center py-4">ยังไม่มี KPI - กรุณาสร้างใน KPI Dictionary ก่อน</p>
                                         ) : (
                                             <div className="space-y-2">
-                                                {kpiList.map(kpi => (
-                                                    <div
-                                                        key={kpi.id}
-                                                        className={`p-2 rounded-lg cursor-pointer transition-colors ${formSelectedKPIs.includes(kpi.id)
-                                                                ? 'bg-purple-100 border-purple-300 border'
-                                                                : 'bg-slate-50 hover:bg-slate-100'
-                                                            }`}
-                                                        onClick={() => toggleKPI(kpi.id)}
-                                                    >
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-mono text-sm">{kpi.code}</span>
-                                                            <span className="text-sm">{kpi.name}</span>
+                                                {kpiList.map(kpi => {
+                                                    const kpiId = kpi.id as string;
+                                                    const kpiCode = kpi.code as string;
+                                                    const kpiName = kpi.name as string;
+                                                    return (
+                                                        <div
+                                                            key={kpiId}
+                                                            className={`p-2 rounded-lg cursor-pointer transition-colors ${formSelectedKPIs.includes(kpiId)
+                                                                    ? 'bg-purple-100 border-purple-300 border'
+                                                                    : 'bg-slate-50 hover:bg-slate-100'
+                                                                }`}
+                                                            onClick={() => toggleKPI(kpiId)}
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-mono text-sm">{kpiCode}</span>
+                                                                <span className="text-sm">{kpiName}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </div>
