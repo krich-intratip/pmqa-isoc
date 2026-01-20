@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import { Shield } from 'lucide-react';
-import packageJson from '../../../package.json';
+import { APP_VERSION } from '@/config/version';
 
 export default function AppFooter() {
     const currentYear = new Date().getFullYear();
     const beYear = currentYear + 543;
-    const version = packageJson.version;
-    const lastUpdate = packageJson.lastUpdate;
 
     // แปลงวันที่จาก YYYY-MM-DD เป็นรูปแบบภาษาไทย
     const formatThaiDate = (dateString: string) => {
@@ -53,11 +51,11 @@ export default function AppFooter() {
                 {/* Version Info */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2 border-t border-slate-200 text-xs text-slate-400">
                     <span className="font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-                        Version {version}
+                        Version {APP_VERSION.version}
                     </span>
                     <span className="hidden sm:inline">•</span>
                     <span>
-                        อัปเดตล่าสุด: {formatThaiDate(lastUpdate)}
+                        อัปเดตล่าสุด: {formatThaiDate(APP_VERSION.lastUpdate)}
                     </span>
                 </div>
             </div>

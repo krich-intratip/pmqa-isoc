@@ -16,6 +16,7 @@ import {
     Database,
     Sparkles,
 } from 'lucide-react';
+import { APP_VERSION } from '@/config/version';
 
 export default function AboutPage() {
     return (
@@ -32,20 +33,63 @@ export default function AboutPage() {
                 </p>
                 <div className="flex items-center justify-center gap-4">
                     <Badge variant="outline" className="text-lg px-4 py-2">
-                        Version 1.6.1
+                        Version {APP_VERSION.version}
                     </Badge>
                     <Badge className="text-lg px-4 py-2 bg-green-100 text-green-800">
-                        Released: 20 มกราคม 2569
+                        Released: {APP_VERSION.releaseDate}
                     </Badge>
                 </div>
             </div>
+
+            {/* Version 1.6.2 Features - Dynamically rendered from config */}
+            {APP_VERSION.releases['v1.6.2'] && (
+                <Card className="border-blue-200 bg-blue-50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-blue-800">
+                            <Sparkles className="h-6 w-6" />
+                            ฟีเจอร์ใหม่ใน Version {APP_VERSION.version}
+                        </CardTitle>
+                        <CardDescription className="text-blue-700">
+                            {APP_VERSION.releases['v1.6.2'].title}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {APP_VERSION.releases['v1.6.2'].features.map((feature, idx) => {
+                                const IconComponent = feature.icon === 'Users' ? Users : ShieldCheck;
+                                return (
+                                    <div key={idx} className="bg-white p-6 rounded-lg border border-blue-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <IconComponent className="h-8 w-8 text-blue-600" />
+                                            <div>
+                                                <h3 className="font-semibold text-lg">{feature.category}</h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {feature.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <ul className="space-y-2 text-sm">
+                                            {feature.items.map((item, itemIdx) => (
+                                                <li key={itemIdx} className="flex items-start gap-2">
+                                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                                    <span>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Version 1.6.0 Features */}
             <Card className="border-emerald-200 bg-emerald-50">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-emerald-800">
                         <Sparkles className="h-6 w-6" />
-                        ฟีเจอร์ใหม่ใน Version 1.6.0
+                        Version 1.6.0 Features
                     </CardTitle>
                     <CardDescription className="text-emerald-700">
                         File Versioning System & Extended Cycle Support

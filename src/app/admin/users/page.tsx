@@ -181,26 +181,52 @@ function UsersManagementContent() {
     const handleSave = async () => {
         if (!editingUser) return;
 
+        // Validate required fields
+        if (!displayName.trim()) {
+            toast.error('กรุณากรอกชื่อ-นามสกุล');
+            return;
+        }
+
+        if (!role) {
+            toast.error('กรุณาเลือกบทบาท');
+            return;
+        }
+
         try {
-            await updateDoc(doc(db, 'users', editingUser.uid), {
-                displayName,
+            // Build metadata object without undefined values
+            const metadataUpdate: any = {};
+            if (position && position.trim()) metadataUpdate.position = position.trim();
+            if (department && department.trim()) metadataUpdate.department = department.trim();
+            if (phone && phone.trim()) metadataUpdate.phone = phone.trim();
+
+            const updateData: any = {
+                displayName: displayName.trim(),
                 role,
-                unitId: unitId || null,
                 status,
-                metadata: {
-                    position: position || undefined,
-                    department: department || undefined,
-                    phone: phone || undefined,
-                },
+                isActive: status === 'approved', // Fix: Update isActive based on status
                 updatedAt: serverTimestamp(),
-            });
+            };
+
+            // Only include unitId if it's not empty
+            if (unitId && unitId.trim()) {
+                updateData.unitId = unitId.trim();
+            } else {
+                updateData.unitId = null;
+            }
+
+            // Only include metadata if there are actual values
+            if (Object.keys(metadataUpdate).length > 0) {
+                updateData.metadata = metadataUpdate;
+            }
+
+            await updateDoc(doc(db, 'users', editingUser.uid), updateData);
 
             toast.success('อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว');
             setDialogOpen(false);
             setEditingUser(null);
             fetchUsers();
         } catch (error) {
-            console.error(error);
+            console.error('Error updating user:', error);
             toast.error('เกิดข้อผิดพลาดในการอัปเดต');
         }
     };
@@ -362,7 +388,7 @@ function UsersManagementContent() {
 
     // Export to CSV
     const handleExport = () => {
-        const csvHeaders = ['ชื่อ-นามสกุล', 'อีเมล', 'บทบาท', 'หน่วยงาน', 'สถานะ', 'วันที่สมัคร'];
+        const csvHeaders = ['ชื่อ-นามสกุล', 'อีเมล', 'บทบาท', 'หน่วยงาน', 'สถานะ', 'วันที่สมัคร', 'เข้าใช้งานล่าสุด'];
         const csvRows = filteredUsers.map(u => [
             u.displayName,
             u.email,
@@ -370,6 +396,7 @@ function UsersManagementContent() {
             u.unitId || '-',
             getStatusText(u.status),
             u.createdAt ? u.createdAt.toDate().toLocaleDateString('th-TH') : '-',
+            u.lastLoginAt ? u.lastLoginAt.toDate().toLocaleDateString('th-TH') : '-',
         ]);
 
         const csvContent = [
@@ -602,6 +629,7 @@ function UsersManagementContent() {
                                         <TableHead>บทบาท</TableHead>
                                         <TableHead>หน่วยงาน</TableHead>
                                         <TableHead>วันที่สมัคร</TableHead>
+                                        <TableHead>เข้าใช้งานล่าสุด</TableHead>
                                         <TableHead>สถานะ</TableHead>
                                         <TableHead className="text-right">จัดการ</TableHead>
                                     </TableRow>
@@ -632,6 +660,17 @@ function UsersManagementContent() {
                                             <TableCell className="text-sm text-muted-foreground">
                                                 {u.createdAt
                                                     ? u.createdAt.toDate().toLocaleDateString('th-TH')
+                                                    : '-'}
+                                            </TableCell>
+                                            <TableCell className="text-sm text-muted-foreground">
+                                                {u.lastLoginAt
+                                                    ? u.lastLoginAt.toDate().toLocaleDateString('th-TH', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })
                                                     : '-'}
                                             </TableCell>
                                             <TableCell>{getStatusBadge(u.status)}</TableCell>
