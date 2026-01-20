@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import { db } from '@/lib/firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -43,7 +43,8 @@ interface AnnouncementCardProps {
     delay?: number;
 }
 
-function AnnouncementCard({ announcement, slot, delay = 0 }: AnnouncementCardProps) {
+// Memoized to prevent re-renders when parent updates
+const AnnouncementCard = memo(function AnnouncementCard({ announcement, slot, delay = 0 }: AnnouncementCardProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const config = SLOT_CONFIG[slot];
@@ -132,7 +133,7 @@ function AnnouncementCard({ announcement, slot, delay = 0 }: AnnouncementCardPro
             </CardFooter>
         </Card>
     );
-}
+});
 
 export function AnnouncementCards() {
     const [announcements, setAnnouncements] = useState<Record<AnnouncementSlot, Announcement | null>>({

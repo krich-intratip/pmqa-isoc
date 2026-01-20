@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useCallback } from 'react';
 import { useCycleStore } from '@/stores/cycle-store';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -12,16 +12,25 @@ interface CycleSelectorProps {
     className?: string;
 }
 
-export default function CycleSelector({ compact = false, className = '' }: CycleSelectorProps) {
+// Memoized to prevent re-renders when used in header
+const CycleSelector = memo(function CycleSelector({ compact = false, className = '' }: CycleSelectorProps) {
     const { cycles, selectedCycle, loading, fetchCycles, setSelectedCycle } = useCycleStore();
     const [mounted, setMounted] = useState(false);
+
+    // Memoized handler to prevent recreation on every render
+    const handleValueChange = useCallback((cycleId: string) => {
+        const cycle = cycles.find(c => c.id === cycleId);
+        if (cycle) {
+            setSelectedCycle(cycle);
+        }
+    }, [cycles, setSelectedCycle]);
 
     useEffect(() => {
         setMounted(true);
         if (mounted && cycles.length === 0 && !loading) {
             fetchCycles();
         }
-    }, [mounted]);
+    }, [mounted, cycles.length, loading, fetchCycles]);
 
     if (!mounted) {
         return null; // Prevent hydration mismatch
@@ -47,19 +56,13 @@ export default function CycleSelector({ compact = false, className = '' }: Cycle
         );
     }
 
-    const handleCycleChange = (cycleId: string) => {
-        const cycle = cycles.find((c) => c.id === cycleId);
-        if (cycle) {
-            setSelectedCycle(cycle);
-        }
-    };
-
-    const formatCycleName = (cycle: AssessmentCycle) => {
+    // Memoized formatter to prevent recreation
+    const formatCycleName = useCallback((cycle: AssessmentCycle) => {
         if (compact) {
             return `${cycle.year}`;
         }
         return cycle.name || `รอบประเมิน ${cycle.year}`;
-    };
+    }, [compact]);
 
     const getStatusBadge = (status: string) => {
         const statusMap = {
@@ -76,7 +79,7 @@ export default function CycleSelector({ compact = false, className = '' }: Cycle
             <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select
                 value={selectedCycle?.id || ''}
-                onValueChange={handleCycleChange}
+                onValueChange={handleValueChange}
             >
                 <SelectTrigger className={compact ? 'w-[120px] h-8 text-xs' : 'w-[280px]'}>
                     <SelectValue placeholder="เลือกรอบการประเมิน" />
@@ -102,4 +105,6 @@ export default function CycleSelector({ compact = false, className = '' }: Cycle
             </Select>
         </div>
     );
-}
+});
+
+export default CycleSelector;

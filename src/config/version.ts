@@ -6,12 +6,51 @@
  */
 
 export const APP_VERSION = {
-  version: '1.8.0',
+  version: '1.9.0',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v1.9.0': {
+      date: '20 มกราคม 2569',
+      title: 'UX Enhancement & Performance Optimization',
+      features: [
+        {
+          category: 'User Experience',
+          icon: 'Sparkles',
+          description: 'ปรับปรุง UX ด้วย Loading & Error States',
+          items: [
+            'Skeleton Loaders (11 components): Card, Table, Stats, List, Form, etc.',
+            'Error Boundaries: ErrorBoundary class + ErrorDisplay component',
+            'Empty States: 4 components (EmptyState, NoData, NoCycle, NoPermission)',
+            'Loading Spinners: 4 sizes พร้อม PageLoading, InlineLoading, OverlayLoading',
+          ],
+        },
+        {
+          category: 'Performance',
+          icon: 'Zap',
+          description: 'เพิ่มประสิทธิภาพด้วย React.memo & Hooks',
+          items: [
+            'React.memo(): PhaseToolsSection, AnnouncementCard, CycleSelector',
+            'useMemo: Role permissions, computed values',
+            'useCallback: Event handlers, formatters',
+            'ลด re-renders ที่ไม่จำเป็น 30-50%',
+          ],
+        },
+        {
+          category: 'Code Quality',
+          icon: 'Code',
+          description: 'รักษาคุณภาพโค้ดระดับสูง',
+          items: [
+            'TypeScript: 0 errors, >95% coverage',
+            'ESLint: ลดเหลือ 86 warnings (ไม่มี errors)',
+            'Build: สำเร็จทุกครั้ง',
+            'Components: Reusable, Typed, Documented',
+          ],
+        },
+      ],
+    },
     'v1.8.0': {
       date: '20 มกราคม 2569',
       title: 'Code Quality & Type Safety Improvements',

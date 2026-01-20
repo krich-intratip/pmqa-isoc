@@ -92,6 +92,146 @@ export default function AboutPage() {
                 </Card>
             )}
 
+            {/* Version 1.8.0 Features */}
+            <Card className="border-slate-200 bg-slate-50">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-slate-800">
+                        <Sparkles className="h-6 w-6" />
+                        Version 1.8.0 Features
+                    </CardTitle>
+                    <CardDescription className="text-slate-700">
+                        Code Quality & Type Safety Improvements
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Code Quality */}
+                        <div className="bg-white p-6 rounded-lg border border-slate-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <FileText className="h-8 w-8 text-slate-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">Code Quality</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        ปรับปรุงคุณภาพโค้ดและความปลอดภัยของ Type
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>แก้ไข ESLint errors เหลือ 0 (Clean Code)</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>เปลี่ยน ANY types เป็น Strict Types &gt;95%</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Performance Optimization (useCallback)</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Technical Improvements */}
+                        <div className="bg-white p-6 rounded-lg border border-slate-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Settings className="h-8 w-8 text-slate-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">Technical Improvements</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        ความเสถียรและประสิทธิภาพ
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Build System เสถียรและรวดเร็วขึ้น</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>User Role & Status Types Definition</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Activity Log Structure Improvement</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Version 1.7.0 Features */}
+            <Card className="border-purple-200 bg-purple-50">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-purple-800">
+                        <Sparkles className="h-6 w-6" />
+                        Version 1.7.0 Features
+                    </CardTitle>
+                    <CardDescription className="text-purple-700">
+                        Dashboard Announcements & Role-Based UI
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Announcements System */}
+                        <div className="bg-white p-6 rounded-lg border border-purple-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <LayoutDashboard className="h-8 w-8 text-purple-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">Announcements System</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        ระบบประกาศข่าวสารและประชาสัมพันธ์
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Dashboard Announcement Cards</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Admin Announcement Manager</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Responsive Grid Layout & Animations</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Adaptive Dashboard */}
+                        <div className="bg-white p-6 rounded-lg border border-purple-200">
+                            <div className="flex items-center gap-3 mb-4">
+                                <ShieldCheck className="h-8 w-8 text-purple-600" />
+                                <div>
+                                    <h3 className="font-semibold text-lg">Adaptive Dashboard</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        ปรับปรุงหน้าจอตามสิทธิ์การใช้งาน
+                                    </p>
+                                </div>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Admin Dashboard Tabs แยกหมวดหมู่</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Real-time Data Integration</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <span>Notification System (Bell Icon)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
             {/* Version 1.6.0 Features */}
             <Card className="border-emerald-200 bg-emerald-50">
                 <CardHeader>

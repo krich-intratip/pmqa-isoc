@@ -24,7 +24,8 @@
       "Bash(done)",
       "Bash(xargs ls:*)",
       "Bash(npm run lint:*)",
-      "Bash(vercel:*)"
+      "Bash(vercel:*)",
+      "Bash(git reset:*)"
     ]
   }
 }

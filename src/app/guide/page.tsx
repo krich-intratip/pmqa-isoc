@@ -678,9 +678,10 @@ export default function GuidePage() {
                         <div className="space-y-4">
                             <h4 className="font-semibold text-slate-800 flex items-center gap-2">
                                 <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
-                                การจัดการผู้ใช้งาน (User Management)
+                                การจัดการผู้ใช้งาน (User Management) & ประกาศ (Announcements)
                             </h4>
                             <ul className="list-disc pl-10 space-y-2">
+                                <li><strong>จัดการประกาศ (Announcements):</strong> สร้าง แก้ไข หรือลบประกาศบน Dashboard (v1.7.0)</li>
                                 <li>อนุมัติ/ปฏิเสธคำขอเข้าใช้งาน</li>
                                 <li>แก้ไขข้อมูล User: บทบาท, หน่วยงาน, ข้อมูลส่วนตัว</li>
                                 <li>แก้ไขข้อมูลก่อนอนุมัติได้ (v1.6.2)</li>

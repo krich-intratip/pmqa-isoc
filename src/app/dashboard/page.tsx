@@ -3,7 +3,7 @@
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
@@ -40,10 +40,19 @@ export default function Dashboard() {
     const [kpiDataCount, setKpiDataCount] = useState(0);
     const [pendingUsersCount, setPendingUsersCount] = useState(0);
 
-    // Role-based permissions
-    const isReviewer = user ? canApproveEvidence(user.role) : false;
-    const showAdminTabs = user ? shouldShowAdminTabs(user.role) : false;
-    const availablePhases = user ? getAvailablePhaseTools(user.role) : [0];
+    // Role-based permissions (memoized to prevent recalculation)
+    const isReviewer = useMemo(() =>
+        user ? canApproveEvidence(user.role) : false,
+        [user]
+    );
+    const showAdminTabs = useMemo(() =>
+        user ? shouldShowAdminTabs(user.role) : false,
+        [user]
+    );
+    const availablePhases = useMemo(() =>
+        user ? getAvailablePhaseTools(user.role) : [0],
+        [user]
+    );
 
     useEffect(() => {
         const unsubscribe = initialize();
@@ -461,7 +470,8 @@ export default function Dashboard() {
 }
 
 // Separate component for Phase Tools to avoid duplication
-function PhaseToolsSection({
+// Memoized to prevent re-renders when parent dashboard updates stats
+const PhaseToolsSection = memo(function PhaseToolsSection({
     isReviewer,
     availablePhases
 }: {
@@ -913,4 +923,4 @@ function PhaseToolsSection({
             )}
         </>
     );
-}
+});
