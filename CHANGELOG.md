@@ -2,6 +2,14 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [1.7.4] - 2026-01-20
+
+### Changed - Dashboard Announcements UI
+- ปรับ Layout การแสดงผลประกาศเป็น 3 คอลัมน์
+- เพิ่มระบบ Expand/Collapse สำหรับเนื้อหาประกาศที่ยาว
+- ปรับปรุง Animation และการตัดคำ (Truncate text)
+- แสดงปุ่ม "อ่านต่อ" เฉพาะเมื่อเนื้อหายาวเกินกำหนด
+
 ## [1.7.3] - 2026-01-20
 
 ### Added - Dashboard Announcements

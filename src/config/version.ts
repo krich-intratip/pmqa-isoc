@@ -6,12 +6,29 @@
  */
 
 export const APP_VERSION = {
-  version: '1.7.3',
+  version: '1.7.4',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v1.7.4': {
+      date: '20 มกราคม 2569',
+      title: 'Dashboard Announcements UI Refinement',
+      features: [
+        {
+          category: 'User Interface',
+          icon: 'Layout',
+          description: 'ปรับปรุงการแสดงผลประกาศ',
+          items: [
+            'ปรับ Layout เป็น 3 คอลัมน์ (Grid View)',
+            'เพิ่มระบบย่อ/ขยายเนื้อหา (Expand/Collapse)',
+            'เพิ่ม Animation การแสดงผลที่นุ่มนวลขึ้น',
+            'ปรับขนาด Card ให้เท่ากันเพื่อความสวยงาม',
+          ],
+        },
+      ],
+    },
     'v1.7.3': {
       date: '20 มกราคม 2569',
       title: 'Dashboard Announcements Feature',
