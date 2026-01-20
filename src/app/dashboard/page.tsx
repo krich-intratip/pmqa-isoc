@@ -374,7 +374,6 @@ export default function Dashboard() {
                     {/* Tab 4: Phase Tools */}
                     <TabsContent value="tools" className="space-y-6">
                         <PhaseToolsSection
-                            isAdmin={isAdmin}
                             isReviewer={isReviewer}
                             availablePhases={availablePhases}
                         />
@@ -455,7 +454,6 @@ export default function Dashboard() {
 
             {/* Phase Tools for Regular Users */}
             <PhaseToolsSection
-                isAdmin={isAdmin}
                 isReviewer={isReviewer}
                 availablePhases={availablePhases}
             />
@@ -465,11 +463,9 @@ export default function Dashboard() {
 
 // Separate component for Phase Tools to avoid duplication
 function PhaseToolsSection({
-    isAdmin,
     isReviewer,
     availablePhases
 }: {
-    isAdmin: boolean;
     isReviewer: boolean;
     availablePhases: number[];
 }) {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -89,6 +89,7 @@ export default function GapClosureTrackerPage() {
 
     useEffect(() => {
         fetchGaps();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const handleAddGap = async () => {
@@ -128,7 +129,7 @@ export default function GapClosureTrackerPage() {
 
     const handleStatusChange = async (gapId: string, newStatus: GapItem['status']) => {
         try {
-            const updates: any = { status: newStatus };
+            const updates: Record<string, unknown> = { status: newStatus };
             if (newStatus === 'resolved') {
                 updates.resolvedDate = serverTimestamp();
             }

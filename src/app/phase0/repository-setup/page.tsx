@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuthStore } from '@/stores/auth-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

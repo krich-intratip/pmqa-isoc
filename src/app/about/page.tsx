@@ -58,7 +58,7 @@ export default function AboutPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => {
                                 // Map icon names to components
-                                const iconMap: Record<string, any> = {
+                                const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
                                     'Users': Users,
                                     'ShieldCheck': ShieldCheck,
                                     'LayoutDashboard': LayoutDashboard,

@@ -22,7 +22,9 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(done)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(npm run lint:*)",
+      "Bash(vercel:*)"
     ]
   }
 }

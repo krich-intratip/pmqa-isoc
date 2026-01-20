@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
 import { collection, query, getDocs, addDoc, serverTimestamp, orderBy } from 'firebase/firestore';
 import { Unit, UnitCategory, UnitFunction } from '@/types/database';

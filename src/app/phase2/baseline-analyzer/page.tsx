@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -72,7 +71,7 @@ export default function BaselineAnalyzerPage() {
                 where('cycleId', '==', selectedCycle.id) // v1.6.0
             );
             const kpiSnap = await getDocs(kpiQ);
-            const kpis: any[] = [];
+            const kpis: Record<string, unknown>[] = [];
             kpiSnap.forEach(d => kpis.push({ id: d.id, ...d.data() }));
 
             // Fetch KPI data with cycle filter
@@ -82,35 +81,35 @@ export default function BaselineAnalyzerPage() {
                 where('cycleId', '==', selectedCycle.id) // v1.6.0
             );
             const dataSnap = await getDocs(dataQ);
-            const allData: any[] = [];
+            const allData: Record<string, unknown>[] = [];
             dataSnap.forEach(d => allData.push({ id: d.id, ...d.data() }));
 
             // Analyze each KPI
             const results: BaselineAnalysis[] = kpis.map(kpi => {
-                const kpiData = allData.filter(d => d.kpiId === kpi.id).sort((a, b) => a.period.localeCompare(b.period));
+                const kpiData = allData.filter(d => d.kpiId === kpi.id).sort((a, b) => (a.period as string).localeCompare(b.period as string));
                 const latestData = kpiData[kpiData.length - 1];
-                const currentValue = latestData?.value || kpi.baselineValue;
+                const currentValue = (latestData?.value as number) || (kpi.baselineValue as number);
 
                 // Calculate trend
                 let trend: 'improving' | 'declining' | 'stable' = 'stable';
                 if (kpiData.length >= 2) {
                     const lastTwo = kpiData.slice(-2);
-                    const diff = lastTwo[1].value - lastTwo[0].value;
+                    const diff = (lastTwo[1].value as number) - (lastTwo[0].value as number);
                     if (kpi.direction === 'up') {
                         trend = diff > 0 ? 'improving' : diff < 0 ? 'declining' : 'stable';
                     } else if (kpi.direction === 'down') {
                         trend = diff < 0 ? 'improving' : diff > 0 ? 'declining' : 'stable';
                     } else {
-                        trend = Math.abs(diff) < kpi.targetValue * 0.05 ? 'stable' : 'declining';
+                        trend = Math.abs(diff) < (kpi.targetValue as number) * 0.05 ? 'stable' : 'declining';
                     }
                 }
 
                 // Calculate gap
                 const gapToTarget = kpi.direction === 'down'
-                    ? currentValue - kpi.targetValue
-                    : kpi.targetValue - currentValue;
-                const gapPercentage = kpi.targetValue !== 0
-                    ? Math.abs(gapToTarget / kpi.targetValue) * 100
+                    ? currentValue - (kpi.targetValue as number)
+                    : (kpi.targetValue as number) - currentValue;
+                const gapPercentage = (kpi.targetValue as number) !== 0
+                    ? Math.abs(gapToTarget / (kpi.targetValue as number)) * 100
                     : 0;
 
                 // Generate recommendation
@@ -124,13 +123,13 @@ export default function BaselineAnalyzerPage() {
                 }
 
                 return {
-                    kpiId: kpi.id,
-                    kpiCode: kpi.code,
-                    kpiName: kpi.name,
-                    unit: kpi.unit,
-                    direction: kpi.direction,
-                    baselineValue: kpi.baselineValue,
-                    targetValue: kpi.targetValue,
+                    kpiId: kpi.id as string,
+                    kpiCode: kpi.code as string,
+                    kpiName: kpi.name as string,
+                    unit: kpi.unit as string,
+                    direction: kpi.direction as 'up' | 'down' | 'maintain',
+                    baselineValue: kpi.baselineValue as number,
+                    targetValue: kpi.targetValue as number,
                     currentValue,
                     trend,
                     gapToTarget,
@@ -150,22 +149,17 @@ export default function BaselineAnalyzerPage() {
 
     useEffect(() => {
         fetchAndAnalyze();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const filteredAnalysis = selectedCategory === 'all'
         ? analysis
         : analysis.filter(a => a.kpiCode.startsWith(selectedCategory));
 
-    const getTrendIcon = (trend: string, direction: string) => {
+    const getTrendIcon = (trend: string) => {
         if (trend === 'improving') return <TrendingUp className="h-5 w-5 text-green-600" />;
         if (trend === 'declining') return <TrendingDown className="h-5 w-5 text-red-600" />;
         return <Minus className="h-5 w-5 text-yellow-600" />;
-    };
-
-    const getProgressColor = (gapPercentage: number) => {
-        if (gapPercentage <= 10) return 'bg-green-500';
-        if (gapPercentage <= 30) return 'bg-yellow-500';
-        return 'bg-red-500';
     };
 
     const improvingCount = analysis.filter(a => a.trend === 'improving').length;
@@ -297,7 +291,7 @@ export default function BaselineAnalyzerPage() {
                                             <TableCell className="text-right text-green-600 font-medium">{item.targetValue} {item.unit}</TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
-                                                    {getTrendIcon(item.trend, item.direction)}
+                                                    {getTrendIcon(item.trend)}
                                                     <span className="text-xs capitalize">{item.trend}</span>
                                                 </div>
                                             </TableCell>

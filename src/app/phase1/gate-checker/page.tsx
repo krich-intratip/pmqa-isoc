@@ -15,7 +15,7 @@ import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { Evidence } from '@/types/database';
 import { toast } from 'sonner';
-import { ROLES, canApproveEvidence } from '@/lib/auth/role-helper';
+import { ROLES } from '@/lib/auth/role-helper';
 
 const PMQA_CATEGORIES = [
     { id: 1, name: 'หมวด 1' },
@@ -113,7 +113,6 @@ export default function EvidenceGateCheckerPage() {
         }
     };
 
-    const canReview = user && canApproveEvidence(user.role);
 
     return (
         <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REVIEWER]}>
