@@ -6,7 +6,7 @@
  */
 
 export const APP_VERSION = {
-  version: '1.7.0',
+  version: '1.7.1',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
