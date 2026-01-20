@@ -63,3 +63,54 @@ export const getRoleDisplay = (role: string) => {
         default: return role;
     }
 };
+
+// v1.7.0: Dashboard Permission Helpers
+export const shouldShowAdminTabs = (role: string): boolean => {
+    return (ADMIN_ROLES as readonly string[]).includes(role);
+};
+
+export const canAccessAdminFeatures = (role: string): boolean => {
+    return (ADMIN_ROLES as readonly string[]).includes(role);
+};
+
+export const canViewSystemStats = (role: string): boolean => {
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN] as const;
+    return (allowed as readonly string[]).includes(role);
+};
+
+export const canViewActivityLogs = (role: string): boolean => {
+    return (ADMIN_ROLES as readonly string[]).includes(role);
+};
+
+export type DashboardTool = {
+    id: string;
+    phase: number;
+    requiredPermission?: (role: string) => boolean;
+};
+
+export const getAvailablePhaseTools = (role: string): number[] => {
+    const isAdmin = canManageUsers(role);
+    const canUpload = canUploadEvidence(role);
+    const canApprove = canApproveEvidence(role);
+    const isReadOnly = role === ROLES.READ_ONLY;
+
+    if (isReadOnly) {
+        return [0]; // Read-only users can only view Dashboard
+    }
+
+    if (isAdmin) {
+        return [0, 1, 2, 3, 4, 5, 6, 7]; // Full access to all phases
+    }
+
+    const phases = [0]; // Everyone gets Phase 0 (Dashboard)
+
+    if (canUpload) {
+        phases.push(1, 2); // Data collection phases
+    }
+
+    if (canApprove) {
+        phases.push(3, 4); // Review and approval phases
+    }
+
+    return phases;
+};

@@ -6,12 +6,40 @@
  */
 
 export const APP_VERSION = {
-  version: '1.6.2',
+  version: '1.7.0',
   lastUpdate: '2026-01-20',
   releaseDate: '20 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v1.7.0': {
+      date: '20 มกราคม 2569',
+      title: 'Role-Based Dashboard with Tabs & Enhanced Permissions',
+      features: [
+        {
+          category: 'Adaptive Dashboard Design',
+          icon: 'LayoutDashboard',
+          description: 'Dashboard ปรับตามบทบาทผู้ใช้งาน',
+          items: [
+            'Admin Dashboard มี 4 Tabs (ภาพรวม, จัดการผู้ใช้, ประวัติการใช้งาน, เครื่องมือ Phase)',
+            'User Dashboard แสดงเฉพาะเครื่องมือที่มีสิทธิ์เข้าถึง',
+            'Phase Tools ถูกกรองตาม Role อัตโนมัติ',
+            'UI ชัดเจนขึ้น ไม่สับสน',
+          ],
+        },
+        {
+          category: 'Enhanced Permission System',
+          icon: 'ShieldCheck',
+          description: 'ระบบ Permission ที่ยืดหยุ่นมากขึ้น',
+          items: [
+            'Helper functions สำหรับตรวจสอบสิทธิ์',
+            'shouldShowAdminTabs(), canViewSystemStats()',
+            'getAvailablePhaseTools() กรอง Phase ตาม Role',
+            'Read-only users แสดงเฉพาะ Dashboard',
+          ],
+        },
+      ],
+    },
     'v1.6.2': {
       date: '20 มกราคม 2569',
       title: 'User Management Improvements & Bug Fixes',
