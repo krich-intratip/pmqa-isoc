@@ -785,12 +785,12 @@ function UsersManagementContent() {
                             </div>
                             <div>
                                 <Label>รหัสหน่วยงาน</Label>
-                                <Select value={unitId} onValueChange={setUnitId}>
+                                <Select value={unitId || 'none'} onValueChange={(v) => setUnitId(v === 'none' ? '' : v)}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="เลือกหน่วยงาน" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">ไม่ระบุ</SelectItem>
+                                        <SelectItem value="none">ไม่ระบุ</SelectItem>
                                         {units.map(unit => (
                                             <SelectItem key={unit.id} value={unit.id}>
                                                 {unit.name}
