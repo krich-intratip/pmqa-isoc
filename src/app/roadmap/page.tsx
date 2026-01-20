@@ -228,15 +228,16 @@ export default function AssessmentRoadmapPage() {
                     </div>
 
                     {/* New Features Highlight */}
-                    <div className="mt-6 p-4 bg-white rounded-lg border border-indigo-200">
-                        <h4 className="font-semibold text-sm text-indigo-800 mb-2">✨ ฟีเจอร์ใหม่ใน v{APP_VERSION.version}</h4>
-                        <ul className="text-xs text-slate-600 space-y-1">
-                            <li>• ระบบจัดการ User ที่ปรับปรุงใหม่ - แก้ไขข้อมูลก่อนอนุมัติได้</li>
-                            <li>• แสดงเวลาเข้าใช้งานล่าสุดในตาราง User Management</li>
-                            <li>• File Versioning - จัดการเวอร์ชันไฟล์หลักฐานแบบครบวงจร (v1.6.0)</li>
-                            <li>• รองรับ Cycle ใน Phase 1-2 และ Phase 4 (v1.6.0-v1.6.1)</li>
-                        </ul>
-                    </div>
+                    {APP_VERSION.releases[`v${APP_VERSION.version}`] && (
+                        <div className="mt-6 p-4 bg-white rounded-lg border border-indigo-200">
+                            <h4 className="font-semibold text-sm text-indigo-800 mb-2">✨ ฟีเจอร์ใหม่ใน v{APP_VERSION.version}</h4>
+                            <ul className="text-xs text-slate-600 space-y-1">
+                                {APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
+                                    <li key={idx}>• {feature.description}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

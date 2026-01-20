@@ -15,6 +15,7 @@ import {
     ClipboardCheck,
     Database,
     Sparkles,
+    LayoutDashboard,
 } from 'lucide-react';
 import { APP_VERSION } from '@/config/version';
 
@@ -41,8 +42,8 @@ export default function AboutPage() {
                 </div>
             </div>
 
-            {/* Version 1.6.2 Features - Dynamically rendered from config */}
-            {APP_VERSION.releases['v1.6.2'] && (
+            {/* Current Version Features - Dynamically rendered from config */}
+            {APP_VERSION.releases[`v${APP_VERSION.version}`] && (
                 <Card className="border-blue-200 bg-blue-50">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-blue-800">
@@ -50,13 +51,20 @@ export default function AboutPage() {
                             ฟีเจอร์ใหม่ใน Version {APP_VERSION.version}
                         </CardTitle>
                         <CardDescription className="text-blue-700">
-                            {APP_VERSION.releases['v1.6.2'].title}
+                            {APP_VERSION.releases[`v${APP_VERSION.version}`].title}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {APP_VERSION.releases['v1.6.2'].features.map((feature, idx) => {
-                                const IconComponent = feature.icon === 'Users' ? Users : ShieldCheck;
+                            {APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => {
+                                // Map icon names to components
+                                const iconMap: Record<string, any> = {
+                                    'Users': Users,
+                                    'ShieldCheck': ShieldCheck,
+                                    'LayoutDashboard': LayoutDashboard,
+                                };
+                                const IconComponent = iconMap[feature.icon] || ShieldCheck;
+
                                 return (
                                     <div key={idx} className="bg-white p-6 rounded-lg border border-blue-200">
                                         <div className="flex items-center gap-3 mb-4">

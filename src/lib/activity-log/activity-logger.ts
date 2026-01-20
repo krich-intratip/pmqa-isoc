@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase/config';
-import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, Timestamp, doc, getDoc } from 'firebase/firestore';
 import { ActivityLog, ActivityAction, ActivityResourceType } from '@/types/database';
 import { User } from '@/types/database';
 
@@ -35,12 +35,26 @@ export async function logActivity(params: LogActivityParams): Promise<boolean> {
             return false;
         }
 
+        // Fetch unit name if unitId exists
+        let unitName: string | undefined = undefined;
+        if (params.user.unitId) {
+            try {
+                const unitDoc = await getDoc(doc(db, 'units', params.user.unitId));
+                if (unitDoc.exists()) {
+                    unitName = unitDoc.data()?.name;
+                }
+            } catch (error) {
+                console.warn('Failed to fetch unit name:', error);
+                // Continue logging even if unit fetch fails
+            }
+        }
+
         const logData: Omit<ActivityLog, 'id'> = {
             userId: params.user.uid,
             userName: params.user.displayName,
             userEmail: params.user.email,
             unitId: params.user.unitId,
-            unitName: undefined, // TODO: ดึงจาก units collection ถ้าต้องการ
+            unitName, // v1.8.0: ดึงจาก units collection
 
             action: params.action,
             resourceType: params.resourceType,

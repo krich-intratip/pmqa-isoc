@@ -640,7 +640,7 @@ export default function GuidePage() {
                 </Card>
 
                 {/* ============================================ */}
-                {/* WHAT'S NEW IN v1.6.2 */}
+                {/* WHAT'S NEW IN CURRENT VERSION */}
                 {/* ============================================ */}
                 <Card className="border-l-4 border-l-blue-500 shadow-sm bg-blue-50">
                     <CardHeader>
@@ -650,7 +650,7 @@ export default function GuidePage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4 text-slate-600">
-                        {APP_VERSION.releases['v1.6.2'] && APP_VERSION.releases['v1.6.2'].features.map((feature, idx) => (
+                        {APP_VERSION.releases[`v${APP_VERSION.version}`] && APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
                             <div key={idx} className="bg-white p-4 rounded-lg border border-blue-200">
                                 <h4 className="font-semibold text-slate-800 mb-2">{feature.category}</h4>
                                 <p className="text-sm text-slate-500 mb-2">{feature.description}</p>
