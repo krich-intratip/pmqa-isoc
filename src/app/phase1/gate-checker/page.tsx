@@ -85,6 +85,7 @@ export default function EvidenceGateCheckerPage() {
 
     useEffect(() => {
         fetchPending();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedCycle]); // v1.6.0: Re-fetch when cycle changes
 
     const handleVerify = async (status: 'verified' | 'rejected') => {

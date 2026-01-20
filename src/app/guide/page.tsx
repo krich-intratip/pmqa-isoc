@@ -5,9 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import {
     Book, FileText, LayoutDashboard, Database,
     BarChart3, PenTool, CheckCircle2, ShieldCheck,
-    Users, Presentation, Settings, Key, Upload,
-    Download, Sparkles, AlertCircle, HelpCircle,
-    Target, ClipboardList, Network, Calendar,
+    Users, Presentation, Sparkles, AlertCircle, HelpCircle,
+    ClipboardList, Network, Calendar,
     Calculator, MessageSquare, TrendingUp, Eye
 } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";

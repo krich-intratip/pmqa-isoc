@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
 import { FolderPlus, CheckCircle2, Loader2, FolderTree, Link2, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { ROLES } from '@/lib/auth/role-helper';
@@ -26,7 +25,6 @@ const FOLDER_STRUCTURE = [
 ];
 
 export default function RepositorySetupPage() {
-    const { user } = useAuthStore();
     const [unitName, setUnitName] = useState('');
     const [year, setYear] = useState(new Date().getFullYear() + 543);
     const [driveLink, setDriveLink] = useState('');
@@ -118,7 +116,7 @@ export default function RepositorySetupPage() {
                             </CardHeader>
                             <CardContent>
                                 <div className="bg-slate-50 p-4 rounded-lg font-mono text-sm space-y-1">
-                                    {folders.map((folder, idx) => (
+                                    {folders.map((folder) => (
                                         <div key={folder.id} className={`flex items-center gap-2 ${folder.parent ? 'ml-6' : ''}`}>
                                             <Checkbox
                                                 checked={selectedFolders.includes(folder.id)}

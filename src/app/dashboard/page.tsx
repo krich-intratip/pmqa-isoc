@@ -20,8 +20,6 @@ import {
     canManageUsers,
     canApproveEvidence,
     shouldShowAdminTabs,
-    canViewSystemStats,
-    canViewActivityLogs,
     getAvailablePhaseTools
 } from '@/lib/auth/role-helper';
 import { db } from '@/lib/firebase/config';
@@ -46,7 +44,6 @@ export default function Dashboard() {
     const isAdmin = user ? canManageUsers(user.role) : false;
     const isReviewer = user ? canApproveEvidence(user.role) : false;
     const showAdminTabs = user ? shouldShowAdminTabs(user.role) : false;
-    const canViewStats = user ? canViewSystemStats(user.role) : false;
     const availablePhases = user ? getAvailablePhaseTools(user.role) : [0];
 
     useEffect(() => {

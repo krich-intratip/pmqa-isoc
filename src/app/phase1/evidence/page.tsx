@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,11 +17,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { db } from '@/lib/firebase/config';
-import { collection, addDoc, query, where, getDocs, serverTimestamp, Timestamp, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, serverTimestamp, Timestamp, doc, deleteDoc } from 'firebase/firestore';
 import { Evidence, FileVersion } from '@/types/database';
 import { toast } from 'sonner';
 import { canDeleteFiles } from '@/lib/auth/role-helper';
-import { getVersionHistory, addNewVersion, deleteVersion, revertToVersion, formatFileSize, formatUploadDate } from '@/lib/file-version/file-version-helper';
+import { getVersionHistory, addNewVersion, revertToVersion, formatUploadDate } from '@/lib/file-version/file-version-helper';
 
 const PMQA_CATEGORIES = [
     { id: 1, name: 'หมวด 1: การนำองค์การ' },
@@ -99,6 +99,7 @@ export default function EvidenceRegisterPage() {
 
     useEffect(() => {
         fetchEvidence(selectedCategory);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory, user, selectedCycle]);
 
     const handleAddEvidence = async () => {

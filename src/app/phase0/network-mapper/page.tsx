@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase/config';
 import { collection, query, getDocs, addDoc, serverTimestamp, orderBy } from 'firebase/firestore';
 import { Unit, UnitCategory, UnitFunction } from '@/types/database';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,11 +15,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { ROLES, UNIT_TYPES } from '@/lib/auth/role-helper';
+import { ROLES } from '@/lib/auth/role-helper';
 import { Map, Plus, Building2, LayoutGrid } from 'lucide-react';
 
 export default function NetworkMapperPage() {
-    const { user } = useAuthStore();
     const [units, setUnits] = useState<Unit[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
@@ -119,7 +118,7 @@ export default function NetworkMapperPage() {
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="category" className="text-right">ประเภท</Label>
-                                    <Select value={category} onValueChange={(v: any) => setCategory(v)}>
+                                    <Select value={category} onValueChange={(v: UnitCategory) => setCategory(v)}>
                                         <SelectTrigger className="col-span-3">
                                             <SelectValue placeholder="เลือกประเภท" />
                                         </SelectTrigger>
@@ -134,7 +133,7 @@ export default function NetworkMapperPage() {
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="function" className="text-right">หน้าที่</Label>
-                                    <Select value={func} onValueChange={(v: any) => setFunc(v)}>
+                                    <Select value={func} onValueChange={(v: UnitFunction) => setFunc(v)}>
                                         <SelectTrigger className="col-span-3">
                                             <SelectValue placeholder="เลือกหน้าที่" />
                                         </SelectTrigger>

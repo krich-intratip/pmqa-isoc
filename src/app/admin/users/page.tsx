@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
 import { collection, getDocs, updateDoc, doc, serverTimestamp, writeBatch } from 'firebase/firestore';
-import { User, Unit, UnitCategory } from '@/types/database';
+import { User, Unit } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -452,16 +452,6 @@ function UsersManagementContent() {
         return unit ? unit.name : unitId;
     };
 
-    const getCategoryLabel = (category: UnitCategory): string => {
-        const labels: Record<UnitCategory, string> = {
-            Central: 'ส่วนกลาง',
-            Regional: 'ภาค',
-            Provincial: 'จังหวัด',
-            Center: 'ศูนย์',
-            DirectUnit: 'หน่วยงานสังกัดโดยตรง',
-        };
-        return labels[category] || category;
-    };
 
     const pendingCount = users.filter(u => u.status === 'pending').length;
     const approvedCount = users.filter(u => u.status === 'approved').length;

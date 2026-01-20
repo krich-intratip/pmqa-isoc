@@ -79,8 +79,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function SubmissionCalendarPage() {
-    const { user } = useAuthStore();
-    const [startDate, setStartDate] = useState(new Date());
+    const [startDate] = useState(new Date());
     const [selectedYear, setSelectedYear] = useState((new Date().getFullYear() + 543).toString());
 
     const generateSchedule = () => {
