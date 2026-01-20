@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Calendar, Target, FileText, Database, BarChart, FileCheck,
-    MessageSquare, CheckCircle2, ArrowRight, Info, Play
+    MessageSquare, CheckCircle2, ArrowDown, Info, Play
 } from 'lucide-react';
 import Link from 'next/link';
 import { APP_VERSION } from '@/config/version';
@@ -255,11 +255,10 @@ export default function AssessmentRoadmapPage() {
                             return (
                                 <div key={phase.id} className="relative">
                                     <Card
-                                        className={`hover:shadow-lg transition-all cursor-pointer border-2 ${
-                                            selectedPhase.id === phase.id
-                                                ? 'border-indigo-500 shadow-md'
-                                                : 'border-transparent'
-                                        }`}
+                                        className={`hover:shadow-lg transition-all cursor-pointer border-2 ${selectedPhase.id === phase.id
+                                            ? 'border-indigo-500 shadow-md'
+                                            : 'border-transparent'
+                                            }`}
                                         onClick={() => setSelectedPhase(phase)}
                                     >
                                         <CardHeader>
@@ -313,7 +312,7 @@ export default function AssessmentRoadmapPage() {
                                     {/* Arrow between phases */}
                                     {index < phases.length - 1 && (
                                         <div className="flex justify-center py-2">
-                                            <ArrowRight className="h-6 w-6 text-muted-foreground" />
+                                            <ArrowDown className="h-6 w-6 text-muted-foreground" />
                                         </div>
                                     )}
                                 </div>
@@ -332,11 +331,10 @@ export default function AssessmentRoadmapPage() {
                                 return (
                                     <Card
                                         key={phase.id}
-                                        className={`cursor-pointer hover:shadow-md transition-all ${
-                                            selectedPhase.id === phase.id
-                                                ? 'border-indigo-500 border-2'
-                                                : ''
-                                        }`}
+                                        className={`cursor-pointer hover:shadow-md transition-all ${selectedPhase.id === phase.id
+                                            ? 'border-indigo-500 border-2'
+                                            : ''
+                                            }`}
                                         onClick={() => setSelectedPhase(phase)}
                                     >
                                         <CardHeader className="p-4">

@@ -678,21 +678,19 @@ export default function AboutPage() {
                         <div className="flex items-start gap-2">
                             <span className="text-yellow-600 font-semibold min-w-[80px]">Phase ถัดไป:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• Assessment Roadmap/Flow Visualization</li>
-                                <li>• Cycle Selector ใน Dashboard/Header</li>
-                                <li>• Dashboard แสดงสถิติจริงจาก Database</li>
-                                <li>• Notification System</li>
-                                <li>• File Upload/Download Tracking</li>
+                                <li>• Export/Import Data (Excel, PDF)</li>
+                                <li>• Version Control สำหรับเนื้อหา SAR</li>
+                                <li>• Dark Mode Support</li>
+                                <li>• Cross-Consistency Check (ตรวจสอบความสอดคล้องข้ามเกณฑ์)</li>
                             </ul>
                         </div>
                         <div className="flex items-start gap-2">
                             <span className="text-yellow-600 font-semibold min-w-[80px]">Long-term:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• Export/Import Data (Excel, PDF)</li>
-                                <li>• Version Control สำหรับ SAR</li>
-                                <li>• Mobile Responsive Improvements</li>
-                                <li>• Dark Mode</li>
                                 <li>• Advanced Analytics & Reporting</li>
+                                <li>• AI-Driven Insights (Advanced)</li>
+                                <li>• Cross-Agency Benchmarking</li>
+                                <li>• Mobile App (Native)</li>
                             </ul>
                         </div>
                     </div>
