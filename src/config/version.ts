@@ -6,12 +6,40 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.4',
+  version: '3.0.5',
   lastUpdate: '2026-01-21',
   releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.5': {
+      date: '21 มกราคม 2569',
+      title: 'User Management & Dark Mode Improvements',
+      features: [
+        {
+          category: 'User Management Enhancements',
+          icon: 'Users',
+          description: 'ปรับปรุงการจัดการผู้ใช้งานและแสดงสถานะออนไลน์',
+          items: [
+            'แสดงสัญลักษณ์ออนไลน์/ออฟไลน์ที่หน้าชื่อ User ในตาราง',
+            'Filter กรองผู้ใช้ตามสถานะออนไลน์ (ทั้งหมด/ออนไลน์/ออฟไลน์)',
+            'เรียงลำดับตามชื่ออัตโนมัติ',
+            'แสดงประวัติการ Online ในหน้าแก้ไขผู้ใช้ (เข้ามาเมื่อไหร่ นานแค่ไหน)',
+          ],
+        },
+        {
+          category: 'Dark Mode Improvements',
+          icon: 'Palette',
+          description: 'ปรับปรุง Dark Mode ให้อ่านง่ายขึ้น',
+          items: [
+            'ปรับสีตัวหนังสือให้มีความคมชัดมากขึ้น',
+            'ปรับสีพื้นหลังและ Card ให้เหมาะสม',
+            'ปรับปรุง Contrast Ratio สำหรับการอ่าน',
+            'ปรับสี Border และ Input ให้ชัดเจนขึ้น',
+          ],
+        },
+      ],
+    },
     'v3.0.4': {
       date: '21 มกราคม 2569',
       title: 'Stability & Meta Sync',

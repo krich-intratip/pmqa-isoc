@@ -1,7 +1,28 @@
 # PMQA-ISOC Development Roadmap
 
 > แผนพัฒนาฟีเจอร์ - อัปเดต: 21 มกราคม 2569
-> **Status:** v3.0.4 Stability & Meta Sync
+> **Status:** v3.0.5 User Management & Dark Mode Improvements
+
+---
+
+## ✅ v3.0.5 - User Management & Dark Mode Improvements
+
+**Release Date:** 21 มกราคม 2569
+**Status:** ✅ Released
+
+### New Features:
+
+#### User Management Enhancements ✅
+- [x] แสดงสัญลักษณ์ออนไลน์/ออฟไลน์ที่หน้าชื่อ User ในตาราง
+- [x] Filter กรองผู้ใช้ตามสถานะออนไลน์ (ทั้งหมด/ออนไลน์/ออฟไลน์)
+- [x] เรียงลำดับตามชื่ออัตโนมัติ
+- [x] แสดงประวัติการ Online ในหน้าแก้ไขผู้ใช้ (เข้ามาเมื่อไหร่ นานแค่ไหน)
+
+#### Dark Mode Improvements ✅
+- [x] ปรับสีตัวหนังสือให้มีความคมชัดมากขึ้น
+- [x] ปรับสีพื้นหลังและ Card ให้เหมาะสม
+- [x] ปรับปรุง Contrast Ratio สำหรับการอ่าน
+- [x] ปรับสี Border และ Input ให้ชัดเจนขึ้น
 
 ---
 

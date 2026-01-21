@@ -6,8 +6,9 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { db } from '@/lib/firebase/config';
-import { collection, getDocs, updateDoc, doc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, serverTimestamp, writeBatch, onSnapshot } from 'firebase/firestore';
 import { User, Unit } from '@/types/database';
+import { UserPresence, getAllUsersPresence } from '@/lib/firebase/presence';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -21,10 +22,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
-import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown } from 'lucide-react';
+import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown, Circle, Clock, Activity } from 'lucide-react';
 import BulkImportUsers from '@/components/admin/BulkImportUsers';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { sendApprovalNotification, sendRejectionNotification } from '@/lib/notification/notification-helper';
+import { formatDistanceToNow } from 'date-fns';
+import { th } from 'date-fns/locale';
 
 function UsersManagementContent() {
     const searchParams = useSearchParams();
@@ -34,6 +37,7 @@ function UsersManagementContent() {
     const [users, setUsers] = useState<User[]>([]);
     const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     const [units, setUnits] = useState<Unit[]>([]);
+    const [presenceData, setPresenceData] = useState<Map<string, UserPresence>>(new Map());
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -47,6 +51,7 @@ function UsersManagementContent() {
     const [filterUnitCategory, setFilterUnitCategory] = useState<string>('all');
     const [filterUnitId, setFilterUnitId] = useState<string>('all');
     const [filterRegion, setFilterRegion] = useState<string>('all');
+    const [filterOnlineStatus, setFilterOnlineStatus] = useState<'all' | 'online' | 'offline'>('all');
     const [sortBy, setSortBy] = useState<'name' | 'date'>('name');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -93,6 +98,48 @@ function UsersManagementContent() {
             console.error('Error fetching units:', error);
         }
     };
+
+    // Fetch presence data
+    useEffect(() => {
+        if (!user || !canManageUsers(user.role)) return;
+
+        // Subscribe to presence collection for real-time updates
+        const presenceRef = collection(db, 'presence');
+        const unsubscribe = onSnapshot(presenceRef, (snapshot) => {
+            const now = Date.now();
+            const FIVE_MINUTES = 5 * 60 * 1000;
+            const presenceMap = new Map<string, UserPresence>();
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                let isActive = false;
+                if (data.lastActivity) {
+                    try {
+                        const lastActivityTime = data.lastActivity.toDate().getTime();
+                        isActive = (now - lastActivityTime) < FIVE_MINUTES;
+                    } catch {
+                        isActive = false;
+                    }
+                }
+
+                presenceMap.set(data.userId, {
+                    userId: data.userId,
+                    displayName: data.displayName,
+                    email: data.email,
+                    role: data.role,
+                    unitName: data.unitName,
+                    unitCategory: data.unitCategory,
+                    isOnline: isActive,
+                    lastSeen: data.lastSeen,
+                    lastActivity: data.lastActivity,
+                });
+            });
+
+            setPresenceData(presenceMap);
+        });
+
+        return () => unsubscribe();
+    }, [user]);
 
     useEffect(() => {
         if (user && canManageUsers(user.role)) {
@@ -152,6 +199,18 @@ function UsersManagementContent() {
             result = result.filter(u => u.unitId && regionalUnitIds.includes(u.unitId));
         }
 
+        // Filter by online status
+        if (filterOnlineStatus !== 'all') {
+            result = result.filter(u => {
+                const presence = presenceData.get(u.uid);
+                if (filterOnlineStatus === 'online') {
+                    return presence?.isOnline === true;
+                } else {
+                    return !presence || presence.isOnline === false;
+                }
+            });
+        }
+
         // Sorting
         result.sort((a, b) => {
             if (sortBy === 'name') {
@@ -166,7 +225,7 @@ function UsersManagementContent() {
         });
 
         setFilteredUsers(result);
-    }, [searchTerm, filterUnitCategory, filterUnitId, filterRegion, sortBy, sortOrder, users, units, activeTab]);
+    }, [searchTerm, filterUnitCategory, filterUnitId, filterRegion, filterOnlineStatus, sortBy, sortOrder, users, units, activeTab, presenceData]);
 
     const handleEdit = (editUser: User) => {
         setEditingUser(editUser);
@@ -467,6 +526,42 @@ function UsersManagementContent() {
         return unit ? unit.name : unitId;
     };
 
+    const isUserOnline = (userId: string): boolean => {
+        const presence = presenceData.get(userId);
+        return presence?.isOnline === true;
+    };
+
+    const getUserPresence = (userId: string): UserPresence | null => {
+        return presenceData.get(userId) || null;
+    };
+
+    const formatLastActivity = (presence: UserPresence | null): string => {
+        if (!presence || !presence.lastActivity) return 'ไม่ทราบ';
+        try {
+            return formatDistanceToNow(presence.lastActivity.toDate(), { addSuffix: true, locale: th });
+        } catch {
+            return 'ไม่ทราบ';
+        }
+    };
+
+    const getOnlineDuration = (presence: UserPresence | null): string => {
+        if (!presence || !presence.lastActivity || !presence.isOnline) return '-';
+        try {
+            const lastSeen = presence.lastSeen?.toDate();
+            if (!lastSeen) return '-';
+            const now = new Date();
+            const diffMs = now.getTime() - lastSeen.getTime();
+            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            if (hours > 0) {
+                return `${hours} ชม. ${minutes} นาที`;
+            }
+            return `${minutes} นาที`;
+        } catch {
+            return '-';
+        }
+    };
+
 
     const pendingCount = users.filter(u => u.status === 'pending').length;
     const approvedCount = users.filter(u => u.status === 'approved').length;
@@ -595,6 +690,17 @@ function UsersManagementContent() {
                                         <SelectItem value="4">ภาค 4</SelectItem>
                                     </SelectContent>
                                 </Select>
+
+                                <Select value={filterOnlineStatus} onValueChange={(v: 'all' | 'online' | 'offline') => setFilterOnlineStatus(v)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="สถานะออนไลน์" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">ทั้งหมด</SelectItem>
+                                        <SelectItem value="online">ออนไลน์</SelectItem>
+                                        <SelectItem value="offline">ออฟไลน์</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             {/* Bulk Actions */}
@@ -665,7 +771,21 @@ function UsersManagementContent() {
                                                     />
                                                 )}
                                             </TableCell>
-                                            <TableCell className="font-medium">{u.displayName}</TableCell>
+                                            <TableCell className="font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    {isUserOnline(u.uid) ? (
+                                                        <span className="relative flex h-2.5 w-2.5" title="ออนไลน์">
+                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                                                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500 border border-green-600 dark:border-green-400"></span>
+                                                        </span>
+                                                    ) : (
+                                                        <span className="relative flex h-2.5 w-2.5" title="ออฟไลน์">
+                                                            <Circle className="h-2.5 w-2.5 text-gray-400 dark:text-gray-500 fill-gray-400 dark:fill-gray-500" />
+                                                        </span>
+                                                    )}
+                                                    <span className="font-medium text-foreground">{u.displayName}</span>
+                                                </div>
+                                            </TableCell>
                                             <TableCell className="text-sm text-muted-foreground">
                                                 {u.email}
                                             </TableCell>
@@ -756,6 +876,64 @@ function UsersManagementContent() {
                             <DialogDescription>อัปเดตข้อมูลและสิทธิ์การใช้งาน</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
+                            {/* Online Status Section */}
+                            {editingUser && (
+                                <div className="p-4 bg-muted/50 dark:bg-muted/30 rounded-lg space-y-3 border border-border">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-base font-semibold text-foreground">สถานะออนไลน์</Label>
+                                        {isUserOnline(editingUser.uid) ? (
+                                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border border-green-300 dark:border-green-700">
+                                                <span className="relative flex h-2 w-2 mr-2">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                                </span>
+                                                ออนไลน์
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="dark:bg-muted dark:text-muted-foreground">
+                                                <Circle className="h-2 w-2 mr-2 text-gray-400 dark:text-gray-500" />
+                                                ออฟไลน์
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {(() => {
+                                        const presence = getUserPresence(editingUser.uid);
+                                        return presence ? (
+                                            <div className="space-y-2 text-sm">
+                                                <div className="flex items-center gap-2 text-foreground dark:text-foreground">
+                                                    <Clock className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="font-medium">เข้าใช้งานล่าสุด:</span>
+                                                    <span className="text-muted-foreground">{formatLastActivity(presence)}</span>
+                                                </div>
+                                                {presence.isOnline && (
+                                                    <div className="flex items-center gap-2 text-foreground dark:text-foreground">
+                                                        <Activity className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                                        <span className="font-medium">ออนไลน์มาแล้ว:</span>
+                                                        <span className="text-green-600 dark:text-green-400 font-semibold">{getOnlineDuration(presence)}</span>
+                                                    </div>
+                                                )}
+                                                {presence.lastSeen && (
+                                                    <div className="pt-2 border-t border-border">
+                                                        <div className="text-xs text-muted-foreground">
+                                                            <span className="font-medium">เวลาที่เห็นล่าสุด:</span>{' '}
+                                                            {presence.lastSeen.toDate().toLocaleString('th-TH', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="text-sm text-muted-foreground dark:text-muted-foreground">ยังไม่มีประวัติการใช้งาน</div>
+                                        );
+                                    })()}
+                                </div>
+                            )}
+
                             <div>
                                 <Label>ชื่อ-นามสกุล</Label>
                                 <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
