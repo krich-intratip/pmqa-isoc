@@ -10,6 +10,7 @@ import CycleSelector from '@/components/cycles/CycleSelector';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { SearchDialog } from '@/components/search/SearchDialog';
 import LivePresence from '@/components/collaboration/LivePresence';
+import { ModeToggle } from '@/components/mode-toggle';
 
 export default function AppHeader() {
     const { user, logout } = useAuth();
@@ -62,6 +63,7 @@ export default function AppHeader() {
                     {user ? (
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
                             {user.status === 'approved' && <NotificationBell />}
+                            <ModeToggle />
                             <button
                                 onClick={handleProfileClick}
                                 className="flex items-center gap-2 hover:bg-slate-50 rounded-lg p-2 transition-colors group"

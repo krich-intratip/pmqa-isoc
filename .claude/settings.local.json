@@ -25,7 +25,8 @@
       "Bash(xargs ls:*)",
       "Bash(npm run lint:*)",
       "Bash(vercel:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
     ]
   }
 }

@@ -6,12 +6,49 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.1',
+  version: '3.0.2',
   lastUpdate: '2026-01-21',
   releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.2': {
+      date: '21 มกราคม 2569',
+      title: 'Dark Mode Toggle & Features Summary Page',
+      features: [
+        {
+          category: 'Dark Mode Toggle',
+          icon: 'Palette',
+          description: 'ปุ่มสลับ Dark/Light Mode',
+          items: [
+            'ปุ่ม Toggle Theme ใกล้รูป Profile',
+            'รองรับ Light, Dark, System modes',
+            'จำการตั้งค่าข้ามเซสชัน',
+          ],
+        },
+        {
+          category: 'Features Summary Page',
+          icon: 'ClipboardCheck',
+          description: 'หน้าสรุปฟีเจอร์ทั้งหมด',
+          items: [
+            'แบ่งเป็น 3 Tabs: Functional, Non-Functional, Technology',
+            'สรุป Functional Requirements ทั้งหมด',
+            'สรุป Non-Functional Requirements (Security, Performance, etc.)',
+            'สรุป Technology Stack และ Architecture',
+          ],
+        },
+        {
+          category: 'About Page Updates',
+          icon: 'FileText',
+          description: 'อัพเดทหน้า About',
+          items: [
+            'อัพเดท Roadmap ตามความคืบหน้า',
+            'ลบ Coming Soon items ที่ทำเสร็จแล้ว',
+            'เพิ่มลิงก์ไป Features Summary',
+          ],
+        },
+      ],
+    },
     'v3.0.1': {
       date: '21 มกราคม 2569',
       title: 'High Priority Features & Bug Fixes',

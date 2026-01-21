@@ -238,13 +238,13 @@ export default function AboutPage() {
             </Card>
 
             {/* Future Roadmap */}
-            <Card className="border-yellow-200 bg-yellow-50">
+            <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-yellow-800">
+                    <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
                         <ClipboardCheck className="h-6 w-6" />
-                        Roadmap - ฟีเจอร์ที่กำลังพัฒนา
+                        Roadmap - ความคืบหน้า
                     </CardTitle>
-                    <CardDescription className="text-yellow-700">
+                    <CardDescription className="text-yellow-700 dark:text-yellow-400">
                         อัปเดต: 21 มกราคม 2569
                     </CardDescription>
                 </CardHeader>
@@ -253,28 +253,26 @@ export default function AboutPage() {
                         <div className="flex items-start gap-2">
                             <span className="text-green-600 font-semibold min-w-[100px]">✅ เสร็จแล้ว:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• 🚀 **v3.0.0 Smart PMQA (AI & Automation)**</li>
+                                <li>• 🚀 <strong>v3.0.2</strong> ปุ่ม Dark Mode & หน้าสรุปฟีเจอร์</li>
+                                <li>• 📤 นำเข้าผู้ใช้จำนวนมาก (Bulk Import Users)</li>
+                                <li>• 📧 ระบบแจ้งเตือนอีเมล (Email Notifications)</li>
                                 <li>• 🏷️ Smart Evidence Tagging & Chat RAG</li>
                                 <li>• 📊 Predictive Scoring & Leaderboard</li>
                                 <li>• 👥 Live Collaboration (Real-time Presence)</li>
                                 <li>• 📚 Interactive eBook Export</li>
                                 <li>• 🌙 Dark Mode & Theme Settings</li>
+                                <li>• 💬 Comments & @Mentions System</li>
+                                <li>• 🔍 Global Search (Cmd/Ctrl+K)</li>
+                                <li>• 📅 Google Calendar Sync</li>
                             </ul>
                         </div>
                         <div className="flex items-start gap-2">
-                            <span className="text-yellow-600 font-semibold min-w-[100px]">เร็วๆ นี้:</span>
+                            <span className="text-blue-600 font-semibold min-w-[100px]">ระยะยาว:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• 📧 Email Notifications (แจ้งเตือน deadline, approvals)</li>
-                                <li>• 📤 Bulk Import Users (นำเข้าผู้ใช้จาก Excel/CSV)</li>
-                                <li>• 📊 Scheduled Reports (Weekly/Monthly email)</li>
-                            </ul>
-                        </div>
-                        <div className="flex items-start gap-2">
-                            <span className="text-yellow-600 font-semibold min-w-[100px]">ระยะยาว:</span>
-                            <ul className="space-y-1 text-muted-foreground">
+                                <li>• 📊 รายงานอัตโนมัติ (Scheduled Reports)</li>
                                 <li>• 📱 PWA / Offline Support</li>
-                                <li>• 🏆 Cross-Agency Benchmarking</li>
-                                <li>• 📲 Mobile App (Native iOS/Android)</li>
+                                <li>• 🏆 เปรียบเทียบข้ามหน่วยงาน (Cross-Agency Benchmarking)</li>
+                                <li>• 📲 Mobile App (iOS/Android)</li>
                             </ul>
                         </div>
                     </div>
