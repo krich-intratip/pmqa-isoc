@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 // import CycleSelector from '@/components/cycles/CycleSelector';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { SearchDialog } from '@/components/search/SearchDialog';
-import LivePresence from '@/components/collaboration/LivePresence';
+import OnlineUsersButton from '@/components/collaboration/OnlineUsersButton';
 import { ModeToggle } from '@/components/mode-toggle';
 
 export default function AppHeader() {
@@ -56,8 +56,7 @@ export default function AppHeader() {
 
                     {user && user.status === 'approved' && (
                         <div className="hidden lg:flex items-center gap-3">
-                            <LivePresence sectionId="global-dashboard" />
-                            {/* CycleSelector ย้ายไปแสดงใน Dashboard */}
+                            <OnlineUsersButton sectionId="global-dashboard" />
                         </div>
                     )}
 

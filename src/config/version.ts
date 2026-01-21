@@ -6,12 +6,50 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.2',
+  version: '3.0.3',
   lastUpdate: '2026-01-21',
   releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.3': {
+      date: '21 มกราคม 2569',
+      title: 'Performance & Real-time User Presence',
+      features: [
+        {
+          category: 'Online Users Popup',
+          icon: 'Users',
+          description: 'แสดงรายชื่อผู้ใช้ออนไลน์แบบ Popup',
+          items: [
+            'คลิกที่ปุ่มผู้ใช้ออนไลน์เพื่อดูรายชื่อทั้งหมด',
+            'แสดง Avatar, ชื่อ และสถานะเวลาที่ active',
+            'Admin สามารถคลิกชื่อ User เพื่อไปหน้าจัดการผู้ใช้',
+            'ปุ่มลัดไปหน้าจัดการผู้ใช้ทั้งหมด (Admin)',
+            'Real-time update ทุก 30 วินาที',
+          ],
+        },
+        {
+          category: 'INP Performance Fix',
+          icon: 'Zap',
+          description: 'แก้ไข UI ค้างเมื่อกดปุ่มอนุมัติ User',
+          items: [
+            'ใช้ Optimistic UI Update - แสดงผลทันที',
+            'Fire-and-forget สำหรับ logging และ notification',
+            'Rollback อัตโนมัติเมื่อเกิดข้อผิดพลาด',
+            'ลดเวลาตอบสนองจาก ~1.5 วินาที เหลือทันที',
+          ],
+        },
+        {
+          category: 'Presence Tracking Fix',
+          icon: 'Activity',
+          description: 'แก้ไขการติดตามผู้ใช้ออนไลน์',
+          items: [
+            'Presence tracking ทำงานได้แม้ไม่มี unitId',
+            'User ทุกคนจะถูกแสดงในรายชื่อออนไลน์',
+          ],
+        },
+      ],
+    },
     'v3.0.2': {
       date: '21 มกราคม 2569',
       title: 'About Page Tabs & Dark Mode Fix',

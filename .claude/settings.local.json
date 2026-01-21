@@ -26,7 +26,8 @@
       "Bash(npm run lint:*)",
       "Bash(vercel:*)",
       "Bash(git reset:*)",
-      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)"
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
+      "Bash(git status:*)"
     ]
   }
 }
