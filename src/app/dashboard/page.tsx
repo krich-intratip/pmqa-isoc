@@ -30,6 +30,7 @@ import { AnnouncementManager } from '@/components/dashboard/AnnouncementManager'
 import { CycleComparison } from '@/components/dashboard/CycleComparison';
 import { exportDashboardSummary, exportDashboardHTML } from '@/lib/export/data-export';
 import { OnlineUsersSidebar } from '@/components/presence/OnlineUsersSidebar';
+import OnlineUsersButton from '@/components/collaboration/OnlineUsersButton';
 import { OnboardingTour, TourStep } from '@/components/onboarding/OnboardingTour';
 import { usePresenceStore } from '@/stores/presence-store';
 
@@ -376,16 +377,7 @@ export default function Dashboard() {
                             <FileText className="h-4 w-4" />
                             Export HTML
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => usePresenceStore.getState().toggleSidebar()}
-                            className="gap-2"
-                        >
-                            <Users className="h-4 w-4" />
-                            ผู้ใช้ออนไลน์
-                            <Badge className="ml-1 bg-green-500 text-white">{usePresenceStore.getState().getFilteredUsers().length}</Badge>
-                        </Button>
+                        <OnlineUsersButton sectionId="global-dashboard" />
                         <div className="text-right">
                             <p className="text-sm text-slate-500">
                                 {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
@@ -748,16 +740,7 @@ export default function Dashboard() {
                         <FileText className="h-4 w-4" />
                         Export HTML
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => usePresenceStore.getState().toggleSidebar()}
-                        className="gap-2"
-                    >
-                        <Users className="h-4 w-4" />
-                        ผู้ใช้ออนไลน์
-                        <Badge className="ml-1 bg-green-500 text-white">{usePresenceStore.getState().getFilteredUsers().length}</Badge>
-                    </Button>
+                    <OnlineUsersButton sectionId="global-dashboard" />
                     <div className="text-right">
                         <p className="text-sm text-slate-500">
                             {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
