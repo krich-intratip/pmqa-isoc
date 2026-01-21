@@ -9,7 +9,7 @@ import { Bot, Palette, User } from 'lucide-react';
 export default function SettingsPage() {
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-6 text-slate-800 dark:text-slate-100">การตั้งค่า (Settings)</h1>
+            <h1 className="text-3xl font-bold mb-6 text-foreground">การตั้งค่า (Settings)</h1>
 
             <div className="grid gap-6">
                 {/* Theme Settings */}
@@ -33,7 +33,7 @@ export default function SettingsPage() {
                 {/* Navigation Links */}
                 <div className="grid md:grid-cols-2 gap-6">
                     <Link href="/settings/ai" className="block">
-                        <Card className="h-full hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                        <Card className="h-full hover:bg-muted/50 transition-colors">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Bot className="h-5 w-5 text-blue-600" />
@@ -45,7 +45,7 @@ export default function SettingsPage() {
                     </Link>
 
                     <Link href="/profile" className="block">
-                        <Card className="h-full hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                        <Card className="h-full hover:bg-muted/50 transition-colors">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="h-5 w-5 text-green-600" />

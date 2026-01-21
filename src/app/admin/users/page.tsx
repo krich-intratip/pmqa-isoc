@@ -498,13 +498,13 @@ function UsersManagementContent() {
     const getStatusBadge = (status: User['status']) => {
         switch (status) {
             case 'pending':
-                return <Badge className="bg-yellow-100 text-yellow-800">รออนุมัติ</Badge>;
+                return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">รออนุมัติ</Badge>;
             case 'approved':
-                return <Badge className="bg-green-100 text-green-800">อนุมัติแล้ว</Badge>;
+                return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">อนุมัติแล้ว</Badge>;
             case 'disabled':
-                return <Badge className="bg-gray-100 text-gray-800">ปิดใช้งาน</Badge>;
+                return <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">ปิดใช้งาน</Badge>;
             case 'rejected':
-                return <Badge className="bg-red-100 text-red-800">ไม่อนุมัติ</Badge>;
+                return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">ไม่อนุมัติ</Badge>;
             default:
                 return <Badge variant="outline">{status}</Badge>;
         }
@@ -576,7 +576,7 @@ function UsersManagementContent() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Users className="h-5 w-5 text-indigo-600" />
+                                    <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                                     จัดการผู้ใช้งาน
                                 </CardTitle>
                                 <CardDescription>
@@ -705,8 +705,8 @@ function UsersManagementContent() {
 
                             {/* Bulk Actions */}
                             {selectedUsers.size > 0 && (
-                                <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg">
-                                    <span className="text-sm font-medium">
+                                <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <span className="text-sm font-medium text-foreground">
                                         เลือกแล้ว {selectedUsers.size} คน
                                     </span>
                                     {activeTab === 'pending' && (

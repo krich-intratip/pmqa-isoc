@@ -16,8 +16,8 @@ export default function GuidePage() {
     return (
         <div className="container mx-auto py-8 max-w-5xl px-4">
             <div className="text-center mb-10">
-                <h1 className="text-4xl font-bold mb-4 text-slate-800">คู่มือการใช้งาน (User Guide)</h1>
-                <p className="text-slate-500 max-w-2xl mx-auto">
+                <h1 className="text-4xl font-bold mb-4 text-foreground">คู่มือการใช้งาน (User Guide)</h1>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
                     คู่มือการใช้งานระบบ PMQA 4.0 Web Application สำหรับ กอ.รมน. ฉบับสมบูรณ์
                     ครอบคลุมทุกขั้นตอนตั้งแต่เริ่มต้นจนถึงการเตรียมรับการตรวจประเมิน
                 </p>
@@ -37,9 +37,9 @@ export default function GuidePage() {
                         </CardTitle>
                         <CardDescription>ขั้นตอนการเข้าสู่ระบบและตั้งค่าเบื้องต้น</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-6 text-slate-600">
+                    <CardContent className="space-y-6 text-foreground">
                         <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                            <h4 className="font-semibold text-foreground flex items-center gap-2">
                                 <span className="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
                                 การเข้าสู่ระบบ (Login)
                             </h4>
@@ -52,7 +52,7 @@ export default function GuidePage() {
                         </div>
 
                         <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                            <h4 className="font-semibold text-foreground flex items-center gap-2">
                                 <span className="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
                                 หน้าแดชบอร์ด (Dashboard)
                             </h4>
@@ -65,7 +65,7 @@ export default function GuidePage() {
                         </div>
 
                         <div className="space-y-4">
-                            <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                            <h4 className="font-semibold text-foreground flex items-center gap-2">
                                 <span className="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span>
                                 การตั้งค่า AI (AI Configuration)
                             </h4>
@@ -97,39 +97,39 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* WORKFLOW PHASES */}
                 {/* ============================================ */}
-                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground mt-4 flex items-center gap-2">
                     <Book className="h-6 w-6 text-indigo-600" />
                     ขั้นตอนการดำเนินงาน (Workflow Phases)
                 </h2>
-                <p className="text-slate-500 -mt-4">ระบบแบ่งการทำงานเป็น 8 Phases ตามลำดับ ควรดำเนินการตามขั้นตอน</p>
+                <p className="text-muted-foreground -mt-4">ระบบแบ่งการทำงานเป็น 8 Phases ตามลำดับ ควรดำเนินการตามขั้นตอน</p>
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
 
                     {/* ============================================ */}
                     {/* PHASE 0: PROJECT SETUP */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase0" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase0" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
                                 <div className="bg-blue-100 p-2 rounded-lg">
                                     <LayoutDashboard className="h-6 w-6 text-blue-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 0: การเตรียมความพร้อม (Project Setup)</div>
-                                    <div className="text-sm text-slate-500 font-normal">กำหนดโครงสร้าง ผู้รับผิดชอบ และแผนงาน</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 0: การเตรียมความพร้อม (Project Setup)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">กำหนดโครงสร้าง ผู้รับผิดชอบ และแผนงาน</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">4 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 {/* App 0.1 */}
                                 <div className="border-l-2 border-blue-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Network className="h-4 w-4 text-blue-600" />
                                         Network Scope Mapper
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">กำหนดขอบเขตเครือข่ายหน่วยงาน</p>
+                                    <p className="text-sm text-muted-foreground mb-2">กำหนดขอบเขตเครือข่ายหน่วยงาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 0 → Network Mapper</strong></li>
                                         <li>นำเข้ารายชื่อหน่วยงาน (Excel/CSV) หรือเพิ่มเองทีละหน่วย</li>
@@ -141,11 +141,11 @@ export default function GuidePage() {
 
                                 {/* App 0.2 */}
                                 <div className="border-l-2 border-blue-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Users className="h-4 w-4 text-blue-600" />
                                         Owner Matrix Builder
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">มอบหมายผู้รับผิดชอบแต่ละหมวด (RACI Matrix)</p>
+                                    <p className="text-sm text-muted-foreground mb-2">มอบหมายผู้รับผิดชอบแต่ละหมวด (RACI Matrix)</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 0 → Owner Matrix</strong></li>
                                         <li>นำเข้ารายชื่อบุคลากร (Excel/CSV)</li>
@@ -157,11 +157,11 @@ export default function GuidePage() {
 
                                 {/* App 0.3 */}
                                 <div className="border-l-2 border-blue-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <FileText className="h-4 w-4 text-blue-600" />
                                         Repository Setup Wizard
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">จัดโครงสร้างโฟลเดอร์เอกสาร</p>
+                                    <p className="text-sm text-muted-foreground mb-2">จัดโครงสร้างโฟลเดอร์เอกสาร</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 0 → Repository Setup</strong></li>
                                         <li>กำหนดรูปแบบการตั้งชื่อไฟล์ (Naming Convention)</li>
@@ -173,11 +173,11 @@ export default function GuidePage() {
 
                                 {/* App 0.4 */}
                                 <div className="border-l-2 border-blue-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Calendar className="h-4 w-4 text-blue-600" />
                                         Submission Calendar Generator
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">สร้างปฏิทินกำหนดส่งงาน</p>
+                                    <p className="text-sm text-muted-foreground mb-2">สร้างปฏิทินกำหนดส่งงาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 0 → Calendar</strong></li>
                                         <li>กำหนด Milestones และ Deadlines หลัก</li>
@@ -193,28 +193,28 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 1: EVIDENCE MANAGEMENT */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase1" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase1" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
                                 <div className="bg-orange-100 p-2 rounded-lg">
                                     <BarChart3 className="h-6 w-6 text-orange-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 1: การจัดการหลักฐาน (Evidence Management)</div>
-                                    <div className="text-sm text-slate-500 font-normal">รวบรวม ตรวจสอบ และติดตามหลักฐาน</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 1: การจัดการหลักฐาน (Evidence Management)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">รวบรวม ตรวจสอบ และติดตามหลักฐาน</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">4 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 {/* App 1.1 */}
                                 <div className="border-l-2 border-orange-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <ClipboardList className="h-4 w-4 text-orange-600" />
                                         Evidence Register Builder
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">ระบบทะเบียนคุมหลักฐาน</p>
+                                    <p className="text-sm text-muted-foreground mb-2">ระบบทะเบียนคุมหลักฐาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 1 → Evidence</strong></li>
                                         <li>คลิก &quot;เพิ่มหลักฐาน&quot; เพื่อนำเข้าไฟล์ (PDF/Word/Excel/รูปภาพ)</li>
@@ -226,11 +226,11 @@ export default function GuidePage() {
 
                                 {/* App 1.2 */}
                                 <div className="border-l-2 border-orange-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Eye className="h-4 w-4 text-orange-600" />
                                         Evidence Gap Analyzer
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">วิเคราะห์ช่องว่างหลักฐาน</p>
+                                    <p className="text-sm text-muted-foreground mb-2">วิเคราะห์ช่องว่างหลักฐาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 1 → Gap Analyzer</strong></li>
                                         <li>ระบบแสดง Matrix: หมวด vs หลักฐาน</li>
@@ -242,11 +242,11 @@ export default function GuidePage() {
 
                                 {/* App 1.3 */}
                                 <div className="border-l-2 border-orange-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <CheckCircle2 className="h-4 w-4 text-orange-600" />
                                         Evidence Gate Checker
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">ตรวจคุณภาพหลักฐาน</p>
+                                    <p className="text-sm text-muted-foreground mb-2">ตรวจคุณภาพหลักฐาน</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 1 → Gate Checker</strong></li>
                                         <li>เลือกหลักฐานที่ต้องการตรวจ</li>
@@ -258,11 +258,11 @@ export default function GuidePage() {
 
                                 {/* App 1.4 */}
                                 <div className="border-l-2 border-orange-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <TrendingUp className="h-4 w-4 text-orange-600" />
                                         Evidence Gap Closure Tracker
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">ติดตามการปิดช่องว่าง</p>
+                                    <p className="text-sm text-muted-foreground mb-2">ติดตามการปิดช่องว่าง</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ไปที่ <strong>Phase 1 → Gap Tracker</strong></li>
                                         <li>ดูรายการ Gaps ที่ต้องปิด</li>
@@ -278,32 +278,32 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 2: DATA MANAGEMENT */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase2" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase2" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
                                 <div className="bg-purple-100 p-2 rounded-lg">
                                     <Database className="h-6 w-6 text-purple-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 2: การจัดการข้อมูล (Data Management)</div>
-                                    <div className="text-sm text-slate-500 font-normal">จัดการ KPI และข้อมูลตัวเลข</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 2: การจัดการข้อมูล (Data Management)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">จัดการ KPI และข้อมูลตัวเลข</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">6 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Data Source Catalog Builder</h4>
-                                    <p className="text-sm text-slate-500 mb-2">จัดทำบัญชีแหล่งข้อมูล KPI</p>
+                                    <h4 className="font-semibold text-foreground">Data Source Catalog Builder</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">จัดทำบัญชีแหล่งข้อมูล KPI</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ระบุ KPI → แหล่งข้อมูล → เจ้าของ → ความถี่อัปเดต</li>
                                         <li>ตรวจสอบว่า KPI ทุกตัวมีแหล่งข้อมูลอ้างอิง</li>
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">KPI Dictionary Builder</h4>
-                                    <p className="text-sm text-slate-500 mb-2">พจนานุกรม KPI</p>
+                                    <h4 className="font-semibold text-foreground">KPI Dictionary Builder</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">พจนานุกรม KPI</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>นิยามความหมาย / หน่วยวัด / สูตรคำนวณ</li>
                                         <li>กำหนด Baseline / Target / เกณฑ์คุณภาพ</li>
@@ -311,8 +311,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Excel Template Generator</h4>
-                                    <p className="text-sm text-slate-500 mb-2">สร้าง Template รวบรวมข้อมูล</p>
+                                    <h4 className="font-semibold text-foreground">Excel Template Generator</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">สร้าง Template รวบรวมข้อมูล</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>สร้าง Excel Templates จาก KPI Dictionary</li>
                                         <li>มี Data Validation และ Conditional Formatting</li>
@@ -320,8 +320,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Data Collector & Validator</h4>
-                                    <p className="text-sm text-slate-500 mb-2">รวบรวมและตรวจสอบข้อมูล</p>
+                                    <h4 className="font-semibold text-foreground">Data Collector & Validator</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">รวบรวมและตรวจสอบข้อมูล</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>อ่านไฟล์ Excel จาก 70+ หน่วย</li>
                                         <li>ตรวจสอบตาม KPI Dictionary Rules</li>
@@ -329,8 +329,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Data Cleaning Assistant</h4>
-                                    <p className="text-sm text-slate-500 mb-2">ทำความสะอาดข้อมูล</p>
+                                    <h4 className="font-semibold text-foreground">Data Cleaning Assistant</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">ทำความสะอาดข้อมูล</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>แสดงปัญหา: Outlier / Missing / Wrong Format</li>
                                         <li>AI เสนอวิธีแก้ไข</li>
@@ -338,8 +338,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-purple-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Results Baseline Analyzer</h4>
-                                    <p className="text-sm text-slate-500 mb-2">วิเคราะห์ผลลัพธ์ Baseline</p>
+                                    <h4 className="font-semibold text-foreground">Results Baseline Analyzer</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">วิเคราะห์ผลลัพธ์ Baseline</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>คำนวณแนวโน้ม 3 ปี (ถ้ามี)</li>
                                         <li>เปรียบเทียบ vs Target / Benchmark</li>
@@ -353,7 +353,7 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 3: ANALYSIS & NARRATIVE */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase3" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase3" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
                                 <div className="bg-sky-100 p-2 rounded-lg">
@@ -366,11 +366,11 @@ export default function GuidePage() {
                                 <Badge variant="outline" className="ml-auto">3 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 <div className="border-l-2 border-sky-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Context Pack Builder</h4>
-                                    <p className="text-sm text-slate-500 mb-2">รวบรวมข้อมูลบริบทองค์กร (OP)</p>
+                                    <h4 className="font-semibold text-foreground">Context Pack Builder</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">รวบรวมข้อมูลบริบทองค์กร (OP)</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>กรอก: วิสัยทัศน์ / พันธกิจ / โครงสร้าง / ผู้มีส่วนได้ส่วนเสีย</li>
                                         <li>AI ช่วยร่าง Organizational Profile</li>
@@ -378,8 +378,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-sky-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Risk & Foresight Analyzer</h4>
-                                    <p className="text-sm text-slate-500 mb-2">วิเคราะห์ความเสี่ยงเชิงยุทธศาสตร์</p>
+                                    <h4 className="font-semibold text-foreground">Risk & Foresight Analyzer</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">วิเคราะห์ความเสี่ยงเชิงยุทธศาสตร์</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>นำเข้าเอกสารนโยบาย/ยุทธศาสตร์</li>
                                         <li>ระบุความเสี่ยงและโอกาส</li>
@@ -388,8 +388,8 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-sky-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Strategy-to-KPI Linker</h4>
-                                    <p className="text-sm text-slate-500 mb-2">เชื่อมโยงยุทธศาสตร์กับ KPI</p>
+                                    <h4 className="font-semibold text-foreground">Strategy-to-KPI Linker</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">เชื่อมโยงยุทธศาสตร์กับ KPI</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>นำเข้า Strategic Focus จาก Risk Analyzer</li>
                                         <li>AI Map: Goal → Project → KPI → Result</li>
@@ -404,7 +404,7 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 4: SAR WRITING */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase4" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase4" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
                                 <div className="bg-pink-100 p-2 rounded-lg">
@@ -418,7 +418,7 @@ export default function GuidePage() {
                                 <Badge className="bg-pink-100 text-pink-700">AI-Powered</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
                                 <div className="flex items-start gap-2">
                                     <Sparkles className="h-5 w-5 text-pink-600 mt-0.5" />
@@ -430,8 +430,8 @@ export default function GuidePage() {
                             </div>
                             <div className="space-y-6">
                                 <div className="border-l-2 border-pink-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">SAR Outline Generator</h4>
-                                    <p className="text-sm text-slate-500 mb-2">สร้างโครงร่างเนื้อหา SAR</p>
+                                    <h4 className="font-semibold text-foreground">SAR Outline Generator</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">สร้างโครงร่างเนื้อหา SAR</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหมวด PMQA ที่ต้องการร่าง</li>
                                         <li>ระบบแสดงหัวข้อย่อยและเกณฑ์การให้คะแนน</li>
@@ -440,11 +440,11 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-pink-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Sparkles className="h-4 w-4 text-pink-600" />
                                         SAR Writer Assistant (AI)
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">AI ช่วยร่างเนื้อหา SAR</p>
+                                    <p className="text-sm text-muted-foreground mb-2">AI ช่วยร่างเนื้อหา SAR</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหัวข้อที่ต้องการเขียน</li>
                                         <li>ระบบดึงข้อมูล Context + Evidence + KPI</li>
@@ -480,11 +480,11 @@ export default function GuidePage() {
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 <div className="border-l-2 border-emerald-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Results Data Pack Builder</h4>
-                                    <p className="text-sm text-slate-500 mb-2">จัดทำชุดข้อมูลผลลัพธ์</p>
+                                    <h4 className="font-semibold text-foreground">Results Data Pack Builder</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">จัดทำชุดข้อมูลผลลัพธ์</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>รวบรวมข้อมูล KPI Results</li>
                                         <li>สร้างตารางและกราฟแสดงผล</li>
@@ -494,11 +494,11 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-emerald-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Sparkles className="h-4 w-4 text-emerald-600" />
                                         Recovery Narrative Builder (AI)
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">AI ช่วยเขียนคำอธิบายผลลัพธ์</p>
+                                    <p className="text-sm text-muted-foreground mb-2">AI ช่วยเขียนคำอธิบายผลลัพธ์</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือก KPI ที่ต้องการอธิบาย</li>
                                         <li>AI ร่าง Narrative ตามรูปแบบ: Explain → Improve → Verify</li>
@@ -526,11 +526,11 @@ export default function GuidePage() {
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 <div className="border-l-2 border-teal-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800">Cross-Consistency Auditor</h4>
-                                    <p className="text-sm text-slate-500 mb-2">ตรวจสอบความสอดคล้องข้ามหมวด</p>
+                                    <h4 className="font-semibold text-foreground">Cross-Consistency Auditor</h4>
+                                    <p className="text-sm text-muted-foreground mb-2">ตรวจสอบความสอดคล้องข้ามหมวด</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>คลิก &quot;เริ่มตรวจสอบ&quot;</li>
                                         <li>ระบบตรวจ 8 เกณฑ์: Context, Strategy-KPI, Evidence, SAR, Owner</li>
@@ -539,11 +539,11 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-teal-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Calculator className="h-4 w-4 text-teal-600" />
                                         Score Simulator & Fix Planner
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">จำลองคะแนน PMQA</p>
+                                    <p className="text-sm text-muted-foreground mb-2">จำลองคะแนน PMQA</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>ปรับ Slider คะแนนแต่ละหมวด (0-100%)</li>
                                         <li>ดูคะแนนรวม (เต็ม 500 คะแนน)</li>
@@ -572,14 +572,14 @@ export default function GuidePage() {
                                 <Badge className="bg-rose-100 text-rose-700">AI-Powered</Badge>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <div className="space-y-6">
                                 <div className="border-l-2 border-rose-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <Sparkles className="h-4 w-4 text-rose-600" />
                                         Interview Brief Generator (AI)
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">สร้างเอกสารเตรียมรับการตรวจ</p>
+                                    <p className="text-sm text-muted-foreground mb-2">สร้างเอกสารเตรียมรับการตรวจ</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหัวข้อที่ต้องการรวม (ภาพรวม, ไฮไลท์, KPI, ความท้าทาย)</li>
                                         <li>ระบุหมายเหตุเพิ่มเติม (ถ้ามี)</li>
@@ -589,11 +589,11 @@ export default function GuidePage() {
                                     </ol>
                                 </div>
                                 <div className="border-l-2 border-rose-300 pl-4">
-                                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                                    <h4 className="font-semibold text-foreground flex items-center gap-2">
                                         <MessageSquare className="h-4 w-4 text-rose-600" />
                                         Q&A Bank Builder (AI)
                                     </h4>
-                                    <p className="text-sm text-slate-500 mb-2">คลังคำถาม-คำตอบ</p>
+                                    <p className="text-sm text-muted-foreground mb-2">คลังคำถาม-คำตอบ</p>
                                     <ol className="list-decimal pl-5 space-y-1 text-sm">
                                         <li>เลือกหมวดที่ต้องการสร้างคำถาม</li>
                                         <li>คลิก &quot;Generate&quot; เพื่อให้ AI สร้าง 3 คำถาม/คำตอบ</li>
@@ -611,7 +611,7 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* FAQ SECTION */}
                 {/* ============================================ */}
-                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground mt-4 flex items-center gap-2">
                     <HelpCircle className="h-6 w-6 text-amber-600" />
                     คำถามที่พบบ่อย (FAQ)
                 </h2>
@@ -626,7 +626,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">ต้องทำตามลำดับ Phase หรือไม่?</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <p className="pl-4">แนะนำให้ทำตามลำดับ Phase 0 → 7 เพื่อให้ข้อมูลเชื่อมโยงกัน แต่สามารถข้ามไปทำ Phase อื่นก่อนได้ถ้าจำเป็น</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -640,7 +640,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">API Key Gemini หาได้จากไหน?</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <p className="pl-4">ไปที่ <a href="https://aistudio.google.com/apikey" target="_blank" className="text-indigo-600 underline">Google AI Studio</a> → สร้าง API Key → คัดลอกมาใส่ในระบบ (ฟรี)</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -654,7 +654,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">ใช้ Model Gemini ตัวไหนดี?</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <p className="pl-4">แนะนำ <strong>Gemini 3.0 Flash</strong> (เร็วและฉลาดที่สุด) หรือ <strong>Gemini 2.5 Pro</strong> (สำหรับงานซับซ้อน)</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -668,7 +668,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">ข้อมูลเก็บที่ไหน ปลอดภัยหรือไม่?</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <p className="pl-4">ข้อมูลเก็บใน Firebase Cloud (Google) มีการเข้ารหัส และกำหนดสิทธิ์การเข้าถึงตาม Role</p>
                         </AccordionContent>
                     </AccordionItem>
@@ -677,7 +677,7 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* WHAT'S NEW IN CURRENT VERSION */}
                 {/* ============================================ */}
-                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground mt-4 flex items-center gap-2">
                     <Sparkles className="h-6 w-6 text-blue-600" />
                     มีอะไรใหม่ใน Version {APP_VERSION.version}
                 </h2>
@@ -696,7 +696,7 @@ export default function GuidePage() {
                                     </div>
                                 </div>
                             </AccordionTrigger>
-                            <AccordionContent className="pt-4 pb-6 text-slate-600">
+                            <AccordionContent className="pt-4 pb-6 text-foreground">
                                 <ul className="list-disc pl-10 space-y-2 text-sm">
                                     {feature.items.map((item, itemIdx) => (
                                         <li key={itemIdx}>{item}</li>
@@ -710,7 +710,7 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* ADMIN FEATURES */}
                 {/* ============================================ */}
-                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground mt-4 flex items-center gap-2">
                     <ShieldCheck className="h-6 w-6 text-purple-600" />
                     ฟีเจอร์สำหรับ Admin
                 </h2>
@@ -726,7 +726,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">การจัดการผู้ใช้งาน & ประกาศ</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li><strong>จัดการประกาศ (Announcements):</strong> สร้าง แก้ไข หรือลบประกาศบน Dashboard (v1.7.0)</li>
                                 <li>อนุมัติ/ปฏิเสธคำขอเข้าใช้งาน</li>
@@ -749,7 +749,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">Activity Logs</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>ดูประวัติการทำงานทั้งหมดในระบบ</li>
                                 <li>กรองตามประเภท: Login, Create, Update, Delete, Upload, Download</li>
@@ -768,7 +768,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">File Versioning (v1.6.0+)</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>Delete ไฟล์หลักฐาน (Admin only)</li>
                                 <li>Revert ไฟล์กลับเวอร์ชันเก่า (Admin only)</li>
@@ -781,7 +781,7 @@ export default function GuidePage() {
                 {/* ============================================ */}
                 {/* CYCLE MANAGEMENT */}
                 {/* ============================================ */}
-                <h2 className="text-2xl font-bold text-slate-800 mt-4 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-foreground mt-4 flex items-center gap-2">
                     <Calendar className="h-6 w-6 text-emerald-600" />
                     การจัดการรอบการประเมิน (Cycle Management)
                 </h2>
@@ -797,7 +797,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">การใช้งาน Cycle</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>เลือก Cycle จาก Dropdown ใน Header</li>
                                 <li>ระบบจะกรองข้อมูลตาม Cycle ที่เลือก</li>
@@ -817,7 +817,7 @@ export default function GuidePage() {
                                 <div className="font-semibold text-slate-800">หน้าที่รองรับ Cycle</div>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pt-4 pb-6 text-slate-600">
+                        <AccordionContent className="pt-4 pb-6 text-foreground">
                             <ul className="list-disc pl-10 space-y-2 text-sm">
                                 <li>Phase 1: Evidence, Gap Tracker, Gap Analyzer, Gate Checker</li>
                                 <li>Phase 2: Data Collector, Data Cleaning, Baseline Analyzer, Data Catalog, KPI Dictionary</li>

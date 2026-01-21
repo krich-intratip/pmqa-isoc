@@ -126,7 +126,7 @@ export default function ProfilePage() {
     return (
         <ProtectedRoute>
             <div className="container mx-auto py-8 max-w-3xl">
-                <h1 className="text-3xl font-bold mb-6 flex items-center gap-2 text-slate-800">
+                <h1 className="text-3xl font-bold mb-6 flex items-center gap-2 text-foreground">
                     <User className="h-8 w-8 text-indigo-600" />
                     โปรไฟล์ของฉัน
                 </h1>
@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
                         <div className="mt-14 flex justify-between items-start">
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-800">{user.displayName}</h2>
+                                <h2 className="text-2xl font-bold text-foreground">{user.displayName}</h2>
                                 <div className="flex items-center gap-2 mt-1 text-muted-foreground">
                                     <Mail className="h-4 w-4" />
                                     <span>{user.email}</span>
@@ -173,16 +173,16 @@ export default function ProfilePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                                 <span className="text-muted-foreground">บทบาท</span>
                                 <Badge className="bg-purple-100 text-purple-800">{getRoleDisplay(user.role)}</Badge>
                             </div>
-                            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                                 <span className="text-muted-foreground">สถานะ</span>
                                 {getStatusBadge()}
                             </div>
                             {user.lastLoginAt && (
-                                <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                                     <span className="text-muted-foreground flex items-center gap-1">
                                         <Calendar className="h-4 w-4" /> เข้าสู่ระบบล่าสุด
                                     </span>
@@ -203,12 +203,12 @@ export default function ProfilePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                                 <span className="text-muted-foreground">รหัสหน่วย</span>
                                 <span className="font-mono">{user.unitId || '-'}</span>
                             </div>
                             {user.metadata?.department && (
-                                <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                                     <span className="text-muted-foreground">ฝ่าย/แผนก</span>
                                     <span>{user.metadata.department}</span>
                                 </div>
@@ -269,9 +269,9 @@ export default function ProfilePage() {
                         <CardDescription>การดำเนินการในส่วนนี้จะส่งผลกระทบต่อ Account ของคุณอย่างรุนแรง</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-red-200">
+                        <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-red-200 dark:border-red-800">
                             <div>
-                                <p className="font-medium text-slate-900">ปิดการใช้งาน Account</p>
+                                <p className="font-medium text-foreground">ปิดการใช้งาน Account</p>
                                 <p className="text-sm text-muted-foreground mt-1">
                                     คุณจะไม่สามารถเข้าสู่ระบบได้ แต่ข้อมูลจะยังคงอยู่ในระบบ (Admin สามารถเปิดใช้งานใหม่ได้)
                                 </p>

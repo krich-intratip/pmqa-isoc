@@ -315,8 +315,8 @@ export default function Dashboard() {
                 {/* Welcome Section */}
                 <section className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-800">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
-                        <p className="text-slate-500 mt-2">แดชบอร์ดผู้ดูแลระบบ PMQA 4.0</p>
+                        <h1 className="text-3xl font-bold text-foreground">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
+                        <p className="text-muted-foreground mt-2">แดชบอร์ดผู้ดูแลระบบ PMQA 4.0</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <Button
@@ -344,10 +344,10 @@ export default function Dashboard() {
                         </Button>
                         <OnlineUsersButton />
                         <div className="text-right">
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm text-muted-foreground">
                                 {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
                             </p>
-                            <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
                                 <CheckCircle2 size={18} />
                                 <span>กำลังดำเนินการ</span>
                             </div>
@@ -392,7 +392,7 @@ export default function Dashboard() {
                                     {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-emerald-600">
+                                    <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                                         {statsLoading ? '-' : `${categoryProgress}%`}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -406,7 +406,7 @@ export default function Dashboard() {
                                     {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-blue-600">
+                                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                                         {statsLoading ? '-' : kpiDataCount}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -420,7 +420,7 @@ export default function Dashboard() {
                                     {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-indigo-600">
+                                    <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                                         {statsLoading ? '-' : evidenceCount}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -430,11 +430,11 @@ export default function Dashboard() {
                             </Card>
                             <Card className="border-amber-200 bg-amber-50/50">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium text-amber-700">รอการอนุมัติ</CardTitle>
+                                    <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">รอการอนุมัติ</CardTitle>
                                     {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold text-amber-600">
+                                    <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                                         {statsLoading ? '-' : pendingUsersCount}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
@@ -445,7 +445,7 @@ export default function Dashboard() {
                         </div>
 
                         {/* Phase Progress Section */}
-                        <h3 className="text-lg font-semibold text-slate-800 mt-6">ความคืบหน้าตาม Phase</h3>
+                        <h3 className="text-lg font-semibold text-foreground mt-6">ความคืบหน้าตาม Phase</h3>
                         <div id="dashboard-phase-progress" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                             <PhaseProgressCard
                                 phase={1}
@@ -517,11 +517,11 @@ export default function Dashboard() {
                         {/* Cycle Comparison */}
                         <CycleComparison />
 
-                        <h3 className="text-lg font-semibold text-slate-800">ระบบหลัก</h3>
+                        <h3 className="text-lg font-semibold text-foreground">ระบบหลัก</h3>
                         <div id="dashboard-system-nav" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                                         <MapPin className="h-5 w-5" />
                                         <span className="text-base">Assessment Roadmap</span>
                                     </CardTitle>
@@ -534,9 +534,9 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                         <Calendar className="h-5 w-5" />
                                         <span className="text-base">Cycle Management</span>
                                     </CardTitle>
@@ -549,9 +549,9 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-100 dark:border-purple-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                                         <Settings className="h-5 w-5" />
                                         <span className="text-base">AI Configuration</span>
                                     </CardTitle>
@@ -566,7 +566,7 @@ export default function Dashboard() {
 
                             <Card id="dashboard-ai-card" className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                         <Sparkles className="h-5 w-5" />
                                         <span className="text-base">AI Strategic Insights</span>
                                     </CardTitle>
@@ -583,11 +583,11 @@ export default function Dashboard() {
 
                     {/* Tab 2: Users Management */}
                     <TabsContent value="users" className="space-y-6">
-                        <h3 className="text-lg font-semibold text-slate-800">จัดการผู้ใช้งานระบบ</h3>
+                        <h3 className="text-lg font-semibold text-foreground">จัดการผู้ใช้งานระบบ</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                         <UserCog className="h-5 w-5" />
                                         <span className="text-base">User Management</span>
                                     </CardTitle>
@@ -600,9 +600,9 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-emerald-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-emerald-100 dark:border-emerald-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-emerald-700">
+                                    <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                                         <UserCheck className="h-5 w-5" />
                                         <span className="text-base">User Approvals</span>
                                     </CardTitle>
@@ -615,9 +615,9 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-blue-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-100 dark:border-blue-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-blue-700">
+                                    <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
                                         <Map className="h-5 w-5" />
                                         <span className="text-base">Network Mapper</span>
                                     </CardTitle>
@@ -634,17 +634,17 @@ export default function Dashboard() {
 
                     {/* Tab 2: Announcements Management */}
                     <TabsContent value="announcements" className="space-y-6">
-                        <h3 className="text-lg font-semibold text-slate-800">จัดการประกาศหน้า Dashboard</h3>
+                        <h3 className="text-lg font-semibold text-foreground">จัดการประกาศหน้า Dashboard</h3>
                         <AnnouncementManager />
                     </TabsContent>
 
                     {/* Tab 3: Activity Logs */}
                     <TabsContent value="activity" className="space-y-6">
-                        <h3 className="text-lg font-semibold text-slate-800">ประวัติการใช้งานระบบ</h3>
+                        <h3 className="text-lg font-semibold text-foreground">ประวัติการใช้งานระบบ</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-100">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                         <Activity className="h-5 w-5" />
                                         <span className="text-base">Activity Log</span>
                                     </CardTitle>
@@ -678,8 +678,8 @@ export default function Dashboard() {
             {/* Welcome Section */}
             <section className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-800">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
-                    <p className="text-slate-500 mt-2">ติดตามความคืบหน้าการประเมิน PMQA 4.0 ของหน่วยงานคุณ</p>
+                    <h1 className="text-3xl font-bold text-foreground">ยินดีต้อนรับ, {user.displayName || 'ผู้ใช้งาน'}</h1>
+                    <p className="text-muted-foreground mt-2">ติดตามความคืบหน้าการประเมิน PMQA 4.0 ของหน่วยงานคุณ</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Button
@@ -710,7 +710,7 @@ export default function Dashboard() {
                         <p className="text-sm text-slate-500">
                             {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
                         </p>
-                        <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
                             <CheckCircle2 size={18} />
                             <span>กำลังดำเนินการ</span>
                         </div>
@@ -769,7 +769,7 @@ export default function Dashboard() {
 
             {/* Phase Progress Section for Regular Users */}
             <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-3">ความคืบหน้าตาม Phase</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-3">ความคืบหน้าตาม Phase</h3>
                 <div id="dashboard-phase-progress" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                     <PhaseProgressCard phase={1} title="Evidence" value={evidenceCount} subValue={`${verifiedCount} ผ่าน`} loading={statsLoading} color="green" />
                     <PhaseProgressCard phase={2} title="Data" value={kpiDefinitionsCount} subValue={`${kpiDataCount} ข้อมูล`} loading={statsLoading} color="blue" />
@@ -856,7 +856,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
 }) {
     return (
         <>
-            <h2 className="text-xl font-semibold mb-4 text-slate-800">เครื่องมือของฉัน</h2>
+            <h2 className="text-xl font-semibold mb-4 text-foreground">เครื่องมือของฉัน</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Roadmap - Available to all users */}
                 <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
@@ -877,7 +877,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                 {/* Phase 0 Apps */}
                 {availablePhases.includes(0) && (
                     <>
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-blue-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-blue-700">
                                     <FileText className="h-5 w-5" />
@@ -892,7 +892,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-teal-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-teal-50 dark:border-teal-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-teal-700">
                                     <FolderPlus className="h-5 w-5" />
@@ -907,7 +907,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-amber-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-amber-50 dark:border-amber-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-amber-700">
                                     <CalendarIcon className="h-5 w-5" />
@@ -928,9 +928,9 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 1 Apps */}
             {availablePhases.includes(1) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 1: Evidence Management</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 1: Evidence Management</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-green-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-green-50 dark:border-green-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-green-700">
                                     <FileText className="h-5 w-5" />
@@ -945,7 +945,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-orange-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-orange-50 dark:border-orange-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-orange-700">
                                     <BarChart3 className="h-5 w-5" />
@@ -961,9 +961,9 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                         </Card>
 
                         {isReviewer && (
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-50">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-50 dark:border-purple-900">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                                         <ShieldCheck className="h-5 w-5" />
                                         <span className="text-base">Gate Checker</span>
                                     </CardTitle>
@@ -977,7 +977,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </Card>
                         )}
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-rose-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-rose-50 dark:border-rose-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-rose-700">
                                     <ClipboardCheck className="h-5 w-5" />
@@ -998,9 +998,9 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 2: Data Management */}
             {availablePhases.includes(2) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 2: Data Management</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 2: Data Management</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-blue-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-blue-700">
                                     <Database className="h-5 w-5" />
@@ -1030,7 +1030,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-green-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-green-50 dark:border-green-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-green-700">
                                     <FileSpreadsheet className="h-5 w-5" />
@@ -1113,7 +1113,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-orange-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-orange-50 dark:border-orange-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-orange-700">
                                     <AlertTriangle className="h-5 w-5" />
@@ -1204,7 +1204,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-amber-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-amber-50 dark:border-amber-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-amber-700">
                                     <BookOpen className="h-5 w-5" />
@@ -1227,7 +1227,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                 <>
                     <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 6: Quality Assurance</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-blue-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-blue-700">
                                     <ShieldCheck className="h-5 w-5" />
@@ -1242,7 +1242,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-teal-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-teal-50 dark:border-teal-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-teal-700">
                                     <Calculator className="h-5 w-5" />
@@ -1265,7 +1265,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                 <>
                     <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 7: Interview Prep</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-rose-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-rose-50 dark:border-rose-900">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-rose-700">
                                     <Presentation className="h-5 w-5" />
