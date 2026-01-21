@@ -39,6 +39,7 @@ interface PresenceStore {
 
 let unsubscribePresence: (() => void) | null = null;
 let unsubscribeTracking: (() => void) | null = null;
+let currentUserId: string | null = null;
 
 export const usePresenceStore = create<PresenceStore>((set, get) => ({
     onlineUsers: [],
@@ -57,16 +58,33 @@ export const usePresenceStore = create<PresenceStore>((set, get) => ({
     setFilterUnit: (unit) => set({ filterUnit: unit }),
 
     startPresenceTracking: (userId, userData) => {
-        // Subscribe to online users
-        if (!unsubscribePresence) {
-            unsubscribePresence = subscribeToOnlineUsers((users) => {
-                get().setOnlineUsers(users);
-            });
+        // Unsubscribe existing tracking if user changed
+        if (currentUserId && currentUserId !== userId && unsubscribeTracking) {
+            unsubscribeTracking();
+            unsubscribeTracking = null;
         }
 
+        // Always subscribe to online users to get real-time updates
+        // Unsubscribe first if already subscribed to avoid duplicate subscriptions
+        if (unsubscribePresence) {
+            unsubscribePresence();
+            unsubscribePresence = null;
+        }
+        
+        // Subscribe to online users - this will get all users who are online
+        unsubscribePresence = subscribeToOnlineUsers((users) => {
+            console.log('[Presence] Online users updated:', users.length, users.map(u => u.displayName));
+            get().setOnlineUsers(users);
+        });
+
         // Initialize presence tracking for current user
-        if (!unsubscribeTracking) {
+        if (!unsubscribeTracking || currentUserId !== userId) {
+            if (unsubscribeTracking) {
+                unsubscribeTracking();
+            }
+            console.log('[Presence] Starting tracking for user:', userId, userData.displayName);
             unsubscribeTracking = initializePresenceTracking(userId, userData);
+            currentUserId = userId;
         }
     },
 
@@ -78,6 +96,7 @@ export const usePresenceStore = create<PresenceStore>((set, get) => ({
         if (unsubscribeTracking) {
             unsubscribeTracking();
             unsubscribeTracking = null;
+            currentUserId = null;
         }
     },
 

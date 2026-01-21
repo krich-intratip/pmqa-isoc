@@ -80,26 +80,34 @@ export function subscribeToOnlineUsers(
         where('isOnline', '==', true)
     );
 
-    return onSnapshot(presenceQuery, (snapshot) => {
-        const onlineUsers: UserPresence[] = [];
+    return onSnapshot(
+        presenceQuery,
+        (snapshot) => {
+            const onlineUsers: UserPresence[] = [];
 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            onlineUsers.push({
-                userId: data.userId,
-                displayName: data.displayName,
-                email: data.email,
-                role: data.role,
-                unitName: data.unitName,
-                unitCategory: data.unitCategory,
-                isOnline: data.isOnline,
-                lastSeen: data.lastSeen,
-                lastActivity: data.lastActivity,
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                onlineUsers.push({
+                    userId: data.userId,
+                    displayName: data.displayName,
+                    email: data.email,
+                    role: data.role,
+                    unitName: data.unitName,
+                    unitCategory: data.unitCategory,
+                    isOnline: data.isOnline,
+                    lastSeen: data.lastSeen,
+                    lastActivity: data.lastActivity,
+                });
             });
-        });
 
-        callback(onlineUsers);
-    });
+            console.log('[Presence] Snapshot received:', onlineUsers.length, 'online users');
+            callback(onlineUsers);
+        },
+        (error) => {
+            console.error('[Presence] Error subscribing to online users:', error);
+            callback([]); // Return empty array on error
+        }
+    );
 }
 
 /**
@@ -142,26 +150,37 @@ export function initializePresenceTracking(
         unitCategory?: string;
     }
 ): () => void {
-    // Set user online immediately
-    setUserOnline(userId, userData);
+    // Set user online immediately (fire and forget, but log errors)
+    setUserOnline(userId, userData).catch((error) => {
+        console.error('[Presence] Error setting user online:', error);
+    });
 
     // Update activity every 30 seconds
     const activityInterval = setInterval(() => {
-        updateUserActivity(userId);
+        updateUserActivity(userId).catch((error) => {
+            console.error('[Presence] Error updating user activity:', error);
+        });
     }, 30000);
 
     // Set offline on beforeunload
     const handleBeforeUnload = () => {
-        setUserOffline(userId);
+        // Use sendBeacon for reliable offline detection
+        setUserOffline(userId).catch((error) => {
+            console.error('[Presence] Error setting user offline:', error);
+        });
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Set offline on visibility change (tab closed/hidden)
     const handleVisibilityChange = () => {
         if (document.hidden) {
-            setUserOffline(userId);
+            setUserOffline(userId).catch((error) => {
+                console.error('[Presence] Error setting user offline:', error);
+            });
         } else {
-            setUserOnline(userId, userData);
+            setUserOnline(userId, userData).catch((error) => {
+                console.error('[Presence] Error setting user online:', error);
+            });
         }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -171,6 +190,8 @@ export function initializePresenceTracking(
         clearInterval(activityInterval);
         window.removeEventListener('beforeunload', handleBeforeUnload);
         document.removeEventListener('visibilitychange', handleVisibilityChange);
-        setUserOffline(userId);
+        setUserOffline(userId).catch((error) => {
+            console.error('[Presence] Error setting user offline on cleanup:', error);
+        });
     };
 }
