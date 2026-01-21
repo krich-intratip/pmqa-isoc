@@ -383,11 +383,11 @@ export function InsightDashboard({ sarContents, previousSarContents, apiKey, mod
                         </div>
 
                         {/* Chat Interface */}
-                        <div className="lg:col-span-2 flex flex-col h-full bg-white rounded-lg border shadow-sm">
+                        <div className="lg:col-span-2 flex flex-col h-full bg-card rounded-lg border shadow-sm">
                             <div className="flex-1 p-4 overflow-hidden">
                                 <ScrollArea className="h-full pr-4">
                                     {chatMessages.length === 0 ? (
-                                        <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4 opacity-50">
+                                        <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-4 opacity-50">
                                             <MessageSquare className="h-16 w-16" />
                                             <p>เริ่มสนทนากับข้อมูลของคุณ</p>
                                         </div>
@@ -401,7 +401,7 @@ export function InsightDashboard({ sarContents, previousSarContents, apiKey, mod
                                                     <div
                                                         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${msg.role === 'user'
                                                             ? 'bg-blue-600 text-white rounded-br-none'
-                                                            : 'bg-slate-100 text-slate-800 rounded-bl-none'
+                                                            : 'bg-muted text-foreground rounded-bl-none'
                                                             }`}
                                                     >
                                                         {msg.content}

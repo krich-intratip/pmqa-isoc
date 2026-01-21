@@ -358,7 +358,7 @@ export default function QABankPage() {
                                         <div className="mb-2">
                                             <div className="font-medium text-slate-800">Q: {item.question}</div>
                                         </div>
-                                        <div className="text-sm text-slate-600 bg-white p-3 rounded border">
+                                        <div className="text-sm text-foreground bg-card p-3 rounded border">
                                             <span className="font-medium text-green-700">A:</span> {item.answer}
                                         </div>
                                     </div>

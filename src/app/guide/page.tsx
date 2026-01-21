@@ -69,12 +69,12 @@ export default function GuidePage() {
                                 <span className="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span>
                                 การตั้งค่า AI (AI Configuration)
                             </h4>
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 ml-8">
+                            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 ml-8">
                                 <div className="flex items-start gap-2">
-                                    <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
                                     <div>
-                                        <p className="font-medium text-amber-800">สำคัญ: ต้องตั้งค่าก่อนใช้งาน AI</p>
-                                        <p className="text-sm text-amber-700 mt-1">ฟีเจอร์ที่ใช้ AI (SAR Writer, Interview Brief, Q&A Bank) จำเป็นต้องตั้งค่า API Key ก่อน</p>
+                                        <p className="font-medium text-amber-800 dark:text-amber-300">สำคัญ: ต้องตั้งค่าก่อนใช้งาน AI</p>
+                                        <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">ฟีเจอร์ที่ใช้ AI (SAR Writer, Interview Brief, Q&A Bank) จำเป็นต้องตั้งค่า API Key ก่อน</p>
                                     </div>
                                 </div>
                             </div>
@@ -360,8 +360,8 @@ export default function GuidePage() {
                                     <FileText className="h-6 w-6 text-sky-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 3: การวิเคราะห์ (Analysis & Narrative)</div>
-                                    <div className="text-sm text-slate-500 font-normal">เตรียมข้อมูลบริบทและวิเคราะห์เชิงยุทธศาสตร์</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 3: การวิเคราะห์ (Analysis & Narrative)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">เตรียมข้อมูลบริบทและวิเคราะห์เชิงยุทธศาสตร์</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">3 Apps</Badge>
                             </div>
@@ -411,20 +411,20 @@ export default function GuidePage() {
                                     <PenTool className="h-6 w-6 text-pink-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 4: การเขียนรายงาน (SAR Writing)</div>
-                                    <div className="text-sm text-slate-500 font-normal">ใช้ AI ช่วยร่างรายงานการประเมินตนเอง</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 4: การเขียนรายงาน (SAR Writing)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">ใช้ AI ช่วยร่างรายงานการประเมินตนเอง</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                                 <Badge className="bg-pink-100 text-pink-700">AI-Powered</Badge>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
-                            <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
+                            <div className="bg-pink-50 dark:bg-pink-950/30 border border-pink-200 dark:border-pink-800 rounded-lg p-4 mb-4">
                                 <div className="flex items-start gap-2">
-                                    <Sparkles className="h-5 w-5 text-pink-600 mt-0.5" />
+                                    <Sparkles className="h-5 w-5 text-pink-600 dark:text-pink-400 mt-0.5" />
                                     <div>
-                                        <p className="font-medium text-pink-800">ใช้งาน AI ในการร่างเนื้อหา</p>
-                                        <p className="text-sm text-pink-700">Phase นี้ใช้ Gemini AI เขียนเนื้อหา ต้องตั้งค่า API Key ก่อน</p>
+                                        <p className="font-medium text-pink-800 dark:text-pink-300">ใช้งาน AI ในการร่างเนื้อหา</p>
+                                        <p className="text-sm text-pink-700 dark:text-pink-400">Phase นี้ใช้ Gemini AI เขียนเนื้อหา ต้องตั้งค่า API Key ก่อน</p>
                                     </div>
                                 </div>
                             </div>
@@ -467,15 +467,15 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 5: RESULTS */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase5" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase5" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-emerald-100 p-2 rounded-lg">
-                                    <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                                <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg">
+                                    <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 5: ผลลัพธ์ (Results)</div>
-                                    <div className="text-sm text-slate-500 font-normal">นำเสนอผลลัพธ์การดำเนินงาน (หมวด 7)</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 5: ผลลัพธ์ (Results)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">นำเสนอผลลัพธ์การดำเนินงาน (หมวด 7)</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                             </div>
@@ -513,15 +513,15 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 6: QUALITY ASSURANCE */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase6" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase6" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-teal-100 p-2 rounded-lg">
-                                    <ShieldCheck className="h-6 w-6 text-teal-600" />
+                                <div className="bg-teal-100 dark:bg-teal-900/30 p-2 rounded-lg">
+                                    <ShieldCheck className="h-6 w-6 text-teal-600 dark:text-teal-400" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 6: การตรวจสอบคุณภาพ (Quality Assurance)</div>
-                                    <div className="text-sm text-slate-500 font-normal">ตรวจความสอดคล้องและจำลองคะแนน</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 6: การตรวจสอบคุณภาพ (Quality Assurance)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">ตรวจความสอดคล้องและจำลองคะแนน</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                             </div>
@@ -558,15 +558,15 @@ export default function GuidePage() {
                     {/* ============================================ */}
                     {/* PHASE 7: INTERVIEW PREP */}
                     {/* ============================================ */}
-                    <AccordionItem value="phase7" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="phase7" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-rose-100 p-2 rounded-lg">
-                                    <Presentation className="h-6 w-6 text-rose-600" />
+                                <div className="bg-rose-100 dark:bg-rose-900/30 p-2 rounded-lg">
+                                    <Presentation className="h-6 w-6 text-rose-600 dark:text-rose-400" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg text-slate-800">Phase 7: การเตรียมรับการตรวจ (Interview Prep)</div>
-                                    <div className="text-sm text-slate-500 font-normal">เตรียมข้อมูลและคำถาม-คำตอบ</div>
+                                    <div className="font-semibold text-lg text-foreground">Phase 7: การเตรียมรับการตรวจ (Interview Prep)</div>
+                                    <div className="text-sm text-muted-foreground font-normal">เตรียมข้อมูลและคำถาม-คำตอบ</div>
                                 </div>
                                 <Badge variant="outline" className="ml-auto">2 Apps</Badge>
                                 <Badge className="bg-rose-100 text-rose-700">AI-Powered</Badge>
@@ -617,13 +617,13 @@ export default function GuidePage() {
                 </h2>
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
-                    <AccordionItem value="faq1" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="faq1" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-amber-100 p-2 rounded-lg">
-                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">ต้องทำตามลำดับ Phase หรือไม่?</div>
+                                <div className="font-semibold text-foreground">ต้องทำตามลำดับ Phase หรือไม่?</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -631,13 +631,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="faq2" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="faq2" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-amber-100 p-2 rounded-lg">
-                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">API Key Gemini หาได้จากไหน?</div>
+                                <div className="font-semibold text-foreground">API Key Gemini หาได้จากไหน?</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -645,13 +645,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="faq3" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="faq3" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-amber-100 p-2 rounded-lg">
-                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">ใช้ Model Gemini ตัวไหนดี?</div>
+                                <div className="font-semibold text-foreground">ใช้ Model Gemini ตัวไหนดี?</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -659,13 +659,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="faq4" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="faq4" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-amber-100 p-2 rounded-lg">
-                                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                                <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg">
+                                    <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">ข้อมูลเก็บที่ไหน ปลอดภัยหรือไม่?</div>
+                                <div className="font-semibold text-foreground">ข้อมูลเก็บที่ไหน ปลอดภัยหรือไม่?</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -684,15 +684,15 @@ export default function GuidePage() {
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {APP_VERSION.releases[`v${APP_VERSION.version}`] && APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
-                        <AccordionItem key={idx} value={`feature-${idx}`} className="bg-white border rounded-lg px-4">
+                        <AccordionItem key={idx} value={`feature-${idx}`} className="bg-card border rounded-lg px-4">
                             <AccordionTrigger className="hover:no-underline">
                                 <div className="flex items-center gap-3 text-left">
-                                    <div className="bg-blue-100 p-2 rounded-lg">
-                                        <Sparkles className="h-5 w-5 text-blue-600" />
+                                    <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg">
+                                        <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div>
-                                        <div className="font-semibold text-slate-800">{feature.category}</div>
-                                        <div className="text-sm text-slate-500 font-normal">{feature.description}</div>
+                                        <div className="font-semibold text-foreground">{feature.category}</div>
+                                        <div className="text-sm text-muted-foreground font-normal">{feature.description}</div>
                                     </div>
                                 </div>
                             </AccordionTrigger>
@@ -714,16 +714,16 @@ export default function GuidePage() {
                     <ShieldCheck className="h-6 w-6 text-purple-600" />
                     ฟีเจอร์สำหรับ Admin
                 </h2>
-                <p className="text-slate-500 -mt-4">การจัดการผู้ใช้งานและระบบ (เฉพาะ Admin เท่านั้น)</p>
+                <p className="text-muted-foreground -mt-4">การจัดการผู้ใช้งานและระบบ (เฉพาะ Admin เท่านั้น)</p>
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
-                    <AccordionItem value="admin1" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="admin1" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-purple-100 p-2 rounded-lg">
-                                    <Users className="h-5 w-5 text-purple-600" />
+                                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
+                                    <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">การจัดการผู้ใช้งาน & ประกาศ</div>
+                                <div className="font-semibold text-foreground">การจัดการผู้ใช้งาน & ประกาศ</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -740,13 +740,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="admin2" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="admin2" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-purple-100 p-2 rounded-lg">
-                                    <Activity className="h-5 w-5 text-purple-600" />
+                                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
+                                    <Activity className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">Activity Logs</div>
+                                <div className="font-semibold text-foreground">Activity Logs</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -759,13 +759,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="admin3" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="admin3" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-purple-100 p-2 rounded-lg">
-                                    <FileText className="h-5 w-5 text-purple-600" />
+                                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
+                                    <FileText className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">File Versioning (v1.6.0+)</div>
+                                <div className="font-semibold text-foreground">File Versioning (v1.6.0+)</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -785,16 +785,16 @@ export default function GuidePage() {
                     <Calendar className="h-6 w-6 text-emerald-600" />
                     การจัดการรอบการประเมิน (Cycle Management)
                 </h2>
-                <p className="text-slate-500 -mt-4">รองรับการทำงานหลายรอบการประเมิน (v1.5.0+)</p>
+                <p className="text-muted-foreground -mt-4">รองรับการทำงานหลายรอบการประเมิน (v1.5.0+)</p>
 
                 <Accordion type="single" collapsible className="w-full space-y-4">
-                    <AccordionItem value="cycle1" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="cycle1" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-emerald-100 p-2 rounded-lg">
-                                    <Calendar className="h-5 w-5 text-emerald-600" />
+                                <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg">
+                                    <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">การใช้งาน Cycle</div>
+                                <div className="font-semibold text-foreground">การใช้งาน Cycle</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -808,13 +808,13 @@ export default function GuidePage() {
                         </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem value="cycle2" className="bg-white border rounded-lg px-4">
+                    <AccordionItem value="cycle2" className="bg-card border rounded-lg px-4">
                         <AccordionTrigger className="hover:no-underline">
                             <div className="flex items-center gap-3 text-left">
-                                <div className="bg-emerald-100 p-2 rounded-lg">
-                                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                                <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg">
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                                 </div>
-                                <div className="font-semibold text-slate-800">หน้าที่รองรับ Cycle</div>
+                                <div className="font-semibold text-foreground">หน้าที่รองรับ Cycle</div>
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className="pt-4 pb-6 text-foreground">
@@ -832,10 +832,10 @@ export default function GuidePage() {
                 {/* FOOTER */}
                 {/* ============================================ */}
                 <div className="text-center mt-8 space-y-2 py-6 border-t">
-                    <p className="text-lg font-semibold text-slate-700">PMQA 4.0 Web Application</p>
-                    <p className="text-sm text-slate-500">Version {APP_VERSION.version} | อัปเดตล่าสุด: {APP_VERSION.releaseDate}</p>
-                    <p className="text-sm text-slate-400">Internal Security Operations Command (กอ.รมน.)</p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-lg font-semibold text-foreground">PMQA 4.0 Web Application</p>
+                    <p className="text-sm text-muted-foreground">Version {APP_VERSION.version} | อัปเดตล่าสุด: {APP_VERSION.releaseDate}</p>
+                    <p className="text-sm text-muted-foreground/70">Internal Security Operations Command (กอ.รมน.)</p>
+                    <p className="text-xs text-muted-foreground/60 mt-2">
                         พัฒนาโดย{' '}
                         <a href="https://portfolio-two-sepia-33.vercel.app/" target="_blank" className="text-indigo-600 underline">
                             พล.ท.ดร.กริช อินทราทิพย์

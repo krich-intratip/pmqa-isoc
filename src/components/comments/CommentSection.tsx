@@ -245,7 +245,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
     return (
         <div className="space-y-4">
             {/* Header */}
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <MessageSquare className="h-4 w-4" />
                 ความคิดเห็น ({comments.filter(c => !c.isDeleted).length})
             </div>
@@ -253,10 +253,10 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
             {/* Comment List */}
             {loading ? (
                 <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
             ) : comments.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4 text-center">
+                <p className="text-sm text-muted-foreground py-4 text-center">
                     ยังไม่มีความคิดเห็น
                 </p>
             ) : (
@@ -264,7 +264,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                     {comments.map((comment) => (
                         <div
                             key={comment.id}
-                            className={`flex gap-3 p-3 rounded-lg ${comment.isDeleted ? 'bg-slate-50' : 'bg-white border'
+                            className={`flex gap-3 p-3 rounded-lg ${comment.isDeleted ? 'bg-muted' : 'bg-card border'
                                 }`}
                         >
                             <Avatar className="h-8 w-8">
@@ -279,7 +279,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                                     <span className="font-medium text-sm">
                                         {comment.authorName}
                                     </span>
-                                    <span className="text-xs text-slate-500">
+                                    <span className="text-xs text-muted-foreground">
                                         {comment.createdAt?.toDate && formatDistanceToNow(
                                             comment.createdAt.toDate(),
                                             { addSuffix: true, locale: th }
@@ -318,7 +318,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                                         </div>
                                     </div>
                                 ) : (
-                                    <p className={`text-sm ${comment.isDeleted ? 'text-slate-400 italic' : ''}`}>
+                                    <p className={`text-sm ${comment.isDeleted ? 'text-muted-foreground/70 italic' : ''}`}>
                                         {renderContent(comment.content)}
                                     </p>
                                 )}
@@ -377,7 +377,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                                 <Button
                                     size="icon"
                                     variant="ghost"
-                                    className="absolute right-1 bottom-1 h-8 w-8 text-slate-400 hover:text-indigo-600"
+                                    className="absolute right-1 bottom-1 h-8 w-8 text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400"
                                     onClick={() => {
                                         setNewComment(prev => prev + '@');
                                         textareaRef.current?.focus();
@@ -389,12 +389,12 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
 
                                 {/* Mention Suggestions */}
                                 {showSuggestions && suggestions.length > 0 && (
-                                    <div className="absolute bottom-full left-0 w-64 bg-white border rounded-md shadow-lg mb-1 z-50">
+                                    <div className="absolute bottom-full left-0 w-64 bg-card border rounded-md shadow-lg mb-1 z-50">
                                         {suggestions.map((s) => (
                                             <button
                                                 key={s.uid}
                                                 onClick={() => insertMention(s)}
-                                                className="w-full flex items-center gap-2 p-2 hover:bg-slate-50 text-left"
+                                                className="w-full flex items-center gap-2 p-2 hover:bg-muted text-left"
                                             >
                                                 <Avatar className="h-6 w-6">
                                                     <AvatarImage src={s.photoURL} />

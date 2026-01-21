@@ -6,12 +6,30 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.5',
+  version: '3.0.6',
   lastUpdate: '2026-01-21',
   releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.6': {
+      date: '21 มกราคม 2569',
+      title: 'Complete Dark Mode Support',
+      features: [
+        {
+          category: 'Dark Mode Improvements',
+          icon: 'Palette',
+          description: 'ปรับปรุง Dark Mode ให้สมบูรณ์ทุกหน้า',
+          items: [
+            'แก้ไข hardcoded colors ในทุก components ให้ใช้ semantic colors',
+            'ปรับปรุง Guide page, Search Dialog, Comments, Chat และ Insights',
+            'เพิ่ม dark mode support สำหรับ Online Users Sidebar และ Live Presence',
+            'ปรับปรุง contrast ratio และความอ่านง่ายใน dark mode',
+            'แก้ไข UI components ให้รองรับ dark mode อย่างสมบูรณ์',
+          ],
+        },
+      ],
+    },
     'v3.0.5': {
       date: '21 มกราคม 2569',
       title: 'User Management & Dark Mode Improvements',

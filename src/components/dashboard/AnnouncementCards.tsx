@@ -90,7 +90,7 @@ const AnnouncementCard = memo(function AnnouncementCard({ announcement, slot, de
             <CardContent className="px-5 pb-2 flex-grow">
                 <div
                     className={cn(
-                        "relative text-slate-600 text-sm leading-relaxed whitespace-pre-wrap transition-all duration-300 ease-in-out",
+                        "relative text-foreground text-sm leading-relaxed whitespace-pre-wrap transition-all duration-300 ease-in-out",
                         !isExpanded ? "max-h-[5.5rem] overflow-hidden" : "max-h-[1000px]"
                     )}
                 >
@@ -100,15 +100,15 @@ const AnnouncementCard = memo(function AnnouncementCard({ announcement, slot, de
 
                     {/* Gradient Fade for truncated content */}
                     {!isExpanded && isOverflowing && (
-                        <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background to-transparent pointer-events-none" />
                     )}
                 </div>
             </CardContent>
 
-            <CardFooter className="px-5 pt-2 pb-4 flex justify-between items-center border-t border-slate-50 mt-2 bg-slate-50/30">
+            <CardFooter className="px-5 pt-2 pb-4 flex justify-between items-center border-t border-border mt-2 bg-muted/30">
                 {announcement?.link ? (
                     <Link href={announcement.link} target="_blank" className="z-20">
-                        <Button variant="ghost" size="sm" className={cn("gap-1.5 h-8 px-2 text-xs font-medium", config.textColor, "hover:bg-white hover:shadow-sm")}>
+                        <Button variant="ghost" size="sm" className={cn("gap-1.5 h-8 px-2 text-xs font-medium", config.textColor, "hover:bg-background hover:shadow-sm")}>
                             <ExternalLink className="h-3 w-3" />
                             {announcement.linkText || 'เปิดลิงก์'}
                         </Button>
@@ -121,7 +121,7 @@ const AnnouncementCard = memo(function AnnouncementCard({ announcement, slot, de
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="gap-1 text-slate-400 hover:text-slate-700 h-8 px-2 text-xs"
+                        className="gap-1 text-muted-foreground hover:text-foreground h-8 px-2 text-xs"
                     >
                         {isExpanded ? (
                             <>ย่อ <ChevronUp className="h-3 w-3" /></>

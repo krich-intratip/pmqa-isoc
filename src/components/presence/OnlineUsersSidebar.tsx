@@ -57,10 +57,10 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
 
     const getRoleBadgeColor = (role: string) => {
         switch (role) {
-            case 'admin': return 'bg-red-100 text-red-700';
-            case 'reviewer': return 'bg-blue-100 text-blue-700';
-            case 'editor': return 'bg-green-100 text-green-700';
-            default: return 'bg-gray-100 text-gray-700';
+            case 'admin': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
+            case 'reviewer': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
+            case 'editor': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+            default: return 'bg-muted text-muted-foreground';
         }
     };
 
@@ -79,7 +79,7 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
             {/* Sidebar */}
             <div
                 className={cn(
-                    'fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-white border-l border-slate-200 shadow-xl z-30 transition-transform duration-300 ease-in-out',
+                    'fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-card border-l border-border shadow-xl z-30 transition-transform duration-300 ease-in-out',
                     'hidden lg:block',
                     isSidebarOpen ? 'translate-x-0' : 'translate-x-full',
                     className
@@ -122,7 +122,7 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
 
                         {/* Filters */}
                         {showFilters && (
-                            <div className="space-y-2 p-3 bg-slate-50 rounded-lg">
+                            <div className="space-y-2 p-3 bg-muted rounded-lg">
                                 <div>
                                     <label className="text-xs font-medium text-muted-foreground mb-1 block">
                                         บทบาท
@@ -194,7 +194,7 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
                                     {filteredUsers.map((user) => (
                                         <div
                                             key={user.userId}
-                                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
                                         >
                                             <UserAvatar
                                                 displayName={user.displayName}

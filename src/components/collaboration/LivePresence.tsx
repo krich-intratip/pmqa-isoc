@@ -67,16 +67,16 @@ export default function LivePresence({ sectionId }: LivePresenceProps) {
     if (activeUsers.length === 0) return null;
 
     return (
-        <div className="flex items-center gap-1 bg-white/80 backdrop-blur px-2 py-1 rounded-full border border-slate-200 shadow-sm">
-            <span className="text-xs text-slate-500 mr-1 hidden sm:inline-block">Viewing:</span>
+        <div className="flex items-center gap-1 bg-background/80 backdrop-blur px-2 py-1 rounded-full border border-border shadow-sm">
+            <span className="text-xs text-muted-foreground mr-1 hidden sm:inline-block">Viewing:</span>
             <div className="flex -space-x-2">
                 <TooltipProvider delayDuration={0}>
                     {activeUsers.map((u) => (
                         <Tooltip key={u.uid}>
                             <TooltipTrigger asChild>
-                                <Avatar className="h-6 w-6 border-2 border-white ring-1 ring-slate-100 cursor-default">
+                                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-border cursor-default">
                                     <AvatarImage src={u.photoURL} />
-                                    <AvatarFallback className="bg-indigo-100 text-[10px] text-indigo-700">
+                                    <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/30 text-[10px] text-indigo-700 dark:text-indigo-400">
                                         {u.displayName?.substring(0, 1)}
                                     </AvatarFallback>
                                 </Avatar>
@@ -89,7 +89,7 @@ export default function LivePresence({ sectionId }: LivePresenceProps) {
                 </TooltipProvider>
             </div>
             {activeUsers.length > 3 && (
-                <span className="text-xs text-slate-400 ml-1">+{activeUsers.length - 3}</span>
+                <span className="text-xs text-muted-foreground ml-1">+{activeUsers.length - 3}</span>
             )}
         </div>
     );

@@ -45,8 +45,8 @@ export function InlineLoading({ text }: { text?: string }) {
 // Overlay loading
 export function OverlayLoading({ text = 'กำลังประมวลผล...' }: { text?: string }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 shadow-xl">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-background rounded-lg p-6 shadow-xl border border-border">
         <LoadingSpinner size="xl" text={text} />
       </div>
     </div>

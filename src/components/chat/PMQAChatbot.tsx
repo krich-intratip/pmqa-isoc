@@ -172,7 +172,7 @@ export default function PMQAChatbot() {
                                             "p-3 text-sm rounded-2xl shadow-sm",
                                             msg.role === 'user'
                                                 ? "bg-indigo-600 text-white rounded-br-none"
-                                                : "bg-white text-slate-800 rounded-bl-none border border-slate-200"
+                                                : "bg-card text-foreground rounded-bl-none border border-border"
                                         )}>
                                             {msg.content}
                                         </div>
@@ -183,9 +183,9 @@ export default function PMQAChatbot() {
                                         <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                                             <Bot className="h-4 w-4 text-emerald-600" />
                                         </div>
-                                        <div className="bg-white p-3 rounded-2xl rounded-bl-none border border-slate-200 flex items-center">
-                                            <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
-                                            <span className="ml-2 text-xs text-slate-400">Thinking...</span>
+                                        <div className="bg-card p-3 rounded-2xl rounded-bl-none border border-border flex items-center">
+                                            <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                                            <span className="ml-2 text-xs text-muted-foreground">Thinking...</span>
                                         </div>
                                     </div>
                                 )}
@@ -194,7 +194,7 @@ export default function PMQAChatbot() {
                         </ScrollArea>
                     </CardContent>
 
-                    <CardFooter className="p-3 bg-white border-t">
+                    <CardFooter className="p-3 bg-card border-t">
                         <div className="flex w-full gap-2">
                             <Input
                                 placeholder="ถามเกี่ยวกับเกณฑ์ PMQA..."

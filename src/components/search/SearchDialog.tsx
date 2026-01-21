@@ -271,11 +271,11 @@ export function SearchDialog() {
         <>
             <div
                 onClick={() => setOpen(true)}
-                className="relative hidden md:flex items-center w-64 h-9 px-3 rounded-md border border-slate-200 bg-slate-50 text-slate-500 cursor-text hover:bg-slate-100 hover:text-slate-600 transition-colors mr-4"
+                className="relative hidden md:flex items-center w-64 h-9 px-3 rounded-md border border-border bg-muted text-muted-foreground cursor-text hover:bg-muted/80 hover:text-foreground transition-colors mr-4"
             >
                 <Search className="h-4 w-4 mr-2" />
                 <span className="text-sm">ค้นหา...</span>
-                <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-white px-1.5 font-mono text-[10px] font-medium text-slate-500 opacity-100 sm:flex">
+                <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 sm:flex">
                     <span className="text-xs">⌘</span>K
                 </kbd>
             </div>
@@ -297,8 +297,8 @@ export function SearchDialog() {
 
                     {/* Filter Tabs */}
                     {results.length > 0 && (
-                        <div className="px-3 py-2 border-b bg-slate-50 flex items-center gap-1 overflow-x-auto">
-                            <Filter className="w-3.5 h-3.5 text-slate-400 mr-1 flex-shrink-0" />
+                        <div className="px-3 py-2 border-b bg-muted flex items-center gap-1 overflow-x-auto">
+                            <Filter className="w-3.5 h-3.5 text-muted-foreground mr-1 flex-shrink-0" />
                             {filterConfig.map((filter) => {
                                 const count = filter.value === 'all'
                                     ? results.length
@@ -311,7 +311,7 @@ export function SearchDialog() {
                                         onClick={() => setActiveFilter(filter.value)}
                                         className={`px-2.5 py-1 text-xs rounded-full transition-colors whitespace-nowrap ${activeFilter === filter.value
                                                 ? 'bg-indigo-600 text-white'
-                                                : 'bg-white border text-slate-600 hover:bg-slate-100'
+                                                : 'bg-background border text-foreground hover:bg-muted'
                                             }`}
                                     >
                                         {filter.label} ({count})
@@ -323,13 +323,13 @@ export function SearchDialog() {
 
                     <ScrollArea className="max-h-[60vh]">
                         {loading ? (
-                            <div className="py-12 text-center text-slate-400">
+                            <div className="py-12 text-center text-muted-foreground">
                                 <div className="animate-spin w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full mx-auto mb-2"></div>
                                 <p>กำลังค้นหา...</p>
                             </div>
                         ) : filteredResults.length > 0 ? (
                             <div className="p-2 space-y-1">
-                                <div className="px-2 py-1.5 text-xs font-semibold text-slate-500 bg-slate-50 rounded-md flex justify-between">
+                                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted rounded-md flex justify-between">
                                     <span>ผลการค้นหา</span>
                                     <span>{filteredResults.length} รายการ</span>
                                 </div>
@@ -337,35 +337,35 @@ export function SearchDialog() {
                                     <button
                                         key={result.id}
                                         onClick={() => handleSelect(result.url)}
-                                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 text-left transition-colors group"
+                                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted text-left transition-colors group"
                                     >
-                                        <div className="p-2 bg-white border rounded-md group-hover:border-indigo-200 group-hover:bg-indigo-50 transition-colors">
+                                        <div className="p-2 bg-card border rounded-md group-hover:border-indigo-200 dark:group-hover:border-indigo-700 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950/30 transition-colors">
                                             {getTypeIcon(result.type)}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <span className="font-medium text-slate-900 group-hover:text-indigo-700 truncate">
+                                                <span className="font-medium text-foreground group-hover:text-indigo-700 dark:group-hover:text-indigo-400 truncate">
                                                     {highlightText(result.title, queryText)}
                                                 </span>
                                                 {getTypeBadge(result.type)}
                                             </div>
                                             {result.subtitle && (
-                                                <div className="text-xs text-slate-500 truncate">
+                                                <div className="text-xs text-muted-foreground truncate">
                                                     {highlightText(result.subtitle, queryText)}
                                                 </div>
                                             )}
                                         </div>
-                                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 flex-shrink-0" />
+                                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground flex-shrink-0" />
                                     </button>
                                 ))}
                             </div>
                         ) : queryText ? (
-                            <div className="py-12 text-center text-slate-500">
+                            <div className="py-12 text-center text-muted-foreground">
                                 <p>ไม่พบผลการค้นหาสำหรับ "{queryText}"</p>
-                                <p className="text-xs mt-1 text-slate-400">ลองค้นหาด้วยคำอื่น หรือพิมพ์มากกว่า 2 ตัวอักษร</p>
+                                <p className="text-xs mt-1 text-muted-foreground/70">ลองค้นหาด้วยคำอื่น หรือพิมพ์มากกว่า 2 ตัวอักษร</p>
                             </div>
                         ) : (
-                            <div className="py-12 text-center text-slate-400">
+                            <div className="py-12 text-center text-muted-foreground/70">
                                 <Search className="w-12 h-12 mx-auto mb-3 opacity-20" />
                                 <p>พิมพ์เพื่อเริ่มค้นหา</p>
                                 <p className="text-xs mt-1">ค้นหา เมนู, Evidence, KPI, SAR, หรือผู้ใช้งาน</p>
@@ -373,18 +373,18 @@ export function SearchDialog() {
                         )}
                     </ScrollArea>
 
-                    <div className="p-2 border-t bg-slate-50 text-[10px] text-slate-400 flex justify-end gap-3 px-4">
+                    <div className="p-2 border-t bg-muted text-[10px] text-muted-foreground flex justify-end gap-3 px-4">
                         <span className="flex items-center gap-1">
-                            <kbd className="bg-white border text-slate-500 px-1 rounded">↓</kbd>
-                            <kbd className="bg-white border text-slate-500 px-1 rounded">↑</kbd>
+                            <kbd className="bg-background border text-muted-foreground px-1 rounded">↓</kbd>
+                            <kbd className="bg-background border text-muted-foreground px-1 rounded">↑</kbd>
                             เลือก
                         </span>
                         <span className="flex items-center gap-1">
-                            <kbd className="bg-white border text-slate-500 px-1 rounded">↵</kbd>
+                            <kbd className="bg-background border text-muted-foreground px-1 rounded">↵</kbd>
                             ไป
                         </span>
                         <span className="flex items-center gap-1">
-                            <kbd className="bg-white border text-slate-500 px-1 rounded">esc</kbd>
+                            <kbd className="bg-background border text-muted-foreground px-1 rounded">esc</kbd>
                             ปิด
                         </span>
                     </div>
