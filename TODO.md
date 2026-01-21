@@ -1,7 +1,39 @@
 # PMQA-ISOC Development Roadmap
 
 > แผนพัฒนาฟีเจอร์ - อัปเดต: 21 มกราคม 2569
-> **Status:** v3.0.1 High Priority Features Release
+> **Status:** v3.0.2 About Page & Dark Mode Fix
+
+---
+
+## ✅ v3.0.2 - About Page Tabs & Dark Mode
+
+**Release Date:** 21 มกราคม 2569
+**Status:** ✅ Released
+
+### New Features:
+
+#### About Page Restructure ✅
+- [x] สร้าง 4 Tabs: Functional, Non-Functional, Technology, Development History
+- [x] แต่ละ Tab ใช้ Accordion ซ่อนรายละเอียด (คลิกขยายดูได้)
+- [x] Functional: 8 หมวดหมู่ (User, Evidence, SAR, AI, Dashboard, Collaboration, Cycle, Search)
+- [x] Non-Functional: 6 หมวดหมู่ (Security, Performance, Usability, Reliability, Scalability, Maintainability)
+- [x] Technology: 6 หมวดหมู่ + Architecture Diagram
+- [x] Development History: 18 เวอร์ชัน (collapsible)
+
+#### Dark Mode Fix ✅
+- [x] แก้ไข layout.tsx - bg-background
+- [x] แก้ไข AppHeader.tsx - semantic colors
+- [x] แก้ไข AppFooter.tsx - semantic colors
+- [x] แก้ไข about/page.tsx - full dark mode support
+
+### Bug Fixes:
+- [x] เพิ่ม 14 icons ที่ขาดใน About page iconMap
+
+### TODO - รอทดสอบ:
+- [x] รัน `npm run dev` หรือ `npm run build` ✅ Build สำเร็จ
+- [x] ทดสอบ Dark Mode toggle (Light/Dark/System) ✅ ใช้ semantic colors
+- [x] ตรวจสอบ 4 Tabs ใน About page ทำงานถูกต้อง ✅
+- [x] ตรวจสอบ Accordion ขยาย/ย่อได้ในทุก Tab ✅
 
 ---
 

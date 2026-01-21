@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body className={`${kanit.className} ${kanit.variable} ${sarabun.variable} antialiased min-h-screen bg-slate-50 flex flex-col`}>
+      <body className={`${kanit.className} ${kanit.variable} ${sarabun.variable} antialiased min-h-screen bg-background flex flex-col`}>
         <AuthProvider>
           <ThemeProvider
             attribute="class"

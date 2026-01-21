@@ -14,37 +14,30 @@ export const APP_VERSION = {
   releases: {
     'v3.0.2': {
       date: '21 มกราคม 2569',
-      title: 'Dark Mode Toggle & Features Summary Page',
+      title: 'About Page Tabs & Dark Mode Fix',
       features: [
         {
-          category: 'Dark Mode Toggle',
+          category: 'About Page Restructure',
+          icon: 'Layout',
+          description: 'ปรับโครงสร้างหน้า About ใหม่ทั้งหมด',
+          items: [
+            '4 Tabs: Functional, Non-Functional, Technology, Development History',
+            'Collapsible Accordion sections ในทุก Tab',
+            'Functional: 8 หมวดหมู่ (User, Evidence, SAR, AI, Dashboard, etc.)',
+            'Non-Functional: 6 หมวดหมู่ (Security, Performance, etc.)',
+            'Technology: 6 หมวดหมู่ + Architecture Diagram',
+            'Development History: 18 เวอร์ชัน (ซ่อนรายละเอียด กดขยายได้)',
+          ],
+        },
+        {
+          category: 'Dark Mode Fix',
           icon: 'Palette',
-          description: 'ปุ่มสลับ Dark/Light Mode',
+          description: 'แก้ไข Dark Mode ทำงานทั้งเว็บ',
           items: [
-            'ปุ่ม Toggle Theme ใกล้รูป Profile',
-            'รองรับ Light, Dark, System modes',
-            'จำการตั้งค่าข้ามเซสชัน',
-          ],
-        },
-        {
-          category: 'Features Summary Page',
-          icon: 'ClipboardCheck',
-          description: 'หน้าสรุปฟีเจอร์ทั้งหมด',
-          items: [
-            'แบ่งเป็น 3 Tabs: Functional, Non-Functional, Technology',
-            'สรุป Functional Requirements ทั้งหมด',
-            'สรุป Non-Functional Requirements (Security, Performance, etc.)',
-            'สรุป Technology Stack และ Architecture',
-          ],
-        },
-        {
-          category: 'About Page Updates',
-          icon: 'FileText',
-          description: 'อัพเดทหน้า About',
-          items: [
-            'อัพเดท Roadmap ตามความคืบหน้า',
-            'ลบ Coming Soon items ที่ทำเสร็จแล้ว',
-            'เพิ่มลิงก์ไป Features Summary',
+            'แก้ไข hardcoded colors ใน layout.tsx',
+            'แก้ไข AppHeader.tsx ใช้ semantic colors',
+            'แก้ไข AppFooter.tsx รองรับ Dark Mode',
+            'ใช้ CSS variables (bg-background, text-foreground, etc.)',
           ],
         },
       ],
