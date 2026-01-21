@@ -115,21 +115,37 @@ export default function Dashboard() {
     }, [user]);
 
     // Start presence tracking when user is authenticated
+    // Track unitInfoLoaded separately so presence works even without unitId
+    const [unitInfoLoaded, setUnitInfoLoaded] = useState(false);
+
+    // Mark unit info as loaded after fetch attempt
     useEffect(() => {
-        if (user && user.uid && unitName) {
+        if (user) {
+            // If user has unitId, wait for unitName to be fetched
+            // If user doesn't have unitId, mark as loaded immediately
+            if (!user.unitId) {
+                setUnitInfoLoaded(true);
+            } else if (unitName) {
+                setUnitInfoLoaded(true);
+            }
+        }
+    }, [user, unitName]);
+
+    useEffect(() => {
+        if (user && user.uid && unitInfoLoaded) {
             startPresenceTracking(user.uid, {
                 displayName: user.displayName || 'ไม่ระบุชื่อ',
                 email: user.email || '',
                 role: user.role || 'viewer',
-                unitName: unitName,
-                unitCategory: unitCategory,
+                unitName: unitName || '',
+                unitCategory: unitCategory || '',
             });
 
             return () => {
                 stopPresenceTracking();
             };
         }
-    }, [user, unitName, unitCategory, startPresenceTracking, stopPresenceTracking]);
+    }, [user, unitInfoLoaded, unitName, unitCategory, startPresenceTracking, stopPresenceTracking]);
 
     // Fetch real dashboard stats
     useEffect(() => {
