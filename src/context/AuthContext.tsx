@@ -6,6 +6,7 @@ import { auth } from '@/lib/firebase/config';
 import { useRouter } from 'next/navigation';
 import { User } from '@/types/database';
 import { getUserProfile, signInWithGoogle as signInWithGoogleAuth } from '@/lib/firebase/auth';
+import { usePresenceStore } from '@/stores/presence-store';
 import { logLogout } from '@/lib/activity-log/activity-logger';
 
 interface AuthContextType {
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const { startPresenceTracking, stopPresenceTracking } = usePresenceStore();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -36,6 +38,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         return () => unsubscribe();
     }, []);
+
+    // Start real-time presence tracking globally (not only on Dashboard)
+    useEffect(() => {
+        if (user?.uid) {
+            startPresenceTracking(user.uid, {
+                displayName: user.displayName || 'ไม่ระบุชื่อ',
+                email: user.email || '',
+                role: user.role || 'viewer',
+                unitName: '', // Will be populated by dashboard if needed
+                unitCategory: '', // Will be populated by dashboard if needed
+            });
+
+            return () => {
+                stopPresenceTracking();
+            };
+        }
+
+        // If user is null, ensure presence tracking is stopped
+        stopPresenceTracking();
+    }, [user, startPresenceTracking, stopPresenceTracking]);
 
     const signInWithGoogle = async () => {
         try {

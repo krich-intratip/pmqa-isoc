@@ -1,7 +1,7 @@
 # PMQA-ISOC Development Roadmap
 
 > แผนพัฒนาฟีเจอร์ - อัปเดต: 21 มกราคม 2569
-> **Status:** v3.0.2 About Page & Dark Mode Fix
+> **Status:** v3.0.4 Stability & Meta Sync
 
 ---
 

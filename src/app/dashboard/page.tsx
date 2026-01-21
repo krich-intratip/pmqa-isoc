@@ -32,7 +32,6 @@ import { exportDashboardSummary, exportDashboardHTML } from '@/lib/export/data-e
 import { OnlineUsersSidebar } from '@/components/presence/OnlineUsersSidebar';
 import OnlineUsersButton from '@/components/collaboration/OnlineUsersButton';
 import { OnboardingTour, TourStep } from '@/components/onboarding/OnboardingTour';
-import { usePresenceStore } from '@/stores/presence-store';
 
 const TOUR_STEPS: TourStep[] = [
     { targetId: 'dashboard-stats', title: 'ภาพรวมสถานะ', content: 'ดูสถานะความคืบหน้าของงานทั้งหมด และตรวจสอบ KPI ที่สำคัญ', position: 'bottom' },
@@ -45,7 +44,6 @@ const TOUR_STEPS: TourStep[] = [
 export default function Dashboard() {
     const { user, loading, initialize } = useAuthStore();
     const { selectedCycle, fetchCycles } = useCycleStore();
-    const { startPresenceTracking, stopPresenceTracking } = usePresenceStore();
     const router = useRouter();
 
     // Dashboard Stats State
@@ -114,39 +112,6 @@ export default function Dashboard() {
 
         fetchUnitInfo();
     }, [user]);
-
-    // Start presence tracking when user is authenticated
-    // Track unitInfoLoaded separately so presence works even without unitId
-    const [unitInfoLoaded, setUnitInfoLoaded] = useState(false);
-
-    // Mark unit info as loaded after fetch attempt
-    useEffect(() => {
-        if (user) {
-            // If user has unitId, wait for unitName to be fetched
-            // If user doesn't have unitId, mark as loaded immediately
-            if (!user.unitId) {
-                setUnitInfoLoaded(true);
-            } else if (unitName) {
-                setUnitInfoLoaded(true);
-            }
-        }
-    }, [user, unitName]);
-
-    useEffect(() => {
-        if (user && user.uid && unitInfoLoaded) {
-            startPresenceTracking(user.uid, {
-                displayName: user.displayName || 'ไม่ระบุชื่อ',
-                email: user.email || '',
-                role: user.role || 'viewer',
-                unitName: unitName || '',
-                unitCategory: unitCategory || '',
-            });
-
-            return () => {
-                stopPresenceTracking();
-            };
-        }
-    }, [user, unitInfoLoaded, unitName, unitCategory, startPresenceTracking, stopPresenceTracking]);
 
     // Fetch real dashboard stats
     useEffect(() => {

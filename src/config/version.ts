@@ -6,12 +6,27 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.3',
+  version: '3.0.4',
   lastUpdate: '2026-01-21',
   releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.4': {
+      date: '21 มกราคม 2569',
+      title: 'Stability & Meta Sync',
+      features: [
+        {
+          category: 'Version Sync',
+          icon: 'Package',
+          description: 'ปรับหมายเลขเวอร์ชันให้ตรงกับการ deploy ล่าสุด',
+          items: [
+            'อัปเดตแหล่งอ้างอิงเวอร์ชันหลักเป็น 3.0.4',
+            'แก้ไขเอกสารและไฟล์ metadata ให้ตรงกัน',
+          ],
+        },
+      ],
+    },
     'v3.0.3': {
       date: '21 มกราคม 2569',
       title: 'Performance & Real-time User Presence',

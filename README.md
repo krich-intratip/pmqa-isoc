@@ -1,7 +1,7 @@
 # PMQA ISOC - ระบบสนับสนุนการประเมินตนเอง PMQA 4.0
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
-![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![Version](https://img.shields.io/badge/version-3.0.4-blue)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange)
 
 ระบบสนับสนุนการประเมินตนเอง (ISOC - Integrated Self-Assessment Online Companion) สำหรับกระบวนการประเมินคุณภาพการบริหารจัดการภาครัฐ PMQA 4.0
