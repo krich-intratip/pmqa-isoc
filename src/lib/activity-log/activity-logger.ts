@@ -67,7 +67,7 @@ export async function logActivity(params: LogActivityParams): Promise<boolean> {
             createdAt: serverTimestamp() as Timestamp,
         };
 
-        await addDoc(collection(db, 'activityLogs'), logData);
+        await addDoc(collection(db, 'activity_log'), logData);
         return true;
     } catch (error) {
         console.error('Error logging activity:', error);

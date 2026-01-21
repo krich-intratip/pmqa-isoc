@@ -16,7 +16,8 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return isAuthenticated() &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+             (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin' ||
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'central_admin');
     }
 
     // Presence collection - Real-time online user tracking
@@ -102,6 +103,62 @@ service cloud.firestore {
     match /announcements/{docId} {
       allow read: if isAuthenticated();
       allow create, update, delete: if isAdmin();
+    }
+
+    // Comments collection
+    match /comments/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && isOwner(resource.data.authorId);
+    }
+
+    // File Versions collection
+    match /file_versions/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+
+    // KPI Definitions collection
+    match /kpi_definitions/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Context Packs collection
+    match /context_packs/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Recovery Narratives collection
+    match /recovery_narratives/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Gap Items collection
+    match /gap_items/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Data Sources collection
+    match /data_sources/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Owner Matrix collection
+    match /owner_matrix/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Email Queue collection (internal use, admin only)
+    match /email_queue/{docId} {
+      allow read, write: if isAdmin();
     }
 
     // Default: deny all other access

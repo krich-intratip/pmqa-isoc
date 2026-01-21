@@ -100,11 +100,11 @@ export default function CyclesManagementPage() {
 
             if (editMode && editingCycleId) {
                 // Update existing cycle
-                await updateDoc(doc(db, 'assessmentCycles', editingCycleId), cycleData);
+                await updateDoc(doc(db, 'cycles', editingCycleId), cycleData);
                 toast.success('อัปเดตรอบการประเมินเรียบร้อยแล้ว');
             } else {
                 // Create new cycle
-                await addDoc(collection(db, 'assessmentCycles'), {
+                await addDoc(collection(db, 'cycles'), {
                     ...cycleData,
                     createdAt: serverTimestamp(),
                     createdBy: user?.uid,

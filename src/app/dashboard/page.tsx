@@ -428,9 +428,9 @@ export default function Dashboard() {
                                     </p>
                                 </CardContent>
                             </Card>
-                            <Card className="border-amber-200 bg-amber-50/50">
+                            <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/50">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">รอการอนุมัติ</CardTitle>
+                                    <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400 dark:text-amber-400">รอการอนุมัติ</CardTitle>
                                     {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                                 </CardHeader>
                                 <CardContent>
@@ -519,9 +519,9 @@ export default function Dashboard() {
 
                         <h3 className="text-lg font-semibold text-foreground">ระบบหลัก</h3>
                         <div id="dashboard-system-nav" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50 border-purple-200 dark:border-purple-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400 dark:text-purple-400">
                                         <MapPin className="h-5 w-5" />
                                         <span className="text-base">Assessment Roadmap</span>
                                     </CardTitle>
@@ -529,14 +529,14 @@ export default function Dashboard() {
                                 </CardHeader>
                                 <CardContent>
                                     <Link href="/roadmap">
-                                        <Button variant="outline" className="w-full border-purple-300 hover:bg-purple-100">เริ่มต้น</Button>
+                                        <Button variant="outline" className="w-full border-purple-300 dark:border-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900">เริ่มต้น</Button>
                                     </Link>
                                 </CardContent>
                             </Card>
 
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 dark:text-indigo-400">
                                         <Calendar className="h-5 w-5" />
                                         <span className="text-base">Cycle Management</span>
                                     </CardTitle>
@@ -551,7 +551,7 @@ export default function Dashboard() {
 
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-100 dark:border-purple-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400 dark:text-purple-400">
                                         <Settings className="h-5 w-5" />
                                         <span className="text-base">AI Configuration</span>
                                     </CardTitle>
@@ -564,9 +564,9 @@ export default function Dashboard() {
                                 </CardContent>
                             </Card>
 
-                            <Card id="dashboard-ai-card" className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+                            <Card id="dashboard-ai-card" className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 border-indigo-200 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 dark:text-indigo-400">
                                         <Sparkles className="h-5 w-5" />
                                         <span className="text-base">AI Strategic Insights</span>
                                     </CardTitle>
@@ -574,7 +574,7 @@ export default function Dashboard() {
                                 </CardHeader>
                                 <CardContent>
                                     <Link href="/insights">
-                                        <Button variant="outline" className="w-full border-indigo-300 hover:bg-indigo-100">วิเคราะห์ข้อมูล</Button>
+                                        <Button variant="outline" className="w-full border-indigo-300 dark:border-indigo-700 hover:bg-indigo-100 dark:hover:bg-indigo-900">วิเคราะห์ข้อมูล</Button>
                                     </Link>
                                 </CardContent>
                             </Card>
@@ -587,7 +587,7 @@ export default function Dashboard() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 dark:text-indigo-400">
                                         <UserCog className="h-5 w-5" />
                                         <span className="text-base">User Management</span>
                                     </CardTitle>
@@ -602,7 +602,7 @@ export default function Dashboard() {
 
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-emerald-100 dark:border-emerald-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                                    <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 dark:text-emerald-400">
                                         <UserCheck className="h-5 w-5" />
                                         <span className="text-base">User Approvals</span>
                                     </CardTitle>
@@ -617,7 +617,7 @@ export default function Dashboard() {
 
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-100 dark:border-blue-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                                    <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400 dark:text-blue-400">
                                         <Map className="h-5 w-5" />
                                         <span className="text-base">Network Mapper</span>
                                     </CardTitle>
@@ -644,7 +644,7 @@ export default function Dashboard() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-100 dark:border-indigo-800">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 dark:text-indigo-400">
                                         <Activity className="h-5 w-5" />
                                         <span className="text-base">Activity Log</span>
                                     </CardTitle>
@@ -707,7 +707,7 @@ export default function Dashboard() {
                     </Button>
                     <OnlineUsersButton />
                     <div className="text-right">
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-muted-foreground">
                             {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
                         </p>
                         <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
@@ -729,7 +729,7 @@ export default function Dashboard() {
                         {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-emerald-600">
+                        <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                             {statsLoading ? '-' : `${categoryProgress}%`}
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -743,7 +743,7 @@ export default function Dashboard() {
                         {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-blue-600">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                             {statsLoading ? '-' : kpiDataCount}
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -757,7 +757,7 @@ export default function Dashboard() {
                         {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-indigo-600">
+                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                             {statsLoading ? '-' : evidenceCount}
                         </div>
                         <p className="text-xs text-muted-foreground">
@@ -818,14 +818,14 @@ const PhaseProgressCard = memo(function PhaseProgressCard({
     isPercentage?: boolean;
 }) {
     const colorClasses: Record<string, string> = {
-        green: 'bg-green-50 border-green-200 text-green-700',
-        blue: 'bg-blue-50 border-blue-200 text-blue-700',
-        orange: 'bg-orange-50 border-orange-200 text-orange-700',
-        indigo: 'bg-indigo-50 border-indigo-200 text-indigo-700',
-        emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-        teal: 'bg-teal-50 border-teal-200 text-teal-700',
-        violet: 'bg-violet-50 border-violet-200 text-violet-700',
-        purple: 'bg-purple-50 border-purple-200 text-purple-700',
+        green: 'bg-green-50 dark:bg-green-950/50 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 dark:text-green-400',
+        blue: 'bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 dark:text-blue-400',
+        orange: 'bg-orange-50 dark:bg-orange-950/50 border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 dark:text-orange-400',
+        indigo: 'bg-indigo-50 dark:bg-indigo-950/50 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 dark:text-indigo-400',
+        emerald: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 dark:text-emerald-400',
+        teal: 'bg-teal-50 dark:bg-teal-950/50 border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-400 dark:text-teal-400',
+        violet: 'bg-violet-50 dark:bg-violet-950/50 border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-400 dark:text-violet-400',
+        purple: 'bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-400 dark:text-purple-400',
     };
 
     return (
@@ -859,9 +859,9 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             <h2 className="text-xl font-semibold mb-4 text-foreground">เครื่องมือของฉัน</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Roadmap - Available to all users */}
-                <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
+                <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/50 dark:to-indigo-950/50 border-purple-200 dark:border-purple-800">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-purple-700">
+                        <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400 dark:text-purple-400">
                             <MapPin className="h-5 w-5" />
                             <span className="text-base">Assessment Roadmap</span>
                         </CardTitle>
@@ -869,7 +869,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                     </CardHeader>
                     <CardContent>
                         <Link href="/roadmap">
-                            <Button variant="outline" className="w-full border-purple-300 hover:bg-purple-100">เริ่มต้น</Button>
+                            <Button variant="outline" className="w-full border-purple-300 dark:border-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900">เริ่มต้น</Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -879,7 +879,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                     <>
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-blue-700">
+                                <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
                                     <FileText className="h-5 w-5" />
                                     <span className="text-base">Owner Matrix</span>
                                 </CardTitle>
@@ -887,14 +887,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase0/owner-matrix">
-                                    <Button variant="outline" className="w-full text-blue-700 bg-blue-50 border-blue-100 hover:bg-blue-100">จัดการ</Button>
+                                    <Button variant="outline" className="w-full text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900">จัดการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-teal-50 dark:border-teal-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-teal-700">
+                                <CardTitle className="flex items-center gap-2 text-teal-700 dark:text-teal-400">
                                     <FolderPlus className="h-5 w-5" />
                                     <span className="text-base">Repository Setup</span>
                                 </CardTitle>
@@ -902,14 +902,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase0/repository-setup">
-                                    <Button variant="outline" className="w-full text-teal-700 bg-teal-50 border-teal-100 hover:bg-teal-100">สร้าง</Button>
+                                    <Button variant="outline" className="w-full text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50 border-teal-100 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900">สร้าง</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-amber-50 dark:border-amber-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-amber-700">
+                                <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
                                     <CalendarIcon className="h-5 w-5" />
                                     <span className="text-base">Submission Calendar</span>
                                 </CardTitle>
@@ -917,7 +917,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase0/calendar">
-                                    <Button variant="outline" className="w-full text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">ดูตาราง</Button>
+                                    <Button variant="outline" className="w-full text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 border-amber-100 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900">ดูตาราง</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -932,7 +932,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-green-50 dark:border-green-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-green-700">
+                                <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
                                     <FileText className="h-5 w-5" />
                                     <span className="text-base">Evidence Register</span>
                                 </CardTitle>
@@ -940,14 +940,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase1/evidence">
-                                    <Button variant="outline" className="w-full text-green-700 bg-green-50 border-green-100 hover:bg-green-100">เข้าสู่ระบบ</Button>
+                                    <Button variant="outline" className="w-full text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/50 border-green-100 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900">เข้าสู่ระบบ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-orange-50 dark:border-orange-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-orange-700">
+                                <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
                                     <BarChart3 className="h-5 w-5" />
                                     <span className="text-base">Gap Analyzer</span>
                                 </CardTitle>
@@ -955,15 +955,15 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase1/gap-analyzer">
-                                    <Button variant="outline" className="w-full text-orange-700 bg-orange-50 border-orange-100 hover:bg-orange-100">วิเคราะห์</Button>
+                                    <Button variant="outline" className="w-full text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 border-orange-100 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900">วิเคราะห์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         {isReviewer && (
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-50 dark:border-purple-900">
+                            <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-50 dark:border-purple-900 dark:border-purple-900">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+                                    <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400 dark:text-purple-400">
                                         <ShieldCheck className="h-5 w-5" />
                                         <span className="text-base">Gate Checker</span>
                                     </CardTitle>
@@ -971,7 +971,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                                 </CardHeader>
                                 <CardContent>
                                     <Link href="/phase1/gate-checker">
-                                        <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">ตรวจสอบ</Button>
+                                        <Button variant="outline" className="w-full text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900">ตรวจสอบ</Button>
                                     </Link>
                                 </CardContent>
                             </Card>
@@ -979,7 +979,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-rose-50 dark:border-rose-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-rose-700">
+                                <CardTitle className="flex items-center gap-2 text-rose-700 dark:text-rose-400">
                                     <ClipboardCheck className="h-5 w-5" />
                                     <span className="text-base">Gap Tracker</span>
                                 </CardTitle>
@@ -987,7 +987,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase1/gap-tracker">
-                                    <Button variant="outline" className="w-full text-rose-700 bg-rose-50 border-rose-100 hover:bg-rose-100">ติดตาม</Button>
+                                    <Button variant="outline" className="w-full text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 border-rose-100 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900">ติดตาม</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1002,7 +1002,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-blue-700">
+                                <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
                                     <Database className="h-5 w-5" />
                                     <span className="text-base">Data Source Catalog</span>
                                 </CardTitle>
@@ -1010,14 +1010,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/data-catalog">
-                                    <Button variant="outline" className="w-full text-blue-700 bg-blue-50 border-blue-100 hover:bg-blue-100">จัดการ</Button>
+                                    <Button variant="outline" className="w-full text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900">จัดการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-50 dark:border-indigo-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                     <BookOpen className="h-5 w-5" />
                                     <span className="text-base">KPI Dictionary</span>
                                 </CardTitle>
@@ -1025,14 +1025,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/kpi-dictionary">
-                                    <Button variant="outline" className="w-full text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">จัดการ</Button>
+                                    <Button variant="outline" className="w-full text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900">จัดการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-green-50 dark:border-green-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-green-700">
+                                <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
                                     <FileSpreadsheet className="h-5 w-5" />
                                     <span className="text-base">Excel Templates</span>
                                 </CardTitle>
@@ -1040,14 +1040,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/excel-templates">
-                                    <Button variant="outline" className="w-full text-green-700 bg-green-50 border-green-100 hover:bg-green-100">สร้าง</Button>
+                                    <Button variant="outline" className="w-full text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/50 border-green-100 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900">สร้าง</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-cyan-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-cyan-50 dark:border-cyan-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-cyan-700">
+                                <CardTitle className="flex items-center gap-2 text-cyan-700 dark:text-cyan-400">
                                     <ClipboardEdit className="h-5 w-5" />
                                     <span className="text-base">Data Collector</span>
                                 </CardTitle>
@@ -1055,14 +1055,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/data-collector">
-                                    <Button variant="outline" className="w-full text-cyan-700 bg-cyan-50 border-cyan-100 hover:bg-cyan-100">กรอกข้อมูล</Button>
+                                    <Button variant="outline" className="w-full text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/50 border-cyan-100 dark:border-cyan-800 hover:bg-cyan-100 dark:hover:bg-cyan-900">กรอกข้อมูล</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-violet-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-violet-50 dark:border-violet-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-violet-700">
+                                <CardTitle className="flex items-center gap-2 text-violet-700 dark:text-violet-400">
                                     <Sparkles className="h-5 w-5" />
                                     <span className="text-base">Data Cleaning</span>
                                 </CardTitle>
@@ -1070,14 +1070,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/data-cleaning">
-                                    <Button variant="outline" className="w-full text-violet-700 bg-violet-50 border-violet-100 hover:bg-violet-100">วิเคราะห์</Button>
+                                    <Button variant="outline" className="w-full text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border-violet-100 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900">วิเคราะห์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-emerald-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-emerald-50 dark:border-emerald-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-emerald-700">
+                                <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                                     <LineChart className="h-5 w-5" />
                                     <span className="text-base">Baseline Analyzer</span>
                                 </CardTitle>
@@ -1085,7 +1085,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase2/baseline-analyzer">
-                                    <Button variant="outline" className="w-full text-emerald-700 bg-emerald-50 border-emerald-100 hover:bg-emerald-100">วิเคราะห์</Button>
+                                    <Button variant="outline" className="w-full text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900">วิเคราะห์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1096,11 +1096,11 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 3: Analysis & Narrative */}
             {availablePhases.includes(3) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 3: Analysis & Narrative</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 3: Analysis & Narrative</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-sky-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-sky-50 dark:border-sky-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-sky-700">
+                                <CardTitle className="flex items-center gap-2 text-sky-700 dark:text-sky-400">
                                     <FileText className="h-5 w-5" />
                                     <span className="text-base">Context Pack</span>
                                 </CardTitle>
@@ -1108,14 +1108,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase3/context-pack">
-                                    <Button variant="outline" className="w-full text-sky-700 bg-sky-50 border-sky-100 hover:bg-sky-100">จัดการ</Button>
+                                    <Button variant="outline" className="w-full text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 border-sky-100 dark:border-sky-800 hover:bg-sky-100 dark:hover:bg-sky-900">จัดการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-orange-50 dark:border-orange-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-orange-700">
+                                <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
                                     <AlertTriangle className="h-5 w-5" />
                                     <span className="text-base">Risk Analyzer</span>
                                 </CardTitle>
@@ -1123,14 +1123,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase3/risk-analyzer">
-                                    <Button variant="outline" className="w-full text-orange-700 bg-orange-50 border-orange-100 hover:bg-orange-100">วิเคราะห์</Button>
+                                    <Button variant="outline" className="w-full text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 border-orange-100 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900">วิเคราะห์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-50 dark:border-purple-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-purple-700">
+                                <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                                     <GitBranch className="h-5 w-5" />
                                     <span className="text-base">Strategy Linker</span>
                                 </CardTitle>
@@ -1138,7 +1138,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase3/strategy-linker">
-                                    <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">จัดการ</Button>
+                                    <Button variant="outline" className="w-full text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900">จัดการ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1149,11 +1149,11 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 4: SAR Writing */}
             {availablePhases.includes(4) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 4: SAR Writing (AI-Powered)</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 4: SAR Writing (AI-Powered)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-indigo-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-indigo-50 dark:border-indigo-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                                     <FileText className="h-5 w-5" />
                                     <span className="text-base">SAR Outline</span>
                                 </CardTitle>
@@ -1161,14 +1161,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase4/sar-outline">
-                                    <Button variant="outline" className="w-full text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">สร้าง</Button>
+                                    <Button variant="outline" className="w-full text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900">สร้าง</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-purple-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-purple-50 dark:border-purple-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-purple-700">
+                                <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
                                     <PenTool className="h-5 w-5" />
                                     <span className="text-base">SAR Writer</span>
                                 </CardTitle>
@@ -1176,7 +1176,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase4/sar-writer">
-                                    <Button variant="outline" className="w-full text-purple-700 bg-purple-50 border-purple-100 hover:bg-purple-100">เขียน</Button>
+                                    <Button variant="outline" className="w-full text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 border-purple-100 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900">เขียน</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1187,11 +1187,11 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 5: Results */}
             {availablePhases.includes(5) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 5: Results (Category 7)</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 5: Results (Category 7)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-emerald-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-emerald-50 dark:border-emerald-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-emerald-700">
+                                <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                                     <Package className="h-5 w-5" />
                                     <span className="text-base">Results Data Pack</span>
                                 </CardTitle>
@@ -1199,14 +1199,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase5/results-pack">
-                                    <Button variant="outline" className="w-full text-emerald-700 bg-emerald-50 border-emerald-100 hover:bg-emerald-100">ดูผลลัพธ์</Button>
+                                    <Button variant="outline" className="w-full text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900">ดูผลลัพธ์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-amber-50 dark:border-amber-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-amber-700">
+                                <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
                                     <BookOpen className="h-5 w-5" />
                                     <span className="text-base">Recovery Narrative</span>
                                 </CardTitle>
@@ -1214,7 +1214,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase5/recovery-narrative">
-                                    <Button variant="outline" className="w-full text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">สร้างบทวิเคราะห์</Button>
+                                    <Button variant="outline" className="w-full text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 border-amber-100 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900">สร้างบทวิเคราะห์</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1225,11 +1225,11 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 6: Quality Assurance */}
             {availablePhases.includes(6) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 6: Quality Assurance</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 6: Quality Assurance</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-blue-50 dark:border-blue-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-blue-700">
+                                <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
                                     <ShieldCheck className="h-5 w-5" />
                                     <span className="text-base">Consistency Auditor</span>
                                 </CardTitle>
@@ -1237,14 +1237,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase6/consistency-auditor">
-                                    <Button variant="outline" className="w-full text-blue-700 bg-blue-50 border-blue-100 hover:bg-blue-100">ตรวจสอบ</Button>
+                                    <Button variant="outline" className="w-full text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900">ตรวจสอบ</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-teal-50 dark:border-teal-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-teal-700">
+                                <CardTitle className="flex items-center gap-2 text-teal-700 dark:text-teal-400">
                                     <Calculator className="h-5 w-5" />
                                     <span className="text-base">Score Simulator</span>
                                 </CardTitle>
@@ -1252,7 +1252,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase6/score-simulator">
-                                    <Button variant="outline" className="w-full text-teal-700 bg-teal-50 border-teal-100 hover:bg-teal-100">จำลอง</Button>
+                                    <Button variant="outline" className="w-full text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50 border-teal-100 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900">จำลอง</Button>
                                 </Link>
                             </CardContent>
                         </Card>
@@ -1263,11 +1263,11 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
             {/* Phase 7: Interview Prep */}
             {availablePhases.includes(7) && (
                 <>
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800">Phase 7: Interview Prep</h2>
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Phase 7: Interview Prep</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-rose-50 dark:border-rose-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-rose-700">
+                                <CardTitle className="flex items-center gap-2 text-rose-700 dark:text-rose-400">
                                     <Presentation className="h-5 w-5" />
                                     <span className="text-base">Interview Brief</span>
                                 </CardTitle>
@@ -1275,14 +1275,14 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase7/interview-brief">
-                                    <Button variant="outline" className="w-full text-rose-700 bg-rose-50 border-rose-100 hover:bg-rose-100">สร้าง Brief</Button>
+                                    <Button variant="outline" className="w-full text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 border-rose-100 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900">สร้าง Brief</Button>
                                 </Link>
                             </CardContent>
                         </Card>
 
-                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-white border-violet-50">
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-card border-violet-50 dark:border-violet-900">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-violet-700">
+                                <CardTitle className="flex items-center gap-2 text-violet-700 dark:text-violet-400">
                                     <HelpCircle className="h-5 w-5" />
                                     <span className="text-base">Q&A Bank</span>
                                 </CardTitle>
@@ -1290,7 +1290,7 @@ const PhaseToolsSection = memo(function PhaseToolsSection({
                             </CardHeader>
                             <CardContent>
                                 <Link href="/phase7/qa-bank">
-                                    <Button variant="outline" className="w-full text-violet-700 bg-violet-50 border-violet-100 hover:bg-violet-100">จัดการ Q&A</Button>
+                                    <Button variant="outline" className="w-full text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border-violet-100 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900">จัดการ Q&A</Button>
                                 </Link>
                             </CardContent>
                         </Card>

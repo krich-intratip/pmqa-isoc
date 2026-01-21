@@ -30,7 +30,7 @@ export const useCycleStore = create<CycleStore>()(
             fetchCycles: async () => {
                 set({ loading: true });
                 try {
-                    const q = query(collection(db, 'assessmentCycles'), orderBy('year', 'desc'));
+                    const q = query(collection(db, 'cycles'), orderBy('year', 'desc'));
                     const snapshot = await getDocs(q);
                     const cyclesData = snapshot.docs.map(doc => ({
                         id: doc.id,

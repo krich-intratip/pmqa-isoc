@@ -8,7 +8,7 @@ import { AssessmentCycle } from '@/types/database';
 export async function getActiveCycle(): Promise<AssessmentCycle | null> {
     try {
         const q = query(
-            collection(db, 'assessmentCycles'),
+            collection(db, 'cycles'),
             where('isActive', '==', true),
             where('status', '==', 'active')
         );
@@ -28,7 +28,7 @@ export async function getActiveCycle(): Promise<AssessmentCycle | null> {
  */
 export async function getAllCycles(): Promise<AssessmentCycle[]> {
     try {
-        const snapshot = await getDocs(collection(db, 'assessmentCycles'));
+        const snapshot = await getDocs(collection(db, 'cycles'));
         const cycles = snapshot.docs.map(doc => doc.data() as AssessmentCycle);
 
         // เรียงตามปี จากมากไปน้อย
@@ -46,11 +46,11 @@ export async function switchActiveCycle(newCycleId: string): Promise<boolean> {
     try {
         // 1. ปิด cycle เก่าทั้งหมด
         const activeCycles = await getDocs(
-            query(collection(db, 'assessmentCycles'), where('isActive', '==', true))
+            query(collection(db, 'cycles'), where('isActive', '==', true))
         );
 
         const deactivatePromises = activeCycles.docs.map(d =>
-            updateDoc(doc(db, 'assessmentCycles', d.id), {
+            updateDoc(doc(db, 'cycles', d.id), {
                 isActive: false,
                 updatedAt: serverTimestamp()
             })
@@ -59,7 +59,7 @@ export async function switchActiveCycle(newCycleId: string): Promise<boolean> {
         await Promise.all(deactivatePromises);
 
         // 2. เปิด cycle ใหม่
-        await updateDoc(doc(db, 'assessmentCycles', newCycleId), {
+        await updateDoc(doc(db, 'cycles', newCycleId), {
             isActive: true,
             status: 'active',
             updatedAt: serverTimestamp()

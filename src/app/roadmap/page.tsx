@@ -195,9 +195,9 @@ export default function AssessmentRoadmapPage() {
             </div>
 
             {/* Overview Card */}
-            <Card className="mb-8 border-indigo-200 bg-indigo-50/50">
+            <Card className="mb-8 border-indigo-200 dark:border-indigo-800 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-950/50">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                    <CardTitle className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                         <Info className="h-5 w-5" />
                         ภาพรวมกระบวนการ
                     </CardTitle>
@@ -207,31 +207,31 @@ export default function AssessmentRoadmapPage() {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <p className="text-sm text-muted-foreground">ระยะเวลารวม</p>
-                            <p className="text-2xl font-bold text-indigo-700">16-32 สัปดาห์</p>
+                            <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">16-32 สัปดาห์</p>
                             <p className="text-xs text-muted-foreground">ประมาณ 4-8 เดือน</p>
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">จำนวน Phase</p>
-                            <p className="text-2xl font-bold text-indigo-700">8 Phases</p>
+                            <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">8 Phases</p>
                             <p className="text-xs text-muted-foreground">จากเตรียมการถึงนำเสนอ</p>
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">เครื่องมือทั้งหมด</p>
-                            <p className="text-2xl font-bold text-indigo-700">18 Tools</p>
+                            <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">18 Tools</p>
                             <p className="text-xs text-muted-foreground">พร้อมใช้งานทันที</p>
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">รองรับ Cycle</p>
-                            <p className="text-2xl font-bold text-indigo-700">✓ หลายรอบ</p>
+                            <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">✓ หลายรอบ</p>
                             <p className="text-xs text-muted-foreground">แยกข้อมูลแต่ละรอบ</p>
                         </div>
                     </div>
 
                     {/* New Features Highlight */}
                     {APP_VERSION.releases[`v${APP_VERSION.version}`] && (
-                        <div className="mt-6 p-4 bg-white rounded-lg border border-indigo-200">
-                            <h4 className="font-semibold text-sm text-indigo-800 mb-2">✨ ฟีเจอร์ใหม่ใน v{APP_VERSION.version}</h4>
-                            <ul className="text-xs text-slate-600 space-y-1">
+                        <div className="mt-6 p-4 bg-card rounded-lg border border-indigo-200 dark:border-indigo-800 dark:border-indigo-800">
+                            <h4 className="font-semibold text-sm text-indigo-800 dark:text-indigo-300 mb-2">✨ ฟีเจอร์ใหม่ใน v{APP_VERSION.version}</h4>
+                            <ul className="text-xs text-muted-foreground space-y-1">
                                 {APP_VERSION.releases[`v${APP_VERSION.version}`].features.map((feature, idx) => (
                                     <li key={idx}>• {feature.description}</li>
                                 ))}
@@ -357,7 +357,7 @@ export default function AssessmentRoadmapPage() {
 
                         {/* Phase Details */}
                         <div className="lg:col-span-2">
-                            <Card className="border-indigo-200">
+                            <Card className="border-indigo-200 dark:border-indigo-800 dark:border-indigo-800">
                                 <CardHeader>
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className={`${selectedPhase.color} text-white p-4 rounded-lg`}>
@@ -390,10 +390,10 @@ export default function AssessmentRoadmapPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             {selectedPhase.tools.map((tool) => (
                                                 <Link key={tool.path} href={tool.path}>
-                                                    <Card className="hover:shadow-md transition-shadow hover:border-indigo-300 cursor-pointer h-full">
+                                                    <Card className="hover:shadow-md transition-shadow hover:border-indigo-300 dark:border-indigo-700 cursor-pointer h-full">
                                                         <CardHeader className="p-4">
                                                             <CardTitle className="text-sm flex items-center gap-2">
-                                                                <Play className="h-3 w-3 text-indigo-600" />
+                                                                <Play className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
                                                                 {tool.name}
                                                             </CardTitle>
                                                             <CardDescription className="text-xs">
@@ -415,7 +415,7 @@ export default function AssessmentRoadmapPage() {
                                         <ul className="space-y-2">
                                             {selectedPhase.deliverables.map((item, idx) => (
                                                 <li key={idx} className="flex items-start gap-2">
-                                                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-green-600" />
+                                                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-green-600 dark:text-green-400" />
                                                     <span className="text-sm">{item}</span>
                                                 </li>
                                             ))}

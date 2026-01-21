@@ -103,7 +103,7 @@ export async function getActivityLogs(
             constraints.push(startAfter(lastDoc));
         }
 
-        const q = query(collection(db, 'activityLogs'), ...constraints);
+        const q = query(collection(db, 'activity_log'), ...constraints);
         const snapshot = await getDocs(q);
 
         const logs: ActivityLog[] = [];
@@ -459,7 +459,7 @@ export async function cleanupOldLogs(retentionDays: number = 365): Promise<numbe
         cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
         const q = query(
-            collection(db, 'activityLogs'),
+            collection(db, 'activity_log'),
             where('timestamp', '<', Timestamp.fromDate(cutoffDate)),
             limit(500) // Delete in batches
         );
