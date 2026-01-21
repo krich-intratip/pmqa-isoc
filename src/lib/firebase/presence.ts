@@ -75,18 +75,26 @@ export async function updateUserActivity(userId: string): Promise<void> {
 export function subscribeToOnlineUsers(
     callback: (users: UserPresence[]) => void
 ): () => void {
+    console.log('[Presence] Creating subscription to online users...');
     const presenceQuery = query(
         collection(db, 'presence'),
         where('isOnline', '==', true)
     );
 
-    return onSnapshot(
+    const unsubscribe = onSnapshot(
         presenceQuery,
         (snapshot) => {
+            console.log('[Presence] Snapshot received, size:', snapshot.size, 'docs');
             const onlineUsers: UserPresence[] = [];
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
+                console.log('[Presence] Processing doc:', doc.id, 'data:', {
+                    userId: data.userId,
+                    displayName: data.displayName,
+                    isOnline: data.isOnline,
+                    lastActivity: data.lastActivity ? 'exists' : 'null'
+                });
                 onlineUsers.push({
                     userId: data.userId,
                     displayName: data.displayName,
@@ -100,14 +108,20 @@ export function subscribeToOnlineUsers(
                 });
             });
 
-            console.log('[Presence] Snapshot received:', onlineUsers.length, 'online users');
+            console.log('[Presence] Snapshot processed:', onlineUsers.length, 'online users');
+            console.log('[Presence] Users list:', onlineUsers.map(u => u.displayName));
             callback(onlineUsers);
         },
         (error) => {
             console.error('[Presence] Error subscribing to online users:', error);
+            console.error('[Presence] Error code:', error.code);
+            console.error('[Presence] Error message:', error.message);
             callback([]); // Return empty array on error
         }
     );
+
+    console.log('[Presence] Subscription created, returning unsubscribe function');
+    return unsubscribe;
 }
 
 /**

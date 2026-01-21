@@ -4,6 +4,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { usePresenceStore } from '@/stores/presence-store';
+import { getAllUsersPresence } from '@/lib/firebase/presence';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -53,13 +54,54 @@ export default function OnlineUsersButton({ className }: OnlineUsersButtonProps)
         return () => clearInterval(interval);
     }, []);
 
+    // Fetch initial presence data when component mounts
+    useEffect(() => {
+        if (user) {
+            console.log('[OnlineUsersButton] Component mounted, fetching initial presence data');
+            getAllUsersPresence()
+                .then((allUsers) => {
+                    const onlineUsers = allUsers.filter(u => u.isOnline === true);
+                    console.log('[OnlineUsersButton] Initial fetch:', onlineUsers.length, 'online users', onlineUsers.map(u => u.displayName));
+                    usePresenceStore.getState().setOnlineUsers(onlineUsers);
+                })
+                .catch((error) => {
+                    console.error('[OnlineUsersButton] Error fetching initial presence:', error);
+                });
+        }
+    }, [user]);
+
     // Use Firestore-based presence data (shared across app)
+    // Filter out users who haven't been active in the last 5 minutes
     const activeUsers = useMemo(() => {
-        return onlineUsersRaw.filter((u) => {
-            if (!u.lastActivity) return true;
-            const last = u.lastActivity.toDate().getTime();
-            return currentTime - last < 5 * 60 * 1000;
+        console.log('[OnlineUsersButton] Raw online users:', onlineUsersRaw.length, onlineUsersRaw.map(u => ({ name: u.displayName, isOnline: u.isOnline, lastActivity: u.lastActivity })));
+        
+        const filtered = onlineUsersRaw.filter((u) => {
+            // If user is marked as online, include them
+            if (u.isOnline === true) {
+                // If they have lastActivity, check if it's within 5 minutes
+                if (u.lastActivity) {
+                    try {
+                        const last = u.lastActivity.toDate().getTime();
+                        const isActive = currentTime - last < 5 * 60 * 1000;
+                        if (!isActive) {
+                            console.log('[OnlineUsersButton] Filtering out inactive user:', u.displayName, 'last active:', new Date(last).toLocaleString());
+                        }
+                        return isActive;
+                    } catch (error) {
+                        console.error('[OnlineUsersButton] Error parsing lastActivity for', u.displayName, error);
+                        // If error parsing, include them anyway
+                        return true;
+                    }
+                }
+                // If no lastActivity but isOnline is true, include them
+                return true;
+            }
+            // If isOnline is false, exclude them
+            return false;
         });
+        
+        console.log('[OnlineUsersButton] Filtered active users:', filtered.length, filtered.map(u => u.displayName));
+        return filtered;
     }, [onlineUsersRaw, currentTime]);
 
     const handleUserClick = (targetUser: ActiveUser) => {
