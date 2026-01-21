@@ -42,12 +42,31 @@ export default function LoginPage() {
             }
         } catch (error) {
             console.error('Login error:', error);
-            const err = error as { code?: string };
-            const errorMessage = err?.code === 'auth/popup-closed-by-user'
-                ? 'คุณปิด popup ก่อนเข้าสู่ระบบ'
-                : err?.code === 'auth/unauthorized-domain'
-                    ? 'Domain ไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ'
-                    : 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+            const err = error as { code?: string; message?: string };
+
+            // ตรวจสอบ error types ต่างๆ
+            let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+
+            if (err?.code === 'auth/popup-closed-by-user') {
+                errorMessage = 'คุณปิด popup ก่อนเข้าสู่ระบบ';
+            } else if (err?.code === 'auth/unauthorized-domain') {
+                errorMessage = 'Domain ไม่ได้รับอนุญาต กรุณาติดต่อผู้ดูแลระบบ';
+            } else if (err?.code === 'auth/popup-blocked') {
+                errorMessage = 'Popup ถูกบล็อก กรุณาอนุญาต popup สำหรับเว็บไซต์นี้';
+            } else if (
+                err?.message?.includes('disallowed_useragent') ||
+                err?.message?.includes('403') ||
+                err?.code === 'auth/web-storage-unsupported'
+            ) {
+                // Error 403: disallowed_useragent - เปิดจาก WebView ใน LINE/Facebook/Instagram
+                errorMessage = 'ไม่สามารถเข้าสู่ระบบผ่านแอปนี้ได้ กรุณาเปิดใน Chrome หรือ Safari';
+                toast.error(errorMessage, {
+                    duration: 8000,
+                    description: 'กดเมนู ⋮ แล้วเลือก "เปิดใน Chrome" หรือ "Open in Browser"',
+                });
+                return; // Return early เพราะแสดง toast พิเศษแล้ว
+            }
+
             toast.error(errorMessage);
         } finally {
             setIsLoading(false);
@@ -89,6 +108,14 @@ export default function LoginPage() {
                         )}
                         {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบด้วย Google'}
                     </Button>
+
+                    {/* คำแนะนำสำหรับผู้ใช้ที่เปิดจาก LINE/Facebook */}
+                    <div className="text-center text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p className="font-medium">หากเปิดจาก LINE หรือ Facebook</p>
+                        <p className="mt-1 text-amber-500 dark:text-amber-500">
+                            กรุณากด <span className="font-bold">⋮</span> แล้วเลือก &quot;เปิดใน Chrome&quot;
+                        </p>
+                    </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-2 text-center text-xs text-muted-foreground">
                     <p>
