@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/auth-store';
 import { signInWithGoogle } from '@/lib/firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,33 +13,47 @@ import { APP_VERSION } from '@/config/version';
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { user, loading, initialize } = useAuthStore();
+
+    // Initialize auth state
+    useEffect(() => {
+        const unsubscribe = initialize();
+        return () => unsubscribe();
+    }, [initialize]);
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        if (!loading && user) {
+            if (user.status === 'approved' || user.role === 'super_admin') {
+                router.replace('/dashboard');
+            } else if (user.status === 'pending') {
+                router.replace('/auth/register');
+            }
+        }
+    }, [user, loading, router]);
 
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
             const { user, isNew } = await signInWithGoogle();
 
+            // Immediately redirect based on user status
             if (user.status === 'pending') {
                 if (isNew || !user.requestDetails) {
-                    // Redirect to register/request page if pending and new (or missing details)
-                    router.push('/auth/register');
                     toast.info('กรุณากรอกข้อมูลเพื่อขอสิทธิ์ใช้งาน');
+                    router.replace('/auth/register');
                 } else {
-                    // Pending but submitted request -> wait approval
-                    // Maybe redirect to a specific 'pending approval' status page?
-                    // For now, let them go to register page to check status or edit?
-                    // Or dashboard with limited view?
-                    // Logic says: Register page can handle "You have already requested" state.
-                    router.push('/auth/register');
+                    router.replace('/auth/register');
                 }
             } else if (user.status === 'approved' || user.role === 'super_admin') {
-                router.push('/dashboard');
                 toast.success(`ยินดีต้อนรับ ${user.displayName}`);
+                router.replace('/dashboard');
             } else if (user.status === 'rejected') {
                 toast.error('บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+                setIsLoading(false);
             } else {
                 // Fallback
-                router.push('/dashboard');
+                router.replace('/dashboard');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -64,14 +79,26 @@ export default function LoginPage() {
                     duration: 8000,
                     description: 'กดเมนู ⋮ แล้วเลือก "เปิดใน Chrome" หรือ "Open in Browser"',
                 });
+                setIsLoading(false);
                 return; // Return early เพราะแสดง toast พิเศษแล้ว
             }
 
             toast.error(errorMessage);
-        } finally {
             setIsLoading(false);
         }
     };
+
+    // Show loading if checking auth state or redirecting
+    if (loading || (user && (user.status === 'approved' || user.status === 'pending'))) {
+        return (
+            <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">กำลังเข้าสู่ระบบ...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
