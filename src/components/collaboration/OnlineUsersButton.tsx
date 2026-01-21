@@ -114,37 +114,45 @@ export default function OnlineUsersButton({ sectionId = 'global-dashboard', clas
         return `${Math.floor(minutes / 60)} ชม.ที่แล้ว`;
     };
 
-    if (activeUsers.length === 0) {
-        return (
-            <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-full bg-muted/50", className)}>
-                <Circle className="h-2 w-2 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">0 ออนไลน์</span>
-            </div>
-        );
-    }
-
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-full",
-                        "bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-900/50",
-                        "border border-green-200 dark:border-green-800",
-                        className
-                    )}
-                >
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <Users className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-                    <span className="text-xs font-medium text-green-700 dark:text-green-300">
-                        {activeUsers.length}
-                    </span>
-                </Button>
+                {activeUsers.length === 0 ? (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                            "flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-full",
+                            "bg-muted/50 hover:bg-muted",
+                            "border border-border",
+                            className
+                        )}
+                    >
+                        <Circle className="h-2 w-2 text-muted-foreground" />
+                        <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">0</span>
+                    </Button>
+                ) : (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                            "flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-full",
+                            "bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-900/50",
+                            "border border-green-200 dark:border-green-800",
+                            className
+                        )}
+                    >
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <Users className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                        <span className="text-xs font-medium text-green-700 dark:text-green-300">
+                            {activeUsers.length}
+                        </span>
+                    </Button>
+                )}
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
                 <div className="p-4 border-b">
@@ -163,52 +171,60 @@ export default function OnlineUsersButton({ sectionId = 'global-dashboard', clas
                 </div>
                 <ScrollArea className="max-h-[300px]">
                     <div className="p-2 space-y-1">
-                        {activeUsers.map((u) => {
-                            const isMe = u.uid === user?.uid;
-                            const canClick = isAdmin && !isMe;
+                        {activeUsers.length === 0 ? (
+                            <div className="py-8 text-center text-muted-foreground">
+                                <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                <p className="text-sm">ไม่มีผู้ใช้ออนไลน์ในขณะนี้</p>
+                                <p className="text-xs mt-1">กรุณารอสักครู่...</p>
+                            </div>
+                        ) : (
+                            activeUsers.map((u) => {
+                                const isMe = u.uid === user?.uid;
+                                const canClick = isAdmin && !isMe;
 
-                            return (
-                                <div
-                                    key={u.uid}
-                                    onClick={() => canClick && handleUserClick(u)}
-                                    className={cn(
-                                        "flex items-center gap-3 p-2 rounded-lg transition-colors",
-                                        canClick
-                                            ? "cursor-pointer hover:bg-muted"
-                                            : "cursor-default",
-                                        isMe && "bg-primary/5"
-                                    )}
-                                >
-                                    <div className="relative">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src={u.photoURL} />
-                                            <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                                                {u.displayName?.substring(0, 1)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"></span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="text-sm font-medium truncate">
-                                                {u.displayName}
-                                            </span>
-                                            {isMe && (
-                                                <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
-                                                    คุณ
-                                                </Badge>
-                                            )}
+                                return (
+                                    <div
+                                        key={u.uid}
+                                        onClick={() => canClick && handleUserClick(u)}
+                                        className={cn(
+                                            "flex items-center gap-3 p-2 rounded-lg transition-colors",
+                                            canClick
+                                                ? "cursor-pointer hover:bg-muted"
+                                                : "cursor-default",
+                                            isMe && "bg-primary/5"
+                                        )}
+                                    >
+                                        <div className="relative">
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarImage src={u.photoURL} />
+                                                <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                                    {u.displayName?.substring(0, 1)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-800"></span>
                                         </div>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            {formatLastActive(u.lastActive)}
-                                        </p>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-sm font-medium truncate">
+                                                    {u.displayName}
+                                                </span>
+                                                {isMe && (
+                                                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
+                                                        คุณ
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground truncate">
+                                                {formatLastActive(u.lastActive)}
+                                            </p>
+                                        </div>
+                                        {canClick && (
+                                            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100" />
+                                        )}
                                     </div>
-                                    {canClick && (
-                                        <ExternalLink className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100" />
-                                    )}
-                                </div>
-                            );
-                        })}
+                                );
+                            })
+                        )}
                     </div>
                 </ScrollArea>
                 {isAdmin && (
