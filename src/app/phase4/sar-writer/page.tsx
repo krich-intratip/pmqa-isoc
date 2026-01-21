@@ -11,7 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PenTool, Sparkles, Copy, Save, Loader2, FileText, Trash2, AlertTriangle } from 'lucide-react';
+import { PenTool, Sparkles, Copy, Save, Loader2, FileText, Trash2, AlertTriangle, MessageSquare } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import CommentSection from '@/components/comments/CommentSection';
+import RefineTextDialog from '@/components/ai/RefineTextDialog';
 import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -47,6 +50,32 @@ export default function SARWriterPage() {
     const [generating, setGenerating] = useState(false);
     const [saving, setSaving] = useState(false);
     const [savedContents, setSavedContents] = useState<SavedContent[]>([]);
+
+    // Comment Dialog State
+    const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+    const [commentContent, setCommentContent] = useState<SavedContent | null>(null);
+
+    // Refine Dialog State
+    const [refineDialogOpen, setRefineDialogOpen] = useState(false);
+    const [refineTarget, setRefineTarget] = useState<'context' | 'output'>('context');
+
+    const handleOpenRefine = (target: 'context' | 'output') => {
+        const text = target === 'context' ? contextInput : generatedContent;
+        if (!text.trim()) {
+            toast.error('กรุณาระบุข้อความที่ต้องการปรับปรุง');
+            return;
+        }
+        setRefineTarget(target);
+        setRefineDialogOpen(true);
+    };
+
+    const handleRefineReplace = (newText: string) => {
+        if (refineTarget === 'context') {
+            setContextInput(newText);
+        } else {
+            setGeneratedContent(newText);
+        }
+    };
 
     const currentCategory = PMQA_CATEGORIES.find(c => c.id === selectedCategory);
 
@@ -292,7 +321,16 @@ ${contextInput}
                                             rows={12}
                                             className="font-mono text-sm"
                                         />
-                                        <div className="flex justify-end mt-4">
+                                        <div className="flex justify-between mt-4">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleOpenRefine('context')}
+                                                className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                                            >
+                                                <Sparkles className="h-4 w-4 mr-2" />
+                                                ปรับปรุงภาษา (AI Refine)
+                                            </Button>
                                             <Button onClick={handleGenerate} disabled={generating} className="gap-2">
                                                 {generating ? (
                                                     <>
@@ -322,6 +360,15 @@ ${contextInput}
                                             </div>
                                             {generatedContent && (
                                                 <div className="flex gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        onClick={() => handleOpenRefine('output')}
+                                                        title="ปรับปรุงภาษา (Refine)"
+                                                        className="text-purple-600 hover:bg-purple-50"
+                                                    >
+                                                        <Sparkles className="h-4 w-4" />
+                                                    </Button>
                                                     <Button size="sm" variant="outline" onClick={handleCopy}>
                                                         <Copy className="h-4 w-4" />
                                                     </Button>
@@ -395,6 +442,16 @@ ${contextInput}
                                                                         >
                                                                             <Trash2 className="h-3 w-3" />
                                                                         </Button>
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="outline"
+                                                                            onClick={() => {
+                                                                                setCommentContent(content);
+                                                                                setCommentDialogOpen(true);
+                                                                            }}
+                                                                        >
+                                                                            <MessageSquare className="h-3 w-3" />
+                                                                        </Button>
                                                                     </div>
                                                                 </div>
                                                                 <p className="text-xs text-muted-foreground line-clamp-2">{content.content}</p>
@@ -410,7 +467,35 @@ ${contextInput}
                         </Card>
                     </TabsContent>
                 </Tabs>
+
+                {/* Comment Dialog */}
+                <Dialog open={commentDialogOpen} onOpenChange={setCommentDialogOpen}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>ความคิดเห็น</DialogTitle>
+                            <DialogDescription>
+                                {commentContent?.subsection}
+                            </DialogDescription>
+                        </DialogHeader>
+                        {commentContent && (
+                            <CommentSection
+                                targetType="sar_content"
+                                targetId={commentContent.id}
+                            />
+                        )}
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setCommentDialogOpen(false)}>ปิด</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
+
+            <RefineTextDialog
+                isOpen={refineDialogOpen}
+                onClose={() => setRefineDialogOpen(false)}
+                currentText={refineTarget === 'context' ? contextInput : generatedContent}
+                onReplace={handleRefineReplace}
+            />
         </ProtectedRoute>
     );
 }

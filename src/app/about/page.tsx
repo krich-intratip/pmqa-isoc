@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -23,6 +24,9 @@ import {
     Layout,
     Megaphone,
     Download,
+    MessageSquare,
+    Palette,
+    Compass,
 } from 'lucide-react';
 import { APP_VERSION } from '@/config/version';
 
@@ -44,6 +48,9 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     'Layout': Layout,
     'Megaphone': Megaphone,
     'Download': Download,
+    'MessageSquare': MessageSquare,
+    'Palette': Palette,
+    'Compass': Compass,
 };
 
 // Color schemes for version cards
@@ -237,24 +244,37 @@ export default function AboutPage() {
                         <ClipboardCheck className="h-6 w-6" />
                         Roadmap - ฟีเจอร์ที่กำลังพัฒนา
                     </CardTitle>
+                    <CardDescription className="text-yellow-700">
+                        อัปเดต: 21 มกราคม 2569
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-3 text-sm">
+                    <div className="space-y-4 text-sm">
                         <div className="flex items-start gap-2">
-                            <span className="text-yellow-600 font-semibold min-w-[80px]">Phase ถัดไป:</span>
+                            <span className="text-green-600 font-semibold min-w-[100px]">✅ เสร็จแล้ว:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• Dark Mode Support</li>
-                                <li>• Cross-Consistency Check (ตรวจสอบความสอดคล้องข้ามเกณฑ์)</li>
-                                <li>• Advanced Analytics Dashboard</li>
+                                <li>• 🚀 **v3.0.0 Smart PMQA (AI & Automation)**</li>
+                                <li>• 🏷️ Smart Evidence Tagging & Chat RAG</li>
+                                <li>• 📊 Predictive Scoring & Leaderboard</li>
+                                <li>• 👥 Live Collaboration (Real-time Presence)</li>
+                                <li>• 📚 Interactive eBook Export</li>
+                                <li>• 🌙 Dark Mode & Theme Settings</li>
                             </ul>
                         </div>
                         <div className="flex items-start gap-2">
-                            <span className="text-yellow-600 font-semibold min-w-[80px]">Long-term:</span>
+                            <span className="text-yellow-600 font-semibold min-w-[100px]">เร็วๆ นี้:</span>
                             <ul className="space-y-1 text-muted-foreground">
-                                <li>• Advanced Analytics & Reporting</li>
-                                <li>• AI-Driven Insights (Advanced)</li>
-                                <li>• Cross-Agency Benchmarking</li>
-                                <li>• Mobile App (Native)</li>
+                                <li>• 📧 Email Notifications (แจ้งเตือน deadline, approvals)</li>
+                                <li>• 📤 Bulk Import Users (นำเข้าผู้ใช้จาก Excel/CSV)</li>
+                                <li>• 📊 Scheduled Reports (Weekly/Monthly email)</li>
+                            </ul>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <span className="text-yellow-600 font-semibold min-w-[100px]">ระยะยาว:</span>
+                            <ul className="space-y-1 text-muted-foreground">
+                                <li>• 📱 PWA / Offline Support</li>
+                                <li>• 🏆 Cross-Agency Benchmarking</li>
+                                <li>• 📲 Mobile App (Native iOS/Android)</li>
                             </ul>
                         </div>
                     </div>

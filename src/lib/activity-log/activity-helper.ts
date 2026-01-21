@@ -295,16 +295,16 @@ export function filterActivityLogs(
  */
 export interface ActivityStats {
     totalLogs: number;
-    actionCounts: Record<ActivityAction, number>;
-    resourceTypeCounts: Record<ActivityResourceType, number>;
+    actionCounts: Partial<Record<ActivityAction, number>>;
+    resourceTypeCounts: Partial<Record<ActivityResourceType, number>>;
     topUsers: Array<{ userId: string; userName: string; count: number }>;
     topUnits: Array<{ unitId: string; unitName: string; count: number }>;
     dailyActivity: Array<{ date: string; count: number }>;
 }
 
 export function getActivityStats(logs: ActivityLog[]): ActivityStats {
-    const actionCounts: Record<ActivityAction, number> = {} as any;
-    const resourceTypeCounts: Record<ActivityResourceType, number> = {} as any;
+    const actionCounts: Partial<Record<ActivityAction, number>> = {};
+    const resourceTypeCounts: Partial<Record<ActivityResourceType, number>> = {};
     const userCounts: Record<string, { userName: string; count: number }> = {};
     const unitCounts: Record<string, { unitName: string; count: number }> = {};
     const dailyCounts: Record<string, number> = {};

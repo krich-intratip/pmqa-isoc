@@ -1,10 +1,13 @@
 import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth, db } from './config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { User, Unit } from '@/types/database';
-import { logLogin, logLogout } from '@/lib/activity-log/activity-logger';
+import { User } from '@/types/database';
+import { Timestamp } from 'firebase/firestore';
+import { logLogin } from '@/lib/activity-log/activity-logger';
 
 const googleProvider = new GoogleAuthProvider();
+// Add Calendar scope for Google Calendar integration
+googleProvider.addScope('https://www.googleapis.com/auth/calendar.events');
 
 export const signInWithGoogle = async () => {
     try {
@@ -25,9 +28,9 @@ export const signInWithGoogle = async () => {
                 role: 'read_only', // Default until approved? Or just no role?
                 status: 'pending',
                 permissions: [],
-                createdAt: serverTimestamp() as any,
-                updatedAt: serverTimestamp() as any,
-                lastLoginAt: serverTimestamp() as any,
+                createdAt: serverTimestamp() as Timestamp,
+                updatedAt: serverTimestamp() as Timestamp,
+                lastLoginAt: serverTimestamp() as Timestamp,
                 isActive: true
             };
 

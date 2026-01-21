@@ -16,6 +16,7 @@ import { generateSARContent } from '@/lib/google/ai-api';
 import { db } from '@/lib/firebase/config';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
+import ExportEbookButton from '@/components/export/ExportEbookButton';
 
 interface KPISummary {
     kpiCode: string;
@@ -365,6 +366,18 @@ ${selectedNarrativeType === 'success' ? `
                                     </div>
                                     {generatedNarrative && (
                                         <div className="flex gap-2">
+                                            <ExportEbookButton
+                                                data={{
+                                                    cycleName: selectedCycle?.name || '',
+                                                    unitName: user?.unitId || 'Unknown Unit',
+                                                    sections: [{
+                                                        id: '7.1',
+                                                        title: 'หมวด 7: ผลลัพธ์การดำเนินการ',
+                                                        content: generatedNarrative,
+                                                        evidences: [] // Add evidences if available
+                                                    }]
+                                                }}
+                                            />
                                             <Button size="sm" variant="outline" onClick={handleCopy}>
                                                 <Copy className="h-4 w-4" />
                                             </Button>

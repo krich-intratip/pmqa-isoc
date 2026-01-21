@@ -21,6 +21,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES } from '@/lib/auth/role-helper';
 import { Plus, Edit, CheckCircle2, Calendar, Target } from 'lucide-react';
 import { getAllCycles, switchActiveCycle, getCycleStatusDisplay } from '@/lib/cycles/cycle-helper';
+import CalendarSyncButton from '@/components/calendar/CalendarSyncButton';
 
 export default function CyclesManagementPage() {
     const { user } = useAuthStore();
@@ -292,6 +293,7 @@ export default function CyclesManagementPage() {
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right space-x-2">
+                                                <CalendarSyncButton cycle={cycle} />
                                                 <Button size="sm" variant="outline" onClick={() => handleEdit(cycle)}>
                                                     <Edit className="h-3 w-3 mr-1" /> แก้ไข
                                                 </Button>

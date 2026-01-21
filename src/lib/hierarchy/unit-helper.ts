@@ -1,4 +1,4 @@
-import { Unit } from '@/types/database';
+// Unit type used for type reference only
 
 // Helper to get initial units structure (Hardcoded for MVP start, later fetched from DB)
 export const ISOC_HIERARCHY = {
@@ -35,7 +35,24 @@ export const getProvincesByRegion = (regionId: string) => {
     }
 };
 
-export const getUnitLabel = (unitId: string) => {
-    // Simple lookup
-    return unitId; // Placeholder
+export const getUnitLabel = (unitId: string): string => {
+    // Lookup unit name from hierarchy data
+    const allUnits = [
+        ...ISOC_HIERARCHY.REGIONS,
+        ...ISOC_HIERARCHY.CENTERS,
+        ...ISOC_HIERARCHY.CENTRAL_UNITS,
+    ];
+
+    const unit = allUnits.find(u => u.id === unitId);
+    if (unit) {
+        return unit.name;
+    }
+
+    // Check if it's a province ID (format: prov-ชื่อจังหวัด)
+    if (unitId.startsWith('prov-')) {
+        return unitId.replace('prov-', '');
+    }
+
+    // Fallback to unitId if not found
+    return unitId;
 };

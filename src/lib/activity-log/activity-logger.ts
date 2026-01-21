@@ -10,9 +10,9 @@ interface LogActivityParams {
     resourceId?: string;
     resourceName?: string;
     details?: {
-        changes?: any;
-        oldValue?: any;
-        newValue?: any;
+        changes?: Record<string, unknown>;
+        oldValue?: string | number | boolean | null;
+        newValue?: string | number | boolean | null;
         filename?: string;
         filesize?: number;
         fileType?: string;
@@ -118,7 +118,7 @@ export async function logCreate(
     resourceType: ActivityResourceType,
     resourceId: string,
     resourceName: string,
-    details?: any
+    details?: Record<string, unknown>
 ): Promise<boolean> {
     return logActivity({
         user,
@@ -141,9 +141,9 @@ export async function logUpdate(
     resourceType: ActivityResourceType,
     resourceId: string,
     resourceName: string,
-    changes: any,
-    oldValue?: any,
-    newValue?: any
+    changes: Record<string, unknown>,
+    oldValue?: string | number | boolean | null,
+    newValue?: string | number | boolean | null
 ): Promise<boolean> {
     return logActivity({
         user,

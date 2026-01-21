@@ -31,7 +31,7 @@ export function useActivityLogger() {
             resourceType: ActivityResourceType,
             resourceId?: string,
             resourceName?: string,
-            details?: any
+            details?: Record<string, unknown>
         ): Promise<boolean> => {
             return logActivity({
                 user,
@@ -72,7 +72,7 @@ export function useActivityLogger() {
             resourceType: ActivityResourceType,
             resourceId: string,
             resourceName: string,
-            details?: any
+            details?: Record<string, unknown>
         ): Promise<boolean> => {
             if (!user) return false;
             return logCreate(user, resourceType, resourceId, resourceName, details);
@@ -88,9 +88,9 @@ export function useActivityLogger() {
             resourceType: ActivityResourceType,
             resourceId: string,
             resourceName: string,
-            changes: any,
-            oldValue?: any,
-            newValue?: any
+            changes: Record<string, unknown>,
+            oldValue?: string | number | boolean | null,
+            newValue?: string | number | boolean | null
         ): Promise<boolean> => {
             if (!user) return false;
             return logUpdate(user, resourceType, resourceId, resourceName, changes, oldValue, newValue);

@@ -30,7 +30,16 @@ import { AnnouncementManager } from '@/components/dashboard/AnnouncementManager'
 import { CycleComparison } from '@/components/dashboard/CycleComparison';
 import { exportDashboardSummary, exportDashboardHTML } from '@/lib/export/data-export';
 import { OnlineUsersSidebar } from '@/components/presence/OnlineUsersSidebar';
+import { OnboardingTour, TourStep } from '@/components/onboarding/OnboardingTour';
 import { usePresenceStore } from '@/stores/presence-store';
+
+const TOUR_STEPS: TourStep[] = [
+    { targetId: 'dashboard-stats', title: 'ภาพรวมสถานะ', content: 'ดูสถานะความคืบหน้าของงานทั้งหมด และตรวจสอบ KPI ที่สำคัญ', position: 'bottom' },
+    { targetId: 'dashboard-phase-progress', title: 'ความคืบหน้าตามขั้นตอน', content: 'ติดตามความคืบหน้าของแต่ละเฟส (Phase 1-7) อย่างละเอียด', position: 'top' },
+    { targetId: 'dashboard-comparison', title: 'เปรียบเทียบผลการประเมิน', content: 'กราฟเปรียบเทียบผลลัพธ์กับรอบปีที่ผ่านมา', position: 'top' },
+    { targetId: 'dashboard-phase-tools', title: 'เครื่องมือการทำงาน', content: 'เข้าถึงเครื่องมือสำหรับแต่ละเฟสการทำงาน', position: 'top' },
+    { targetId: 'dashboard-ai-card', title: 'AI Strategic Insights', content: 'ใช้ AI ช่วยวิเคราะห์จุดแข็ง จุดอ่อน และแนวโน้มผลการดำเนินงาน', position: 'left' }
+];
 
 export default function Dashboard() {
     const { user, loading, initialize } = useAuthStore();
@@ -464,7 +473,7 @@ export default function Dashboard() {
 
                         {/* Phase Progress Section */}
                         <h3 className="text-lg font-semibold text-slate-800 mt-6">ความคืบหน้าตาม Phase</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                        <div id="dashboard-phase-progress" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                             <PhaseProgressCard
                                 phase={1}
                                 title="Evidence"
@@ -536,7 +545,7 @@ export default function Dashboard() {
                         <CycleComparison />
 
                         <h3 className="text-lg font-semibold text-slate-800">ระบบหลัก</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div id="dashboard-system-nav" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-purple-700">
@@ -578,6 +587,21 @@ export default function Dashboard() {
                                 <CardContent>
                                     <Link href="/settings/ai">
                                         <Button variant="outline" className="w-full">ตั้งค่า</Button>
+                                    </Link>
+                                </CardContent>
+                            </Card>
+
+                            <Card id="dashboard-ai-card" className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2 text-indigo-700">
+                                        <Sparkles className="h-5 w-5" />
+                                        <span className="text-base">AI Strategic Insights</span>
+                                    </CardTitle>
+                                    <CardDescription>วิเคราะห์จุดแข็ง/จุดอ่อนเชิงกลยุทธ์</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Link href="/insights">
+                                        <Button variant="outline" className="w-full border-indigo-300 hover:bg-indigo-100">วิเคราะห์ข้อมูล</Button>
                                     </Link>
                                 </CardContent>
                             </Card>
@@ -670,6 +694,7 @@ export default function Dashboard() {
                         />
                     </TabsContent>
                 </Tabs>
+                <OnboardingTour steps={TOUR_STEPS} />
             </div>
         );
     }
@@ -733,7 +758,7 @@ export default function Dashboard() {
             <AnnouncementCards />
 
             {/* Main Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div id="dashboard-stats" className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">ความคืบหน้าหลักฐาน</CardTitle>
@@ -781,7 +806,7 @@ export default function Dashboard() {
             {/* Phase Progress Section for Regular Users */}
             <div>
                 <h3 className="text-lg font-semibold text-slate-800 mb-3">ความคืบหน้าตาม Phase</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                <div id="dashboard-phase-progress" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
                     <PhaseProgressCard phase={1} title="Evidence" value={evidenceCount} subValue={`${verifiedCount} ผ่าน`} loading={statsLoading} color="green" />
                     <PhaseProgressCard phase={2} title="Data" value={kpiDefinitionsCount} subValue={`${kpiDataCount} ข้อมูล`} loading={statsLoading} color="blue" />
                     <PhaseProgressCard phase={3} title="Analysis" value={contextPackExists ? 1 : 0} subValue={`${risksCount} ความเสี่ยง`} loading={statsLoading} color="orange" />
@@ -794,13 +819,18 @@ export default function Dashboard() {
             </div>
 
             {/* Cycle Comparison for Regular Users */}
-            <CycleComparison />
+            <div id="dashboard-comparison">
+                <CycleComparison />
+            </div>
 
             {/* Phase Tools for Regular Users */}
-            <PhaseToolsSection
-                isReviewer={isReviewer}
-                availablePhases={availablePhases}
-            />
+            <div id="dashboard-phase-tools">
+                <PhaseToolsSection
+                    isReviewer={isReviewer}
+                    availablePhases={availablePhases}
+                />
+            </div>
+            <OnboardingTour steps={TOUR_STEPS} />
         </div>
     );
 }

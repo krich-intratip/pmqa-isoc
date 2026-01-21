@@ -188,7 +188,7 @@ export interface FileVersion {
 }
 
 // Notification System (v1.7.2)
-export type NotificationType = 'approval' | 'rejection' | 'reminder' | 'system' | 'evidence' | 'cycle';
+export type NotificationType = 'approval' | 'rejection' | 'reminder' | 'system' | 'evidence' | 'cycle' | 'mention';
 
 export interface Notification {
     id: string;
@@ -197,7 +197,7 @@ export interface Notification {
     title: string;
     message: string;
     source?: {
-        type: 'user' | 'system' | 'cycle' | 'evidence';
+        type: 'user' | 'system' | 'cycle' | 'evidence' | 'comment';
         id?: string;
         name?: string;
     };
@@ -224,3 +224,20 @@ export interface Announcement {
     updatedByName: string;
 }
 
+// Comment System (v2.2.1)
+export type CommentTargetType = 'evidence' | 'sar_content';
+
+export interface Comment {
+    id: string;
+    targetType: CommentTargetType;
+    targetId: string;             // evidenceId หรือ sarContentId
+    content: string;              // เนื้อหา comment
+    mentions: string[];           // UIDs ที่ถูก @mention
+    authorId: string;
+    authorName: string;
+    authorPhotoURL?: string;
+    createdAt: Timestamp;
+    updatedAt?: Timestamp;
+    isEdited: boolean;
+    isDeleted?: boolean;
+}

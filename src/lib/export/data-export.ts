@@ -13,7 +13,7 @@ interface ExportOptions {
     filename: string;
     sheetName?: string;
     columns: ExportColumn[];
-    data: Record<string, any>[];
+    data: Record<string, unknown>[];
 }
 
 /**

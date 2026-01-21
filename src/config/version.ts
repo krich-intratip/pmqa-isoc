@@ -6,12 +6,189 @@
  */
 
 export const APP_VERSION = {
-  version: '2.1.0',
-  lastUpdate: '2026-01-20',
-  releaseDate: '20 มกราคม 2569',
+  version: '3.0.1',
+  lastUpdate: '2026-01-21',
+  releaseDate: '21 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.1': {
+      date: '21 มกราคม 2569',
+      title: 'High Priority Features & Bug Fixes',
+      features: [
+        {
+          category: 'Bulk Import Users',
+          icon: 'Upload',
+          description: 'นำเข้าผู้ใช้จำนวนมากจาก Excel',
+          items: [
+            'อัปโหลด Excel/CSV เพื่อสร้างผู้ใช้หลายคนพร้อมกัน',
+            'ตรวจสอบข้อมูลอัตโนมัติก่อนนำเข้า',
+            'ดาวน์โหลดแม่แบบไฟล์นำเข้า',
+          ],
+        },
+        {
+          category: 'Email Notifications',
+          icon: 'Mail',
+          description: 'ระบบแจ้งเตือนทางอีเมล (ต้องใช้ Blaze Plan)',
+          items: [
+            'แจ้งเตือนกำหนดส่งรอบประเมิน',
+            'แจ้งเตือนการอนุมัติ/ปฏิเสธบัญชี',
+            'แจ้งเตือนเมื่อมีคน @mention',
+          ],
+        },
+        {
+          category: 'Bug Fixes',
+          icon: 'Wrench',
+          description: 'แก้ไขปัญหาและปรับปรุง',
+          items: [
+            'แก้ไข getUnitLabel() placeholder function',
+            'ติดตั้ง dependencies ที่ขาด (regression, react-pdf, qrcode)',
+            'เพิ่ม Tooltip component ที่ขาด',
+          ],
+        },
+      ],
+    },
+    'v3.0.0': {
+      date: '21 มกราคม 2569',
+      title: 'Smart PMQA: AI Automation & Engagement',
+      features: [
+        {
+          category: 'AI Automation',
+          icon: 'Sparkles',
+          description: 'เพิ่มประสิทธิภาพการทำงานด้วย AI',
+          items: [
+            'Smart Evidence Tagging (Tag เอกสารอัตโนมัติด้วย AI)',
+            'Chat with PMQA Rules (ถาม-ตอบเกณฑ์ด้วย RAG)',
+          ],
+        },
+        {
+          category: 'Data Insights',
+          icon: 'BarChart3',
+          description: 'วิเคราะห์ข้อมูลเชิงลึก',
+          items: [
+            'Predictive Scoring (พยากรณ์คะแนนในอนาคต)',
+            'Department Ranking (จัดอันดับความก้าวหน้า)',
+          ],
+        },
+        {
+          category: 'Engagement & UX',
+          icon: 'Users',
+          description: 'ประสบการณ์การใช้งานที่ดีขึ้น',
+          items: [
+            'Live Collaboration (เห็นผู้ใช้งานอื่นแบบ Real-time)',
+            'Interactive eBook Export (QR Codes & Clickable TOC)',
+          ],
+        },
+      ],
+    },
+    'v2.4.1': {
+      date: '20 มกราคม 2569',
+      title: 'Dark Mode & UI Improvements',
+      features: [
+        {
+          category: 'User Interface',
+          icon: 'Palette',
+          description: 'ปรับปรุงการแสดงผลและธีม',
+          items: [
+            'Light/Dark Mode system (Theme Toggle)',
+            'หน้า Settings ใหม่สำหรับจัดการการตั้งค่า',
+            'ปรับปรุง UI ให้รองรับทั้งโหมดมืดและสว่าง',
+          ],
+        },
+      ],
+    },
+    'v2.3.1': {
+      date: '20 มกราคม 2569',
+      title: 'AI Enhancements & User Experience',
+      features: [
+        {
+          category: 'AI Capabilities',
+          icon: 'Sparkles',
+          description: 'เพิ่มขีดความสามารถ AI',
+          items: [
+            'AI Trend Analysis วิเคราะห์แนวโน้มเทียบกับรอบก่อนหน้า',
+            'AI Writing Assistant (Refine Text) ปรับภาษาทางการ',
+            'Dynamic Tone Selection (Official, Concise, Elaborate)',
+          ],
+        },
+        {
+          category: 'User Experience',
+          icon: 'Compass',
+          description: 'ประสบการณ์ผู้ใช้',
+          items: [
+            'User Onboarding Tour แนะนำการใช้งานสำหรับผู้ใช้ใหม่',
+            'Interactive Spotlight Guide',
+          ],
+        },
+      ],
+    },
+    'v2.3.0': {
+      date: '20 มกราคม 2569',
+      title: 'Comments & @Mentions System',
+      features: [
+        {
+          category: 'Comments & @Mentions',
+          icon: 'MessageSquare',
+          description: 'ระบบความคิดเห็นและการกล่าวถึงผู้ใช้',
+          items: [
+            'Comment บน Evidence items',
+            'Comment บน SAR sections',
+            '@mention ผู้ใช้พร้อม autocomplete',
+            'แจ้งเตือนเมื่อถูก mention',
+            'แก้ไข/ลบ comment ของตัวเอง',
+            'Comment history & audit trail',
+          ],
+        },
+        {
+          category: 'AI Strategic Insights',
+          icon: 'Sparkles',
+          description: 'ระบบวิเคราะห์กลยุทธ์ด้วย AI (Advanced)',
+          items: [
+            'Generate Strategic Insights (SWOT Analysis)',
+            'Executive Summary generation',
+            'AI-powered Recommendations',
+            'Q&A Assistant (Chat with your SAR data)',
+            'New Insights Dashboard',
+          ],
+        },
+      ],
+    },
+    'v2.2.0': {
+      date: '20 มกราคม 2569',
+      title: 'Google Calendar Integration',
+      features: [
+        {
+          category: 'Google Calendar Sync',
+          icon: 'Calendar',
+          description: 'ซิงค์กำหนดเวลารอบประเมินกับ Google Calendar',
+          items: [
+            'ปุ่ม Sync Calendar ในหน้า Cycles',
+            'สร้าง Event สำหรับวันเริ่มและสิ้นสุด',
+            'แจ้งเตือนล่วงหน้า 7, 3, 1 วัน',
+            'OAuth Google Calendar permission',
+          ],
+        },
+      ],
+    },
+    'v2.1.1': {
+      date: '20 มกราคม 2569',
+      title: 'Global Search Enhancement',
+      features: [
+        {
+          category: 'Global Search',
+          icon: 'Search',
+          description: 'ค้นหาข้อมูลทั้งระบบแบบครอบคลุม',
+          items: [
+            'ค้นหา Pages, Evidence, KPI, SAR, และ Users',
+            'Filter tabs กรองตามประเภทข้อมูล',
+            'Text Highlighting แสดงคำที่ค้นพบ',
+            'Keyboard shortcut (Cmd/Ctrl + K)',
+            'Loading indicator ขณะค้นหา',
+            'Type badges แยกสีตามประเภท',
+          ],
+        },
+      ],
+    },
     'v2.1.0': {
       date: '20 มกราคม 2569',
       title: 'Real-time Collaboration & Advanced Export System',

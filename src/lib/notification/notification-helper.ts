@@ -14,7 +14,7 @@ interface CreateNotificationParams {
     title: string;
     message: string;
     source?: {
-        type: 'user' | 'system' | 'cycle' | 'evidence';
+        type: 'user' | 'system' | 'cycle' | 'evidence' | 'comment';
         id?: string;
         name?: string;
     };

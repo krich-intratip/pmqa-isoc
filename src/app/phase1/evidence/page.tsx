@@ -1,14 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCycleStore } from '@/stores/cycle-store';
+import { useAIConfigStore } from '@/stores/ai-config-store';
+import { analyzeEvidenceImage } from '@/lib/google/ai-api';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Upload, Link as LinkIcon, FileText, CheckCircle, AlertTriangle, Download, Trash2, History, MoreHorizontal, RotateCcw } from 'lucide-react';
+import { Plus, Upload, Link as LinkIcon, FileText, CheckCircle, AlertTriangle, Download, Trash2, History, MoreHorizontal, RotateCcw, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import CommentSection from '@/components/comments/CommentSection';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -39,6 +42,7 @@ export default function EvidenceRegisterPage() {
     const [selectedCategory, setSelectedCategory] = useState(1);
     const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
     const [loading, setLoading] = useState(false);
+    const { apiKey, selectedModel } = useAIConfigStore();
 
     // User permission check
     const isAdmin = user ? canDeleteFiles(user.role) : false;
@@ -55,6 +59,63 @@ export default function EvidenceRegisterPage() {
     const [newCriteria, setNewCriteria] = useState('');
     const [newType, setNewType] = useState<'link' | 'file'>('link');
 
+    // AI Smart Tagging State
+    const [analyzing, setAnalyzing] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+            // Default Name
+            if (!newTitle) setNewTitle(file.name);
+        }
+    };
+
+    const handleSmartTag = async () => {
+        if (!previewUrl || !apiKey) {
+            toast.error(apiKey ? 'กรุณาเลือกไฟล์' : 'กรุณาตั้งค่า API Key ก่อนใช้งาน AI');
+            return;
+        }
+
+        setAnalyzing(true);
+        try {
+            const base64 = previewUrl.split(',')[1];
+            // Determine Mime Type
+            const mimeType = selectedFile?.type || 'image/jpeg';
+
+            const result = await analyzeEvidenceImage(apiKey, selectedModel, base64, mimeType);
+
+            if (result) {
+                if (result.suggestedName) setNewTitle(result.suggestedName);
+
+                // Try to map category
+                if (result.category) {
+                    const catMatch = result.category.match(/(\d+)/);
+                    if (catMatch && catMatch[1]) {
+                        const catId = parseInt(catMatch[1]);
+                        if (catId >= 1 && catId <= 7) setSelectedCategory(catId);
+                    }
+                }
+
+                // If result has documentType or tags, we could append to criteria or notes
+                // For now, let's toast
+                toast.success(`AI Tagging: ${result.documentType} (Confidence: ${Math.round(result.confidence * 100)}%)`);
+            }
+        } catch (error) {
+            console.error('AI Tagging Error:', error);
+            toast.error('AI Analysis Failed');
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
     // Update Dialog State
     const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
     const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
@@ -65,6 +126,10 @@ export default function EvidenceRegisterPage() {
     // History Dialog State
     const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
     const [versionHistory, setVersionHistory] = useState<FileVersion[]>([]);
+
+    // Comment Dialog State
+    const [commentDialogOpen, setCommentDialogOpen] = useState(false);
+    const [commentEvidence, setCommentEvidence] = useState<Evidence | null>(null);
     const [loadingHistory, setLoadingHistory] = useState(false);
 
     const fetchEvidence = async (catId: number) => {
@@ -349,14 +414,6 @@ export default function EvidenceRegisterPage() {
                                     </DialogHeader>
                                     <div className="grid gap-4 py-4">
                                         <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-right">หัวข้อหลักฐาน</Label>
-                                            <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} className="col-span-3" placeholder="เช่น แผนยุทธศาสตร์ปี 69" />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-right">เกณฑ์ย่อย (ID)</Label>
-                                            <Input value={newCriteria} onChange={e => setNewCriteria(e.target.value)} className="col-span-3" placeholder="เช่น 2.1 ก(1)" />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
                                             <Label className="text-right">ประเภท</Label>
                                             <Select value={newType} onValueChange={(v: 'link' | 'file') => setNewType(v)}>
                                                 <SelectTrigger className="col-span-3">
@@ -364,13 +421,46 @@ export default function EvidenceRegisterPage() {
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="link">Link (Google Drive/Web)</SelectItem>
-                                                    <SelectItem value="file">File Upload (Demo)</SelectItem>
+                                                    <SelectItem value="file">File Upload (AI Supported)</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
+
+                                        {newType === 'file' ? (
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-right">เลือกไฟล์</Label>
+                                                <div className="col-span-3 flex gap-2">
+                                                    <Input type="file" onChange={handleFileSelect} accept="image/*,application/pdf" />
+                                                    <Button
+                                                        type="button"
+                                                        variant="secondary"
+                                                        className="gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+                                                        onClick={handleSmartTag}
+                                                        disabled={!selectedFile || analyzing}
+                                                    >
+                                                        {analyzing ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <Sparkles className="h-4 w-4" />
+                                                        )}
+                                                        Smart Tag
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-right">URL / Path</Label>
+                                                <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} className="col-span-3" placeholder="https://..." />
+                                            </div>
+                                        )}
+
                                         <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-right">URL / Path</Label>
-                                            <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} className="col-span-3" placeholder="https://..." />
+                                            <Label className="text-right">หัวข้อหลักฐาน</Label>
+                                            <Input value={newTitle} onChange={e => setNewTitle(e.target.value)} className="col-span-3" placeholder="เช่น แผนยุทธศาสตร์ปี 69" />
+                                        </div>
+                                        <div className="grid grid-cols-4 items-center gap-4">
+                                            <Label className="text-right">เกณฑ์ย่อย (ID)</Label>
+                                            <Input value={newCriteria} onChange={e => setNewCriteria(e.target.value)} className="col-span-3" placeholder="เช่น 2.1 ก(1)" />
                                         </div>
                                     </div>
                                     <DialogFooter>
@@ -439,6 +529,13 @@ export default function EvidenceRegisterPage() {
                                                         <DropdownMenuItem onClick={() => handleViewHistory(item)}>
                                                             <History className="h-4 w-4 mr-2" />
                                                             ประวัติ ({item.totalVersions || 1} เวอร์ชัน)
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => {
+                                                            setCommentEvidence(item);
+                                                            setCommentDialogOpen(true);
+                                                        }}>
+                                                            <MessageSquare className="h-4 w-4 mr-2" />
+                                                            ความคิดเห็น
                                                         </DropdownMenuItem>
                                                         {isAdmin && (
                                                             <>
@@ -576,6 +673,27 @@ export default function EvidenceRegisterPage() {
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setHistoryDialogOpen(false)}>ปิด</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Comment Dialog */}
+                <Dialog open={commentDialogOpen} onOpenChange={setCommentDialogOpen}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>ความคิดเห็น</DialogTitle>
+                            <DialogDescription>
+                                {commentEvidence?.title}
+                            </DialogDescription>
+                        </DialogHeader>
+                        {commentEvidence && (
+                            <CommentSection
+                                targetType="evidence"
+                                targetId={commentEvidence.id}
+                            />
+                        )}
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setCommentDialogOpen(false)}>ปิด</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
 import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown } from 'lucide-react';
+import BulkImportUsers from '@/components/admin/BulkImportUsers';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { sendApprovalNotification, sendRejectionNotification } from '@/lib/notification/notification-helper';
 
@@ -473,10 +474,16 @@ function UsersManagementContent() {
                                     อนุมัติ แก้ไข ปิด/เปิดการใช้งาน และจัดการข้อมูลผู้ใช้
                                 </CardDescription>
                             </div>
-                            <Button onClick={handleExport} variant="outline" size="sm">
-                                <Download className="h-4 w-4 mr-2" />
-                                ส่งออก CSV
-                            </Button>
+                            <div className="flex gap-2">
+                                <BulkImportUsers
+                                    existingEmails={users.map(u => u.email.toLowerCase())}
+                                    onImportComplete={fetchUsers}
+                                />
+                                <Button onClick={handleExport} variant="outline" size="sm">
+                                    <Download className="h-4 w-4 mr-2" />
+                                    ส่งออก CSV
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Tabs for different statuses */}

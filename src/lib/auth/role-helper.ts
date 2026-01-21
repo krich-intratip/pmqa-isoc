@@ -1,4 +1,4 @@
-import { User } from '@/types/database';
+import type { User } from '@/types/database';
 
 export const ROLES = {
     SUPER_ADMIN: 'super_admin',

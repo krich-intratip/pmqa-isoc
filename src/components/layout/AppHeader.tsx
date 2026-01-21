@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
 import CycleSelector from '@/components/cycles/CycleSelector';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { SearchDialog } from '@/components/search/SearchDialog';
+import LivePresence from '@/components/collaboration/LivePresence';
 
 export default function AppHeader() {
     const { user, logout } = useAuth();
@@ -46,8 +48,13 @@ export default function AppHeader() {
                         <Link href="/about" className="hover:text-indigo-600 transition-colors">เกี่ยวกับ</Link>
                     </nav>
 
+                    <div className="hidden md:block">
+                        <SearchDialog />
+                    </div>
+
                     {user && user.status === 'approved' && (
-                        <div className="hidden lg:block">
+                        <div className="hidden lg:flex items-center gap-3">
+                            <LivePresence sectionId="global-dashboard" />
                             <CycleSelector compact />
                         </div>
                     )}
