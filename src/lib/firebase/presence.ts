@@ -70,57 +70,60 @@ export async function updateUserActivity(userId: string): Promise<void> {
 }
 
 /**
- * Subscribe to online users (real-time)
+ * Subscribe to ALL presence documents (real-time)
+ * We filter by lastActivity on the client side to avoid index issues
+ * Users active within last 5 minutes are considered "online"
  */
 export function subscribeToOnlineUsers(
     callback: (users: UserPresence[]) => void
 ): () => void {
-    console.log('[Presence] Creating subscription to online users...');
-    const presenceQuery = query(
-        collection(db, 'presence'),
-        where('isOnline', '==', true)
-    );
+    // Query ALL presence documents (no filter) to avoid index issues
+    const presenceRef = collection(db, 'presence');
 
     const unsubscribe = onSnapshot(
-        presenceQuery,
+        presenceRef,
         (snapshot) => {
-            console.log('[Presence] Snapshot received, size:', snapshot.size, 'docs');
+            const now = Date.now();
+            const FIVE_MINUTES = 5 * 60 * 1000;
             const onlineUsers: UserPresence[] = [];
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                console.log('[Presence] Processing doc:', doc.id, 'data:', {
-                    userId: data.userId,
-                    displayName: data.displayName,
-                    isOnline: data.isOnline,
-                    lastActivity: data.lastActivity ? 'exists' : 'null'
-                });
-                onlineUsers.push({
-                    userId: data.userId,
-                    displayName: data.displayName,
-                    email: data.email,
-                    role: data.role,
-                    unitName: data.unitName,
-                    unitCategory: data.unitCategory,
-                    isOnline: data.isOnline,
-                    lastSeen: data.lastSeen,
-                    lastActivity: data.lastActivity,
-                });
+                
+                // Check if user was active in last 5 minutes
+                let isActive = false;
+                if (data.lastActivity) {
+                    try {
+                        const lastActivityTime = data.lastActivity.toDate().getTime();
+                        isActive = (now - lastActivityTime) < FIVE_MINUTES;
+                    } catch {
+                        isActive = false;
+                    }
+                }
+
+                if (isActive) {
+                    onlineUsers.push({
+                        userId: data.userId,
+                        displayName: data.displayName,
+                        email: data.email,
+                        role: data.role,
+                        unitName: data.unitName,
+                        unitCategory: data.unitCategory,
+                        isOnline: true, // Mark as online if active
+                        lastSeen: data.lastSeen,
+                        lastActivity: data.lastActivity,
+                    });
+                }
             });
 
-            console.log('[Presence] Snapshot processed:', onlineUsers.length, 'online users');
-            console.log('[Presence] Users list:', onlineUsers.map(u => u.displayName));
             callback(onlineUsers);
         },
         (error) => {
-            console.error('[Presence] Error subscribing to online users:', error);
-            console.error('[Presence] Error code:', error.code);
-            console.error('[Presence] Error message:', error.message);
-            callback([]); // Return empty array on error
+            console.error('[Presence] Error:', error);
+            callback([]);
         }
     );
 
-    console.log('[Presence] Subscription created, returning unsubscribe function');
     return unsubscribe;
 }
 
@@ -152,7 +155,7 @@ export async function getAllUsersPresence(): Promise<UserPresence[]> {
 
 /**
  * Initialize presence tracking for a user
- * Sets up automatic online/offline detection
+ * Updates lastActivity every 30 seconds to indicate user is online
  */
 export function initializePresenceTracking(
     userId: string,
@@ -164,48 +167,17 @@ export function initializePresenceTracking(
         unitCategory?: string;
     }
 ): () => void {
-    // Set user online immediately (fire and forget, but log errors)
-    setUserOnline(userId, userData).catch((error) => {
-        console.error('[Presence] Error setting user online:', error);
-    });
+    // Set user online immediately
+    setUserOnline(userId, userData).catch(() => {});
 
-    // Update activity every 30 seconds
+    // Update activity every 30 seconds to keep user "online"
     const activityInterval = setInterval(() => {
-        updateUserActivity(userId).catch((error) => {
-            console.error('[Presence] Error updating user activity:', error);
-        });
+        updateUserActivity(userId).catch(() => {});
     }, 30000);
 
-    // Set offline on beforeunload
-    const handleBeforeUnload = () => {
-        // Use sendBeacon for reliable offline detection
-        setUserOffline(userId).catch((error) => {
-            console.error('[Presence] Error setting user offline:', error);
-        });
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Set offline on visibility change (tab closed/hidden)
-    const handleVisibilityChange = () => {
-        if (document.hidden) {
-            setUserOffline(userId).catch((error) => {
-                console.error('[Presence] Error setting user offline:', error);
-            });
-        } else {
-            setUserOnline(userId, userData).catch((error) => {
-                console.error('[Presence] Error setting user online:', error);
-            });
-        }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // Cleanup function
+    // Cleanup function - only clear interval, don't set offline
+    // User will naturally become "offline" after 5 minutes of inactivity
     return () => {
         clearInterval(activityInterval);
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-        setUserOffline(userId).catch((error) => {
-            console.error('[Presence] Error setting user offline on cleanup:', error);
-        });
     };
 }

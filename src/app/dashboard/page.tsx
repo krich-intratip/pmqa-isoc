@@ -342,7 +342,7 @@ export default function Dashboard() {
                             <FileText className="h-4 w-4" />
                             Export HTML
                         </Button>
-                        <OnlineUsersButton sectionId="global-dashboard" />
+                        <OnlineUsersButton />
                         <div className="text-right">
                             <p className="text-sm text-slate-500">
                                 {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}
@@ -705,7 +705,7 @@ export default function Dashboard() {
                         <FileText className="h-4 w-4" />
                         Export HTML
                     </Button>
-                    <OnlineUsersButton sectionId="global-dashboard" />
+                    <OnlineUsersButton />
                     <div className="text-right">
                         <p className="text-sm text-slate-500">
                             {selectedCycle ? `รอบประเมิน: ${selectedCycle.name || selectedCycle.year}` : 'ยังไม่ได้เลือกรอบประเมิน'}

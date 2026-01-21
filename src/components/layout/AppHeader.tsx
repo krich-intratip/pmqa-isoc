@@ -56,7 +56,7 @@ export default function AppHeader() {
 
                     {user && user.status === 'approved' && (
                         <div className="hidden lg:flex items-center gap-3">
-                            <OnlineUsersButton sectionId="global-dashboard" />
+                            <OnlineUsersButton />
                         </div>
                     )}
 

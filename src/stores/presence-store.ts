@@ -58,47 +58,30 @@ export const usePresenceStore = create<PresenceStore>((set, get) => ({
     setFilterUnit: (unit) => set({ filterUnit: unit }),
 
     startPresenceTracking: (userId, userData) => {
-        console.log('[Presence Store] startPresenceTracking called for:', userId, userData.displayName);
-        
         // Unsubscribe existing tracking if user changed
         if (currentUserId && currentUserId !== userId && unsubscribeTracking) {
-            console.log('[Presence Store] User changed, stopping old tracking');
             unsubscribeTracking();
             unsubscribeTracking = null;
         }
 
-        // Always subscribe to online users to get real-time updates
-        // Unsubscribe first if already subscribed to avoid duplicate subscriptions
+        // Always subscribe to online users
         if (unsubscribePresence) {
-            console.log('[Presence Store] Unsubscribing existing presence subscription');
             unsubscribePresence();
             unsubscribePresence = null;
         }
         
-        // Subscribe to online users - this will get all users who are online
-        console.log('[Presence Store] Subscribing to online users...');
+        // Subscribe to presence - this gets all users active in last 5 minutes
         unsubscribePresence = subscribeToOnlineUsers((users) => {
-            console.log('[Presence Store] Subscription callback received:', users.length, 'users');
-            console.log('[Presence Store] Users:', users.map(u => ({ 
-                userId: u.userId, 
-                displayName: u.displayName, 
-                isOnline: u.isOnline,
-                lastActivity: u.lastActivity ? u.lastActivity.toDate().toISOString() : 'null'
-            })));
             get().setOnlineUsers(users);
         });
 
         // Initialize presence tracking for current user
         if (!unsubscribeTracking || currentUserId !== userId) {
             if (unsubscribeTracking) {
-                console.log('[Presence Store] Stopping old tracking');
                 unsubscribeTracking();
             }
-            console.log('[Presence Store] Starting tracking for user:', userId, userData.displayName);
             unsubscribeTracking = initializePresenceTracking(userId, userData);
             currentUserId = userId;
-        } else {
-            console.log('[Presence Store] Tracking already active for user:', userId);
         }
     },
 
