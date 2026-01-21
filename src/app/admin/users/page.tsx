@@ -236,22 +236,29 @@ function UsersManagementContent() {
     const handleApprove = async (targetUser: User) => {
         if (!confirm(`ยืนยันการอนุมัติผู้ใช้ "${targetUser.displayName}"?`)) return;
 
+        // 1. Optimistic UI update - แสดงผลทันที
+        setUsers(prev => prev.map(u =>
+            u.uid === targetUser.uid ? { ...u, status: 'approved' as const, isActive: true } : u
+        ));
+        toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
+
         try {
+            // 2. ทำงานจริงใน background
             await updateDoc(doc(db, 'users', targetUser.uid), {
                 status: 'approved',
                 isActive: true,
                 updatedAt: serverTimestamp(),
             });
 
-            await logApproveAction('user', targetUser.uid, targetUser.displayName);
-
-            // Send notification to user
-            await sendApprovalNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ');
-
-            toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
-            fetchUsers();
+            // 3. Log และ notification แบบ fire-and-forget (ไม่ต้อง await)
+            logApproveAction('user', targetUser.uid, targetUser.displayName).catch(console.error);
+            sendApprovalNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ').catch(console.error);
         } catch (error) {
+            // 4. Rollback ถ้าผิดพลาด
             console.error(error);
+            setUsers(prev => prev.map(u =>
+                u.uid === targetUser.uid ? { ...u, status: 'pending' as const, isActive: false } : u
+            ));
             toast.error('เกิดข้อผิดพลาดในการอนุมัติ');
         }
     };
@@ -259,22 +266,29 @@ function UsersManagementContent() {
     const handleReject = async (targetUser: User) => {
         const reason = prompt('กรุณาระบุเหตุผลในการปฏิเสธ (ถ้ามี):');
 
+        // 1. Optimistic UI update - แสดงผลทันที
+        setUsers(prev => prev.map(u =>
+            u.uid === targetUser.uid ? { ...u, status: 'rejected' as const, isActive: false } : u
+        ));
+        toast.success('ปฏิเสธผู้ใช้งานเรียบร้อยแล้ว');
+
         try {
+            // 2. ทำงานจริงใน background
             await updateDoc(doc(db, 'users', targetUser.uid), {
                 status: 'rejected',
                 isActive: false,
                 updatedAt: serverTimestamp(),
             });
 
-            await logRejectAction('user', targetUser.uid, targetUser.displayName, reason || undefined);
-
-            // Send notification to user
-            await sendRejectionNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ', reason || undefined);
-
-            toast.success('ปฏิเสธผู้ใช้งานเรียบร้อยแล้ว');
-            fetchUsers();
+            // 3. Log และ notification แบบ fire-and-forget
+            logRejectAction('user', targetUser.uid, targetUser.displayName, reason || undefined).catch(console.error);
+            sendRejectionNotification(targetUser.uid, user?.displayName || 'ผู้ดูแลระบบ', reason || undefined).catch(console.error);
         } catch (error) {
+            // 4. Rollback ถ้าผิดพลาด
             console.error(error);
+            setUsers(prev => prev.map(u =>
+                u.uid === targetUser.uid ? { ...u, status: 'pending' as const, isActive: false } : u
+            ));
             toast.error('เกิดข้อผิดพลาดในการปฏิเสธ');
         }
     };

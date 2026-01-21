@@ -96,6 +96,14 @@ export default function AdminApprovalsPage() {
             return;
         }
 
+        const targetUserId = editingUser.uid;
+
+        // 1. Optimistic UI update - ลบออกจาก pending list ทันที
+        setPendingUsers(prev => prev.filter(u => u.uid !== targetUserId));
+        toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
+        setEditDialogOpen(false);
+        setEditingUser(null);
+
         try {
             // Build metadata object without undefined values
             const metadataUpdate: Record<string, string> = {};
@@ -118,22 +126,25 @@ export default function AdminApprovalsPage() {
                 updateData.metadata = metadataUpdate;
             }
 
-            await updateDoc(doc(db, 'users', editingUser.uid), updateData);
-
-            toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
-            setEditDialogOpen(false);
-            setEditingUser(null);
-            fetchPendingUsers();
+            // 2. ทำงานจริงใน background
+            await updateDoc(doc(db, 'users', targetUserId), updateData);
         } catch (error) {
+            // 3. Rollback ถ้าผิดพลาด - fetch ใหม่
             console.error('Error approving user:', error);
             toast.error('เกิดข้อผิดพลาดในการอนุมัติ');
+            fetchPendingUsers();
         }
     };
 
     const handleApprove = async (userId: string, requestedRole: string, requestedUnitId: string) => {
         if (!confirm('ยืนยันการอนุมัติผู้ใช้นี้ตามข้อมูลที่ร้องขอ?')) return;
 
+        // 1. Optimistic UI update - ลบออกจาก pending list ทันที
+        setPendingUsers(prev => prev.filter(u => u.uid !== userId));
+        toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
+
         try {
+            // 2. ทำงานจริงใน background
             await updateDoc(doc(db, 'users', userId), {
                 status: 'approved',
                 role: requestedRole as User['role'],
@@ -141,26 +152,32 @@ export default function AdminApprovalsPage() {
                 isActive: true,
                 updatedAt: serverTimestamp(),
             });
-            toast.success('อนุมัติผู้ใช้งานเรียบร้อยแล้ว');
-            fetchPendingUsers();
         } catch (error) {
+            // 3. Rollback ถ้าผิดพลาด
             console.error(error);
             toast.error('เกิดข้อผิดพลาดในการอนุมัติ');
+            fetchPendingUsers();
         }
     };
 
     const handleReject = async (userId: string) => {
         if (!confirm('ยืนยันที่จะไม่อนุมัติผู้ใช้งานนี้?')) return;
+
+        // 1. Optimistic UI update - ลบออกจาก pending list ทันที
+        setPendingUsers(prev => prev.filter(u => u.uid !== userId));
+        toast.success('ปฏิเสธผู้ใช้งานแล้ว');
+
         try {
+            // 2. ทำงานจริงใน background
             await updateDoc(doc(db, 'users', userId), {
                 status: 'rejected',
                 updatedAt: serverTimestamp(),
             });
-            toast.success('ปฏิเสธผู้ใช้งานแล้ว');
-            fetchPendingUsers();
         } catch (error) {
+            // 3. Rollback ถ้าผิดพลาด
             console.error(error);
             toast.error('เกิดข้อผิดพลาด');
+            fetchPendingUsers();
         }
     };
 
