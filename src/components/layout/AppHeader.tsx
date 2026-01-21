@@ -6,7 +6,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
-import CycleSelector from '@/components/cycles/CycleSelector';
+// CycleSelector ย้ายไปแสดงใน Dashboard แทน เพื่อไม่ให้รก Header
+// import CycleSelector from '@/components/cycles/CycleSelector';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { SearchDialog } from '@/components/search/SearchDialog';
 import LivePresence from '@/components/collaboration/LivePresence';
@@ -56,7 +57,7 @@ export default function AppHeader() {
                     {user && user.status === 'approved' && (
                         <div className="hidden lg:flex items-center gap-3">
                             <LivePresence sectionId="global-dashboard" />
-                            <CycleSelector compact />
+                            {/* CycleSelector ย้ายไปแสดงใน Dashboard */}
                         </div>
                     )}
 
