@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"D:\\\\Dropbox\\\\DB 1 year 100GB 251068\\\\Dev\\\\WebAppProjects\\\\pmqa-isoc\\\\src\\\\lib\\\\firebase.ts\")",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix critical bugs: auth, RBAC, Firebase config, null safety\n\n- Remove duplicate Firebase initialization \\(firebase.ts\\)\n- Fix Dashboard hardcoded isAdmin/isReviewer to use actual user roles\n- Fix ProtectedRoute incomplete pending/rejected status handling\n- Fix Dashboard wrong redirect path \\(/login -> /auth/login\\)\n- Fix AuthContext to use custom User type with role instead of Firebase User\n- Fix ai-config-store hardcoded ''system'' updatedBy to use actual user ID\n- Fix auth-store missing error handling for profile fetch failures\n- Fix non-null assertions \\(user!.unitId\\) with proper null checks\n- Remove unused imports \\(GoogleAuthProvider, signInWithPopup\\)\n- Add missing dependency @radix-ui/react-accordion\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "mcp__Windows-MCP__App-Tool",
+      "mcp__Windows-MCP__State-Tool",
+      "Bash(npm run dev:*)",
+      "mcp__Windows-MCP__Type-Tool",
+      "mcp__Windows-MCP__Shortcut-Tool",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd setup-admin page for initial Super Admin configuration\n\nProvides a secure UI at /setup-admin for the designated admin email\nto self-register as Super Admin with full permissions in Firestore.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(vercel --version:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git commit:*)",
+      "Bash(printf:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(done)",
+      "Bash(xargs ls:*)",
+      "Bash(npm run lint:*)",
+      "Bash(vercel:*)",
+      "Bash(git reset:*)",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
+      "Bash(git status:*)"
+    ]
+  }
+}
