@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { UserAvatar } from './UserAvatar';
 import { usePresenceStore } from '@/stores/presence-store';
-import { Users, Search, Filter, Loader2 } from 'lucide-react';
+import { Users, Search, Filter, Loader2, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -76,109 +76,134 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
 
     return (
         <>
-            {/* Sidebar */}
+            {/* Sidebar with Glassmorphism */}
             <div
                 className={cn(
-                    'fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 bg-card border-l border-border shadow-xl z-30 transition-transform duration-300 ease-in-out',
-                    'hidden lg:block',
+                    'fixed top-16 right-0 h-[calc(100vh-4rem)] w-80 shadow-2xl z-30 transition-transform duration-300 ease-in-out',
+                    'hidden lg:flex flex-col', // Use flex to organize content
                     isSidebarOpen ? 'translate-x-0' : 'translate-x-full',
+                    'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80', // Glass effect
+                    'border-l border-border/50',
                     className
                 )}
             >
-                <Card className="h-full border-0 rounded-none">
-                    <CardHeader className="pb-4 border-b">
+                {/* Toggle Handle - Visible even when closed */}
+                <Button
+                    variant="secondary"
+                    size="icon"
+                    className={cn(
+                        "absolute top-12 -left-10 h-10 w-10 rounded-l-lg rounded-r-none shadow-md border-y border-l border-r-0 border-border",
+                        "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+                        "hover:w-11 transition-all duration-200", // Hover effect
+                        "flex items-center justify-center"
+                    )}
+                    onClick={() => toggleSidebar()}
+                    title={isSidebarOpen ? "ซ่อนแถบผู้ใช้ออนไลน์" : "แสดงผู้ใช้ออนไลน์"}
+                >
+                    {isSidebarOpen ? (
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    ) : (
+                        <Users className="h-5 w-5 text-primary animate-pulse" />
+                    )}
+                </Button>
+
+                <Card className="h-full border-0 rounded-none bg-transparent shadow-none flex flex-col">
+                    <CardHeader className="pb-4 border-b shrink-0">
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <Users className="h-5 w-5 text-green-600" />
                             ผู้ใช้ออนไลน์
                             {!isLoading && (
-                                <Badge className="ml-auto bg-green-500">{filteredUsers.length}</Badge>
+                                <Badge className="ml-auto bg-green-500 hover:bg-green-600">{filteredUsers.length}</Badge>
                             )}
                         </CardTitle>
                         <CardDescription>ผู้ใช้งานที่ออนไลน์ในขณะนี้</CardDescription>
                     </CardHeader>
 
-                    <CardContent className="p-4 space-y-4">
-                        {/* Search */}
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="ค้นหาชื่อหรืออีเมล..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 h-9"
-                            />
+                    <CardContent className="p-4 space-y-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+                        {/* Search & Filter Section - Shrinkable */}
+                        <div className="space-y-3 shrink-0">
+                            {/* Search */}
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="ค้นหาชื่อหรืออีเมล..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-9 h-9 bg-background/50"
+                                />
+                            </div>
+
+                            {/* Filter Toggle */}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShowFilters(!showFilters)}
+                                className="w-full bg-background/50"
+                            >
+                                <Filter className="h-4 w-4 mr-2" />
+                                {showFilters ? 'ซ่อนตัวกรอง' : 'แสดงตัวกรอง'}
+                            </Button>
+
+                            {/* Filters */}
+                            {showFilters && (
+                                <div className="space-y-2 p-3 bg-muted/50 rounded-lg animate-in slide-in-from-top-2 duration-200">
+                                    <div>
+                                        <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                                            บทบาท
+                                        </label>
+                                        <Select value={filterRole} onValueChange={setFilterRole}>
+                                            <SelectTrigger className="h-8 bg-background">
+                                                <SelectValue placeholder="ทุกบทบาท" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">ทุกบทบาท</SelectItem>
+                                                {uniqueRoles.map((role) => (
+                                                    <SelectItem key={role} value={role}>
+                                                        {getRoleDisplayName(role)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                                            หน่วยงาน
+                                        </label>
+                                        <Select value={filterUnit} onValueChange={setFilterUnit}>
+                                            <SelectTrigger className="h-8 bg-background">
+                                                <SelectValue placeholder="ทุกหน่วยงาน" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">ทุกหน่วยงาน</SelectItem>
+                                                {uniqueUnits.map((unit) => (
+                                                    <SelectItem key={unit} value={unit}>
+                                                        {unit}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {(filterRole !== 'all' || filterUnit !== 'all') && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => {
+                                                setFilterRole('all');
+                                                setFilterUnit('all');
+                                            }}
+                                            className="w-full text-xs"
+                                        >
+                                            ล้างตัวกรอง
+                                        </Button>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
-                        {/* Filter Toggle */}
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowFilters(!showFilters)}
-                            className="w-full"
-                        >
-                            <Filter className="h-4 w-4 mr-2" />
-                            {showFilters ? 'ซ่อนตัวกรอง' : 'แสดงตัวกรอง'}
-                        </Button>
-
-                        {/* Filters */}
-                        {showFilters && (
-                            <div className="space-y-2 p-3 bg-muted rounded-lg">
-                                <div>
-                                    <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                                        บทบาท
-                                    </label>
-                                    <Select value={filterRole} onValueChange={setFilterRole}>
-                                        <SelectTrigger className="h-8">
-                                            <SelectValue placeholder="ทุกบทบาท" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">ทุกบทบาท</SelectItem>
-                                            {uniqueRoles.map((role) => (
-                                                <SelectItem key={role} value={role}>
-                                                    {getRoleDisplayName(role)}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                                        หน่วยงาน
-                                    </label>
-                                    <Select value={filterUnit} onValueChange={setFilterUnit}>
-                                        <SelectTrigger className="h-8">
-                                            <SelectValue placeholder="ทุกหน่วยงาน" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">ทุกหน่วยงาน</SelectItem>
-                                            {uniqueUnits.map((unit) => (
-                                                <SelectItem key={unit} value={unit}>
-                                                    {unit}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                {(filterRole !== 'all' || filterUnit !== 'all') && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                            setFilterRole('all');
-                                            setFilterUnit('all');
-                                        }}
-                                        className="w-full text-xs"
-                                    >
-                                        ล้างตัวกรอง
-                                    </Button>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Users List */}
-                        <ScrollArea className="h-[calc(100vh-22rem)]">
+                        {/* Users List - Scrollable */}
+                        <ScrollArea className="flex-1 -mx-2 px-2">
                             {isLoading ? (
                                 <div className="flex items-center justify-center py-8">
                                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -190,11 +215,11 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
                                         : 'ไม่มีผู้ใช้ออนไลน์ในขณะนี้'}
                                 </div>
                             ) : (
-                                <div className="space-y-2">
+                                <div className="space-y-2 pb-4">
                                     {filteredUsers.map((user) => (
                                         <div
                                             key={user.userId}
-                                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
+                                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/60 transition-colors border border-transparent hover:border-border/50"
                                         >
                                             <UserAvatar
                                                 displayName={user.displayName}
@@ -214,14 +239,14 @@ export function OnlineUsersSidebar({ className }: OnlineUsersSidebarProps) {
                                                         {user.unitName}
                                                     </div>
                                                 )}
-                                                <div className="flex items-center gap-1 mt-1">
+                                                <div className="flex items-center gap-1 mt-1 flex-wrap">
                                                     <Badge
-                                                        className={cn('text-xs px-1.5 py-0', getRoleBadgeColor(user.role))}
+                                                        className={cn('text-[10px] px-1.5 py-0 h-5', getRoleBadgeColor(user.role))}
                                                     >
                                                         {getRoleDisplayName(user.role)}
                                                     </Badge>
                                                     {user.lastActivity && (
-                                                        <span className="text-xs text-muted-foreground">
+                                                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                                                             · {formatLastSeen(user.lastActivity)}
                                                         </span>
                                                     )}
