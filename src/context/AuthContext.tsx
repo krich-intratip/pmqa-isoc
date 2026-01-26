@@ -39,11 +39,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             try {
                 const result = await checkRedirectResult();
                 if (result) {
-                    setUser(result.user);
-                    if (result.isNew) {
-                        router.push('/profile?status=pending');
+                    const authUser = result.user;
+                    setUser(authUser);
+
+                    // Redirect based on user status
+                    if (authUser.status === 'pending') {
+                        router.replace('/auth/register');
+                    } else if (authUser.status === 'approved' || authUser.role === 'super_admin') {
+                        router.replace('/dashboard');
+                    } else if (authUser.status === 'rejected') {
+                        // Stay on login page with error
+                        setAuthError('บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
                     } else {
-                        router.push('/dashboard');
+                        router.replace('/dashboard');
                     }
                 }
             } catch (error) {
