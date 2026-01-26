@@ -6,14 +6,20 @@ import { useAuthStore } from '@/stores/auth-store';
 import { signInWithGoogle } from '@/lib/firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { APP_VERSION } from '@/config/version';
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { user, loading, initialize } = useAuthStore();
+    const [errorDialog, setErrorDialog] = useState<{
+        open: boolean;
+        title: string;
+        message: string;
+    }>({ open: false, title: '', message: '' });
 
     // Initialize auth state
     useEffect(() => {
@@ -75,15 +81,21 @@ export default function LoginPage() {
             ) {
                 // Error 403: disallowed_useragent - เปิดจาก WebView ใน LINE/Facebook/Instagram
                 errorMessage = 'ไม่สามารถเข้าสู่ระบบผ่านแอปนี้ได้ กรุณาเปิดใน Chrome หรือ Safari';
-                toast.error(errorMessage, {
-                    duration: 8000,
-                    description: 'กดเมนู ⋮ แล้วเลือก "เปิดใน Chrome" หรือ "Open in Browser"',
+                setErrorDialog({
+                    open: true,
+                    title: 'เข้าสู่ระบบไม่สำเร็จ',
+                    message: errorMessage + '\n\nกดเมนู ⋮ แล้วเลือก "เปิดใน Chrome" หรือ "Open in Browser"',
                 });
                 setIsLoading(false);
-                return; // Return early เพราะแสดง toast พิเศษแล้ว
+                return; // Return early เพราะแสดง dialog แล้ว
             }
 
-            toast.error(errorMessage);
+            // แสดง Error Dialog สำหรับ error อื่นๆ
+            setErrorDialog({
+                open: true,
+                title: 'เข้าสู่ระบบไม่สำเร็จ',
+                message: errorMessage + '\n\nรายละเอียด: ' + (err?.message || 'ไม่ทราบสาเหตุ'),
+            });
             setIsLoading(false);
         }
     };
@@ -153,6 +165,23 @@ export default function LoginPage() {
                     </p>
                 </CardFooter>
             </Card>
+
+            {/* Error Dialog */}
+            <Dialog open={errorDialog.open} onOpenChange={(open) => setErrorDialog({ ...errorDialog, open })}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                            <AlertCircle className="h-6 w-6 text-destructive" />
+                        </div>
+                        <DialogTitle className="text-center text-lg font-semibold">
+                            {errorDialog.title}
+                        </DialogTitle>
+                        <DialogDescription className="text-center whitespace-pre-line pt-2">
+                            {errorDialog.message}
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

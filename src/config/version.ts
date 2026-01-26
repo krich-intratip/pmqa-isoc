@@ -6,13 +6,29 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.7',
-  lastUpdate: '2026-01-23',
-  releaseDate: '23 มกราคม 2569',
+  version: '3.0.8',
+  lastUpdate: '2026-01-26',
+  releaseDate: '26 มกราคม 2569',
 
   // Version history for About page
   releases: {
-    'v3.0.7': {
+    'v3.0.8': {
+      date: '26 มกราคม 2569',
+      title: 'Login Enhancement - Error Dialog & Configuration',
+      features: [
+        {
+          category: 'Login Improvements',
+          icon: 'Shield',
+          description: 'ปรับปรุงประสบการณ์การ Login',
+          items: [
+            'เพิ่ม Error Dialog Popup แสดงรายละเอียด error ที่ชัดเจน',
+            'แก้ไข error handling ให้ผู้ใช้เห็นสาเหตุ error',
+            'เพิ่ม Environment Variables สำหรับ Firebase Configuration',
+            'ปรับปรุง UX เมื่อเกิด error ในขั้นตอน login',
+          ],
+        },
+      ],
+    },
       date: '23 มกราคม 2569',
       title: 'Login Fix - Google OAuth Scope Removed',
       features: [
