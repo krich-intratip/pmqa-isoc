@@ -1,16 +1,64 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { checkRedirectResult } from '@/lib/firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LogIn, AlertCircle, Loader2, Info } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
-    const { signInWithGoogle, loading, authError, clearAuthError } = useAuth();
+    const { signInWithGoogle, loading, authError, clearAuthError, user } = useAuth();
     const [isSigningIn, setIsSigningIn] = useState(false);
+    const [isCheckingRedirect, setIsCheckingRedirect] = useState(true);
+    const router = useRouter();
+
+    // Check for redirect result on mount
+    useEffect(() => {
+        const handleRedirectResult = async () => {
+            try {
+                const result = await checkRedirectResult();
+                if (result) {
+                    const { user: authUser, isNew } = result;
+
+                    if (authUser.status === 'pending') {
+                        if (isNew) {
+                            toast.info('กรุณากรอกข้อมูลเพื่อขอสิทธิ์ใช้งาน');
+                        }
+                        router.replace('/auth/register');
+                    } else if (authUser.status === 'approved' || authUser.role === 'super_admin') {
+                        toast.success(`ยินดีต้อนรับ ${authUser.displayName}`);
+                        router.replace('/dashboard');
+                    } else if (authUser.status === 'rejected') {
+                        toast.error('บัญชีของคุณถูกระงับการใช้งาน');
+                    } else {
+                        router.replace('/dashboard');
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling redirect result:', error);
+            } finally {
+                setIsCheckingRedirect(false);
+            }
+        };
+
+        handleRedirectResult();
+    }, [router]);
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        if (!loading && !isCheckingRedirect && user) {
+            if (user.status === 'approved' || user.role === 'super_admin') {
+                router.replace('/dashboard');
+            } else if (user.status === 'pending') {
+                router.replace('/auth/register');
+            }
+        }
+    }, [user, loading, isCheckingRedirect, router]);
 
     const handleSignIn = async () => {
         setIsSigningIn(true);
@@ -24,7 +72,19 @@ export default function LoginPage() {
         }
     };
 
-    const isLoading = loading || isSigningIn;
+    const isLoading = loading || isSigningIn || isCheckingRedirect;
+
+    // Show loading while checking redirect result
+    if (isCheckingRedirect) {
+        return (
+            <div className="min-h-[80vh] flex items-center justify-center p-4">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">กำลังตรวจสอบการเข้าสู่ระบบ...</p>
+                </div>
+            </div>
+        );
+    }
 
     // Check if the message is informational (redirect in progress)
     const isInfoMessage = authError?.includes('กำลังนำไป');
