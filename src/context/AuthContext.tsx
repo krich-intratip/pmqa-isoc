@@ -97,27 +97,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signInWithGoogle = async () => {
         setAuthError(null);
+        setLoading(true);
         try {
-            const result = await signInWithGoogleAuth();
-            if (result.isNew) {
-                router.push('/profile?status=pending');
-            } else {
-                router.push('/dashboard');
-            }
+            // Using redirect method - page will redirect to Google
+            setAuthError('กำลังนำไปหน้า Login ของ Google...');
+            await signInWithGoogleAuth();
+            // Page will redirect, this line won't be reached
         } catch (error) {
+            setLoading(false);
             const loginError = error as LoginError;
-
-            // Handle redirect initiated (popup was blocked)
-            if (loginError.code === 'auth/redirect-initiated') {
-                setAuthError('กำลังนำไปหน้า Login ของ Google...');
-                return; // Don't throw, redirect is happening
-            }
 
             // User-friendly error messages
             let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง';
 
             if (loginError.code === 'auth/popup-closed-by-user') {
-                errorMessage = 'คุณปิดหน้าต่าง Login กรุณาลองใหม่อีกครั้ง';
+                errorMessage = 'หน้าต่าง Login ถูกปิด กรุณาลองใหม่อีกครั้ง';
+            } else if (loginError.code === 'auth/popup-blocked') {
+                errorMessage = 'Popup ถูกบล็อก กรุณาใช้ปุ่ม Redirect';
             } else if (loginError.code === 'auth/network-request-failed') {
                 errorMessage = 'ไม่สามารถเชื่อมต่ออินเทอร์เน็ตได้ กรุณาตรวจสอบการเชื่อมต่อ';
             } else if (loginError.code === 'auth/too-many-requests') {
@@ -126,7 +122,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setAuthError(errorMessage);
             console.error('Error signing in with Google:', error);
-            throw error;
         }
     };
 

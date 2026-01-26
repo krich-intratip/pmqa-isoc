@@ -5,9 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { LogIn, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
+import { LogIn, AlertCircle, Loader2, Info } from 'lucide-react';
 import Image from 'next/image';
-import { signInWithGoogleRedirect } from '@/lib/firebase/auth';
 
 export default function LoginPage() {
     const { signInWithGoogle, loading, authError, clearAuthError } = useAuth();
@@ -18,24 +17,17 @@ export default function LoginPage() {
         clearAuthError();
         try {
             await signInWithGoogle();
+            // Page will redirect to Google, no need to handle success here
         } catch {
             // Error is handled by AuthContext
-        } finally {
-            setIsSigningIn(false);
-        }
-    };
-
-    const handleRedirectSignIn = async () => {
-        setIsSigningIn(true);
-        clearAuthError();
-        try {
-            await signInWithGoogleRedirect();
-        } catch {
             setIsSigningIn(false);
         }
     };
 
     const isLoading = loading || isSigningIn;
+
+    // Check if the message is informational (redirect in progress)
+    const isInfoMessage = authError?.includes('กำลังนำไป');
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -55,14 +47,18 @@ export default function LoginPage() {
                     </div>
 
                     {authError && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
+                        <Alert variant={isInfoMessage ? "default" : "destructive"}>
+                            {isInfoMessage ? (
+                                <Info className="h-4 w-4" />
+                            ) : (
+                                <AlertCircle className="h-4 w-4" />
+                            )}
                             <AlertDescription>{authError}</AlertDescription>
                         </Alert>
                     )}
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
-                    {/* Main login button */}
+                    {/* Main login button - uses redirect */}
                     <Button
                         className="w-full h-12 text-lg font-medium transition-all hover:scale-[1.02]"
                         onClick={handleSignIn}
@@ -79,23 +75,12 @@ export default function LoginPage() {
                                 className="mr-3 bg-white rounded-full p-0.5"
                             />
                         )}
-                        {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบด้วย Google'}
-                    </Button>
-
-                    {/* Fallback button for popup-blocked browsers */}
-                    <Button
-                        variant="outline"
-                        className="w-full h-10 text-sm"
-                        onClick={handleRedirectSignIn}
-                        disabled={isLoading}
-                    >
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        เข้าสู่ระบบแบบ Redirect (หาก Popup ไม่ทำงาน)
+                        {isLoading ? 'กำลังนำไปหน้า Google...' : 'เข้าสู่ระบบด้วย Google'}
                     </Button>
 
                     {/* Help text */}
                     <p className="text-xs text-muted-foreground text-center mt-2">
-                        หาก Popup ถูกบล็อก ให้อนุญาต Popup สำหรับเว็บไซต์นี้ หรือใช้ปุ่ม Redirect
+                        ระบบจะนำท่านไปยังหน้า Login ของ Google เพื่อยืนยันตัวตน
                     </p>
                 </CardFooter>
             </Card>

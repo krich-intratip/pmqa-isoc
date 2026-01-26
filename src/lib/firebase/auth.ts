@@ -90,35 +90,44 @@ export const checkRedirectResult = async (): Promise<{ user: User; isNew: boolea
 };
 
 /**
- * Sign in with Google - tries popup first, falls back to redirect
+ * Sign in with Google - uses redirect by default for better compatibility
+ * Popup method has issues with many browsers and extensions
  */
-export const signInWithGoogle = async (): Promise<{ user: User; isNew: boolean }> => {
+export const signInWithGoogle = async (): Promise<{ user: User; isNew: boolean } | null> => {
+    // Use redirect method directly - more reliable across browsers
+    console.log('Starting Google Sign-In with redirect...');
+    await signInWithRedirect(auth, googleProvider);
+    // This line won't be reached as the page will redirect
+    return null;
+};
+
+/**
+ * Sign in with Google using popup (alternative method)
+ * May not work on all browsers/devices
+ */
+export const signInWithGooglePopup = async (): Promise<{ user: User; isNew: boolean }> => {
     try {
-        // Try popup first
         const result = await signInWithPopup(auth, googleProvider);
         return await processAuthenticatedUser(result.user);
     } catch (error) {
         const authError = error as AuthError;
+        console.error('Popup sign-in failed:', authError.code, authError.message);
 
-        // Handle popup blocked or closed errors
-        if (
-            authError.code === 'auth/popup-blocked' ||
-            authError.code === 'auth/popup-closed-by-user' ||
-            authError.code === 'auth/cancelled-popup-request'
-        ) {
-            console.log('Popup blocked or closed, attempting redirect...');
-            // Fall back to redirect method
-            await signInWithRedirect(auth, googleProvider);
-            // This line won't be reached as the page will redirect
+        // Provide specific error messages
+        if (authError.code === 'auth/popup-closed-by-user') {
             throw {
-                code: 'auth/redirect-initiated',
-                message: 'กำลังนำไปหน้า Login...',
+                code: authError.code,
+                message: 'หน้าต่าง Login ถูกปิด กรุณาลองใหม่หรือใช้ปุ่ม Redirect',
+                isPopupBlocked: false
+            } as LoginError;
+        } else if (authError.code === 'auth/popup-blocked') {
+            throw {
+                code: authError.code,
+                message: 'Popup ถูกบล็อก กรุณาอนุญาต Popup หรือใช้ปุ่ม Redirect',
                 isPopupBlocked: true
             } as LoginError;
         }
 
-        // Re-throw other errors
-        console.error('Error signing in with Google:', error);
         throw error;
     }
 };

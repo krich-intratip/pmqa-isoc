@@ -3,16 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
-import { signInWithGoogle } from '@/lib/firebase/auth';
+import { signInWithGoogle, checkRedirectResult } from '@/lib/firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Info } from 'lucide-react';
 import { APP_VERSION } from '@/config/version';
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const router = useRouter();
     const { user, loading, initialize } = useAuthStore();
     const [errorDialog, setErrorDialog] = useState<{
@@ -27,6 +29,37 @@ export default function LoginPage() {
         return () => unsubscribe();
     }, [initialize]);
 
+    // Check for redirect result on mount
+    useEffect(() => {
+        const handleRedirectResult = async () => {
+            try {
+                const result = await checkRedirectResult();
+                if (result) {
+                    const { user, isNew } = result;
+
+                    // Redirect based on user status
+                    if (user.status === 'pending') {
+                        if (isNew) {
+                            toast.info('กรุณากรอกข้อมูลเพื่อขอสิทธิ์ใช้งาน');
+                        }
+                        router.replace('/auth/register');
+                    } else if (user.status === 'approved' || user.role === 'super_admin') {
+                        toast.success(`ยินดีต้อนรับ ${user.displayName}`);
+                        router.replace('/dashboard');
+                    } else if (user.status === 'rejected') {
+                        toast.error('บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+                    } else {
+                        router.replace('/dashboard');
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling redirect result:', error);
+            }
+        };
+
+        handleRedirectResult();
+    }, [router]);
+
     // Auto-redirect if already logged in
     useEffect(() => {
         if (!loading && user) {
@@ -40,32 +73,16 @@ export default function LoginPage() {
 
     const handleGoogleLogin = async () => {
         setIsLoading(true);
-        try {
-            const { user, isNew } = await signInWithGoogle();
+        setStatusMessage('กำลังนำไปหน้า Login ของ Google...');
 
-            // Immediately redirect based on user status
-            if (user.status === 'pending') {
-                if (isNew || !user.requestDetails) {
-                    toast.info('กรุณากรอกข้อมูลเพื่อขอสิทธิ์ใช้งาน');
-                    router.replace('/auth/register');
-                } else {
-                    router.replace('/auth/register');
-                }
-            } else if (user.status === 'approved' || user.role === 'super_admin') {
-                toast.success(`ยินดีต้อนรับ ${user.displayName}`);
-                router.replace('/dashboard');
-            } else if (user.status === 'rejected') {
-                toast.error('บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
-                setIsLoading(false);
-            } else {
-                // Fallback
-                router.replace('/dashboard');
-            }
+        try {
+            // This will redirect to Google - page will reload
+            await signInWithGoogle();
+            // This line won't be reached as the page will redirect
         } catch (error) {
             console.error('Login error:', error);
             const err = error as { code?: string; message?: string };
 
-            // ตรวจสอบ error types ต่างๆ
             let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
 
             if (err?.code === 'auth/popup-closed-by-user') {
@@ -79,7 +96,6 @@ export default function LoginPage() {
                 err?.message?.includes('403') ||
                 err?.code === 'auth/web-storage-unsupported'
             ) {
-                // Error 403: disallowed_useragent - เปิดจาก WebView ใน LINE/Facebook/Instagram
                 errorMessage = 'ไม่สามารถเข้าสู่ระบบผ่านแอปนี้ได้ กรุณาเปิดใน Chrome หรือ Safari';
                 setErrorDialog({
                     open: true,
@@ -87,16 +103,17 @@ export default function LoginPage() {
                     message: errorMessage + '\n\nกดเมนู ⋮ แล้วเลือก "เปิดใน Chrome" หรือ "Open in Browser"',
                 });
                 setIsLoading(false);
-                return; // Return early เพราะแสดง dialog แล้ว
+                setStatusMessage(null);
+                return;
             }
 
-            // แสดง Error Dialog สำหรับ error อื่นๆ
             setErrorDialog({
                 open: true,
                 title: 'เข้าสู่ระบบไม่สำเร็จ',
                 message: errorMessage + '\n\nรายละเอียด: ' + (err?.message || 'ไม่ทราบสาเหตุ'),
             });
             setIsLoading(false);
+            setStatusMessage(null);
         }
     };
 
@@ -132,6 +149,14 @@ export default function LoginPage() {
                     <div className="text-center text-sm text-muted-foreground my-4">
                         เข้าสู่ระบบด้วยบัญชี Google ของท่าน
                     </div>
+
+                    {statusMessage && (
+                        <Alert>
+                            <Info className="h-4 w-4" />
+                            <AlertDescription>{statusMessage}</AlertDescription>
+                        </Alert>
+                    )}
+
                     <Button
                         variant="outline"
                         className="w-full h-12 text-base font-normal hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border-slate-200"
@@ -145,7 +170,7 @@ export default function LoginPage() {
                                 <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
                             </svg>
                         )}
-                        {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบด้วย Google'}
+                        {isLoading ? 'กำลังนำไปหน้า Google...' : 'เข้าสู่ระบบด้วย Google'}
                     </Button>
 
                     {/* คำแนะนำสำหรับผู้ใช้ที่เปิดจาก LINE/Facebook */}
