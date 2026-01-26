@@ -90,15 +90,29 @@ export const checkRedirectResult = async (): Promise<{ user: User; isNew: boolea
 };
 
 /**
- * Sign in with Google - uses redirect by default for better compatibility
- * Popup method has issues with many browsers and extensions
+ * Sign in with Google - uses popup for immediate response
+ * Falls back to redirect if popup is blocked
  */
 export const signInWithGoogle = async (): Promise<{ user: User; isNew: boolean } | null> => {
-    // Use redirect method directly - more reliable across browsers
-    console.log('Starting Google Sign-In with redirect...');
-    await signInWithRedirect(auth, googleProvider);
-    // This line won't be reached as the page will redirect
-    return null;
+    try {
+        console.log('Starting Google Sign-In with popup...');
+        const result = await signInWithPopup(auth, googleProvider);
+        return await processAuthenticatedUser(result.user);
+    } catch (error) {
+        const authError = error as AuthError;
+        console.error('Popup sign-in failed:', authError.code);
+
+        // If popup blocked or closed, fall back to redirect
+        if (authError.code === 'auth/popup-blocked' ||
+            authError.code === 'auth/popup-closed-by-user' ||
+            authError.code === 'auth/cancelled-popup-request') {
+            console.log('Popup failed, falling back to redirect...');
+            await signInWithRedirect(auth, googleProvider);
+            return null;
+        }
+
+        throw error;
+    }
 };
 
 /**

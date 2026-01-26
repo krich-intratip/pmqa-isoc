@@ -107,10 +107,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthError(null);
         setLoading(true);
         try {
-            // Using redirect method - page will redirect to Google
-            setAuthError('กำลังนำไปหน้า Login ของ Google...');
-            await signInWithGoogleAuth();
-            // Page will redirect, this line won't be reached
+            const result = await signInWithGoogleAuth();
+
+            // If popup succeeded, handle the result
+            if (result) {
+                setUser(result.user);
+
+                // Redirect based on user status
+                if (result.user.status === 'pending') {
+                    router.replace('/auth/register');
+                } else if (result.user.status === 'approved' || result.user.role === 'super_admin') {
+                    router.replace('/dashboard');
+                } else if (result.user.status === 'rejected') {
+                    setAuthError('บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ');
+                    setLoading(false);
+                } else {
+                    router.replace('/dashboard');
+                }
+            }
+            // If result is null, redirect method was used - page will reload
         } catch (error) {
             setLoading(false);
             const loginError = error as LoginError;
@@ -118,11 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // User-friendly error messages
             let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง';
 
-            if (loginError.code === 'auth/popup-closed-by-user') {
-                errorMessage = 'หน้าต่าง Login ถูกปิด กรุณาลองใหม่อีกครั้ง';
-            } else if (loginError.code === 'auth/popup-blocked') {
-                errorMessage = 'Popup ถูกบล็อก กรุณาใช้ปุ่ม Redirect';
-            } else if (loginError.code === 'auth/network-request-failed') {
+            if (loginError.code === 'auth/network-request-failed') {
                 errorMessage = 'ไม่สามารถเชื่อมต่ออินเทอร์เน็ตได้ กรุณาตรวจสอบการเชื่อมต่อ';
             } else if (loginError.code === 'auth/too-many-requests') {
                 errorMessage = 'มีการพยายาม Login มากเกินไป กรุณารอสักครู่แล้วลองใหม่';
