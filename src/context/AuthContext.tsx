@@ -1,19 +1,26 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
 import { useRouter } from 'next/navigation';
 import { User } from '@/types/database';
-import { getUserProfile, signInWithGoogle as signInWithGoogleAuth } from '@/lib/firebase/auth';
+import {
+    getUserProfile,
+    signInWithGoogle as signInWithGoogleAuth,
+    checkRedirectResult,
+    LoginError
+} from '@/lib/firebase/auth';
 import { usePresenceStore } from '@/stores/presence-store';
 import { logLogout } from '@/lib/activity-log/activity-logger';
 
 interface AuthContextType {
     user: User | null;
     loading: boolean;
+    authError: string | null;
     signInWithGoogle: () => Promise<void>;
     logout: () => Promise<void>;
+    clearAuthError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -21,8 +28,33 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [authError, setAuthError] = useState<string | null>(null);
+    const [redirectChecked, setRedirectChecked] = useState(false);
     const router = useRouter();
     const { startPresenceTracking, stopPresenceTracking } = usePresenceStore();
+
+    // Check for redirect result on mount (for redirect-based login)
+    useEffect(() => {
+        const handleRedirectResult = async () => {
+            try {
+                const result = await checkRedirectResult();
+                if (result) {
+                    setUser(result.user);
+                    if (result.isNew) {
+                        router.push('/profile?status=pending');
+                    } else {
+                        router.push('/dashboard');
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling redirect result:', error);
+            } finally {
+                setRedirectChecked(true);
+            }
+        };
+
+        handleRedirectResult();
+    }, [router]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -59,7 +91,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         stopPresenceTracking();
     }, [user, startPresenceTracking, stopPresenceTracking]);
 
+    const clearAuthError = useCallback(() => {
+        setAuthError(null);
+    }, []);
+
     const signInWithGoogle = async () => {
+        setAuthError(null);
         try {
             const result = await signInWithGoogleAuth();
             if (result.isNew) {
@@ -68,7 +105,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 router.push('/dashboard');
             }
         } catch (error) {
-            console.error('Error signing in with Google', error);
+            const loginError = error as LoginError;
+
+            // Handle redirect initiated (popup was blocked)
+            if (loginError.code === 'auth/redirect-initiated') {
+                setAuthError('กำลังนำไปหน้า Login ของ Google...');
+                return; // Don't throw, redirect is happening
+            }
+
+            // User-friendly error messages
+            let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง';
+
+            if (loginError.code === 'auth/popup-closed-by-user') {
+                errorMessage = 'คุณปิดหน้าต่าง Login กรุณาลองใหม่อีกครั้ง';
+            } else if (loginError.code === 'auth/network-request-failed') {
+                errorMessage = 'ไม่สามารถเชื่อมต่ออินเทอร์เน็ตได้ กรุณาตรวจสอบการเชื่อมต่อ';
+            } else if (loginError.code === 'auth/too-many-requests') {
+                errorMessage = 'มีการพยายาม Login มากเกินไป กรุณารอสักครู่แล้วลองใหม่';
+            }
+
+            setAuthError(errorMessage);
+            console.error('Error signing in with Google:', error);
             throw error;
         }
     };
@@ -95,7 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signInWithGoogle, logout }}>
+        <AuthContext.Provider value={{ user, loading, authError, signInWithGoogle, logout, clearAuthError }}>
             {children}
         </AuthContext.Provider>
     );

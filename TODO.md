@@ -1,7 +1,21 @@
 # PMQA-ISOC Development Roadmap
 
-> แผนพัฒนาฟีเจอร์ - อัปเดต: 23 มกราคม 2569
-> **Status:** v3.0.7 Login Fix - Google OAuth Scope Removed
+> แผนพัฒนาฟีเจอร์ - อัปเดต: 26 มกราคม 2569
+> **Status:** v3.0.9 Login Popup Fix - Redirect Fallback
+
+---
+
+## ✅ v3.0.9 - Login Popup Fix
+
+**Release Date:** 26 มกราคม 2569
+**Status:** ✅ Released
+
+### Bug Fixes:
+- [x] แก้ไขปัญหา Popup ถูก Block หรือปิดเร็วเกินไป
+- [x] เพิ่ม Auto-fallback ไป Redirect เมื่อ Popup ถูก Block
+- [x] เพิ่มปุ่ม "เข้าสู่ระบบแบบ Redirect" สำหรับกรณี Popup ไม่ทำงาน
+- [x] ปรับปรุง Error Messages เป็นภาษาไทยที่เข้าใจง่าย
+- [x] เพิ่ม Loading State และ Error Alert ในหน้า Login
 
 ---
 
