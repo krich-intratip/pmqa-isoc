@@ -13,9 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { ISOC_HIERARCHY, getProvincesByRegion } from '@/lib/hierarchy/unit-helper';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { ROLES, UNIT_TYPES } from '@/lib/auth/role-helper';
+import { PendingApprovalDialog } from '@/components/auth/PendingApprovalDialog';
 
 const formSchema = z.object({
     unitCategory: z.string().min(1, 'กรุณาเลือกประเภทหน่วยงาน'),
@@ -42,6 +43,9 @@ export default function RegisterPage() {
     const router = useRouter();
     const [regions, setRegions] = useState<RegionOption[]>([]);
     const [units, setUnits] = useState<UnitOption[]>([]);
+    const [showPendingDialog, setShowPendingDialog] = useState(false);
+    const [isNewRegistration, setIsNewRegistration] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -93,8 +97,43 @@ export default function RegisterPage() {
         }
     }, [watchCategory, watchRegion]);
 
+    // Send email notification to System Admins
+    const notifySystemAdmins = async (userName: string, userEmail: string) => {
+        try {
+            // Get all users and filter on client side
+            // (to avoid needing composite index for role + status)
+            const usersRef = collection(db, 'users');
+            const snapshot = await getDocs(usersRef);
+            const adminEmails = snapshot.docs
+                .map(doc => doc.data())
+                .filter(userData =>
+                    (userData.role === ROLES.SUPER_ADMIN || userData.role === ROLES.SYSTEM_ADMIN) &&
+                    userData.status === 'approved' &&
+                    userData.email
+                )
+                .map(userData => userData.email);
+
+            if (adminEmails.length > 0) {
+                // Call API to send email
+                await fetch('/api/email/new-user-notification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        adminEmails,
+                        newUserName: userName,
+                        newUserEmail: userEmail,
+                    }),
+                });
+            }
+        } catch (error) {
+            console.error('Failed to notify admins:', error);
+            // Don't throw - email is not critical
+        }
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!user) return;
+        setIsSubmitting(true);
         try {
             const userRef = doc(db, 'users', user.uid);
             await updateDoc(userRef, {
@@ -109,10 +148,18 @@ export default function RegisterPage() {
                 },
                 isActive: true,
             });
+
+            // Notify System Admins via email
+            await notifySystemAdmins(values.fullName, user.email);
+
             toast.success('ส่งคำขอเรียบร้อยแล้ว');
+            setIsNewRegistration(true);
+            setShowPendingDialog(true);
         } catch (error) {
             console.error(error);
             toast.error('เกิดข้อผิดพลาด');
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -221,11 +268,21 @@ export default function RegisterPage() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full">ส่งคำขอ</Button>
+                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                                {isSubmitting ? 'กำลังส่งคำขอ...' : 'ส่งคำขอ'}
+                            </Button>
                         </form>
                     </Form>
                 </CardContent>
             </Card>
+
+            {/* Pending Approval Dialog */}
+            <PendingApprovalDialog
+                open={showPendingDialog}
+                onOpenChange={setShowPendingDialog}
+                userEmail={user?.email}
+                isNewRegistration={isNewRegistration}
+            />
         </div>
     );
 }

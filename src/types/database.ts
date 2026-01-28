@@ -5,7 +5,7 @@ export interface User {
     email: string;
     displayName: string;
     photoURL?: string;
-    role: 'super_admin' | 'central_admin' | 'regional_coordinator' | 'provincial_staff' | 'data_owner' | 'reviewer' | 'read_only';
+    role: 'super_admin' | 'system_admin' | 'central_admin' | 'regional_coordinator' | 'provincial_staff' | 'data_owner' | 'reviewer' | 'read_only';
     unitId?: string;
     status: 'pending' | 'approved' | 'rejected' | 'disabled';
     requestDetails?: {

@@ -28,10 +28,11 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
             } else {
                 // User is logged in - check status and roles
                 if (user.status === 'pending') {
-                    // Pending users can only access profile page to view their status
-                    const allowedPendingPaths = ['/profile', '/auth/login', '/auth/register'];
-                    if (!allowedPendingPaths.includes(pathname)) {
-                        router.push('/profile?status=pending');
+                    // Pending users can only access profile, help, about, and auth pages
+                    const allowedPendingPaths = ['/profile', '/auth/login', '/auth/register', '/help', '/about'];
+                    const isAllowed = allowedPendingPaths.some(path => pathname.startsWith(path));
+                    if (!isAllowed) {
+                        router.push('/auth/register?status=pending');
                     }
                 } else if (user.status === 'rejected' || user.status === 'disabled') {
                     // Rejected or disabled users should be logged out or shown error

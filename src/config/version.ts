@@ -6,12 +6,39 @@
  */
 
 export const APP_VERSION = {
-  version: '3.0.9',
-  lastUpdate: '2026-01-26',
-  releaseDate: '26 มกราคม 2569',
+  version: '3.0.10',
+  lastUpdate: '2026-01-28',
+  releaseDate: '28 มกราคม 2569',
 
   // Version history for About page
   releases: {
+    'v3.0.10': {
+      date: '28 มกราคม 2569',
+      title: 'System Admin Role & Registration Flow',
+      features: [
+        {
+          category: 'System Admin Role',
+          icon: 'Shield',
+          description: 'เพิ่ม Role ผู้ดูแลระบบ (System Admin)',
+          items: [
+            'เพิ่ม Role System Admin ที่มีสิทธิ์เทียบเท่า Super Admin',
+            'System Admin ไม่สามารถแก้ไข/ลบ Super Admin ได้',
+            'รองรับการจัดการผู้ใช้ตาม Role Hierarchy',
+            'เพิ่ม System Admin ใน Bulk Import Users',
+          ],
+        },
+        {
+          category: 'Registration Flow',
+          icon: 'UserPlus',
+          description: 'ปรับปรุงขั้นตอนการลงทะเบียน',
+          items: [
+            'แสดง Popup แจ้งผู้ใช้ใหม่หลังลงทะเบียนว่ารอการอนุมัติ',
+            'ส่ง Email แจ้งเตือน Super Admin และ System Admin เมื่อมีผู้ใช้ใหม่',
+            'ผู้ใช้ที่รออนุมัติสามารถเข้าถึงเฉพาะหน้า Help และ About',
+          ],
+        },
+      ],
+    },
     'v3.0.9': {
       date: '26 มกราคม 2569',
       title: 'Login Popup Fix - Redirect Fallback',

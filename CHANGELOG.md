@@ -2,6 +2,40 @@
 
 All notable changes to the PMQA ISOC project will be documented in this file.
 
+## [3.0.10] - 2026-01-28
+
+### 🛡️ System Admin Role & Registration Flow
+
+#### System Admin Role
+- **เพิ่ม Role ผู้ดูแลระบบ (System Admin)**
+  - เพิ่ม `system_admin` role ใน database schema
+  - System Admin มีสิทธิ์เทียบเท่า Super Admin
+  - System Admin ไม่สามารถแก้ไข/ลบ Super Admin ได้
+  - ปุ่มแก้ไข/ปิดใช้งาน Super Admin จะถูกซ่อนสำหรับ System Admin
+  - แก้ไขใน `src/lib/auth/role-helper.ts` - เพิ่ม canManageTargetUser function
+  - แก้ไขใน `src/types/database.ts` - เพิ่ม system_admin ใน User role type
+  - แก้ไขใน `src/app/admin/users/page.tsx` - เพิ่ม permission checks
+  - แก้ไขใน `src/components/admin/BulkImportUsers.tsx` - รองรับ system_admin
+
+#### Registration Flow Improvements
+- **แสดง Popup แจ้งผู้ใช้ใหม่หลังลงทะเบียน**
+  - เพิ่ม PendingApprovalDialog component
+  - แสดงข้อความ "รอการอนุมัติจาก System Admin"
+  - เพิ่มลิงก์ไปหน้าคู่มือและปุ่ม Logout
+  - แก้ไขใน `src/app/auth/register/page.tsx`
+
+- **Email Notification สำหรับ Admin**
+  - ส่ง Email แจ้งเตือน Super Admin และ System Admin เมื่อมีผู้ใช้ใหม่ลงทะเบียน
+  - ดึงรายชื่อ Admin จาก users collection
+  - ใช้ Resend service สำหรับส่ง Email
+  - เพิ่ม API endpoint `/api/email/new-user-notification`
+
+- **จำกัดการเข้าถึงสำหรับผู้ใช้รออนุมัติ**
+  - ผู้ใช้ที่ status=pending สามารถเข้าถึงเฉพาะ `/help` และ `/about`
+  - แก้ไขใน `src/components/auth/ProtectedRoute.tsx`
+
+---
+
 ## [3.0.9] - 2026-01-26
 
 ### 🔧 Login Popup Fix - Redirect Fallback

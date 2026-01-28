@@ -21,7 +21,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { ROLES, getRoleDisplay, canManageUsers } from '@/lib/auth/role-helper';
+import { ROLES, getRoleDisplay, canManageUsers, canManageTargetUser } from '@/lib/auth/role-helper';
 import { Users, Edit, UserX, Search, Filter, Download, CheckSquare, XSquare, UserCheck, ArrowUpDown, Circle, Clock, Activity } from 'lucide-react';
 import BulkImportUsers from '@/components/admin/BulkImportUsers';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
@@ -227,7 +227,19 @@ function UsersManagementContent() {
         setFilteredUsers(result);
     }, [searchTerm, filterUnitCategory, filterUnitId, filterRegion, filterOnlineStatus, sortBy, sortOrder, users, units, activeTab, presenceData]);
 
+    // Check if current user can manage the target user
+    const canEditUser = (targetUser: User): boolean => {
+        if (!user) return false;
+        return canManageTargetUser(user.role, targetUser.role);
+    };
+
     const handleEdit = (editUser: User) => {
+        // Check permission before editing
+        if (!canEditUser(editUser)) {
+            toast.error('คุณไม่มีสิทธิ์แก้ไขข้อมูลผู้ใช้นี้');
+            return;
+        }
+
         setEditingUser(editUser);
         setDisplayName(editUser.displayName);
         setRole(editUser.role);
@@ -352,8 +364,14 @@ function UsersManagementContent() {
         }
     };
 
-    const handleDisable = async (userId: string, userName: string, currentStatus: User['status']) => {
-        const newStatus = currentStatus === 'disabled' ? 'approved' : 'disabled';
+    const handleDisable = async (targetUser: User) => {
+        // Check permission before disabling
+        if (!canEditUser(targetUser)) {
+            toast.error('คุณไม่มีสิทธิ์เปลี่ยนสถานะผู้ใช้นี้');
+            return;
+        }
+
+        const newStatus = targetUser.status === 'disabled' ? 'approved' : 'disabled';
         const confirmMsg = newStatus === 'disabled'
             ? 'ยืนยันที่จะปิดการใช้งานผู้ใช้นี้?'
             : 'ยืนยันที่จะเปิดการใช้งานผู้ใช้นี้?';
@@ -361,13 +379,13 @@ function UsersManagementContent() {
         if (!confirm(confirmMsg)) return;
 
         try {
-            await updateDoc(doc(db, 'users', userId), {
+            await updateDoc(doc(db, 'users', targetUser.uid), {
                 status: newStatus,
                 isActive: newStatus === 'approved',
                 updatedAt: serverTimestamp(),
             });
 
-            await logUserStatusChangeAction(userId, userName, newStatus === 'approved' ? 'enabled' : 'disabled');
+            await logUserStatusChangeAction(targetUser.uid, targetUser.displayName, newStatus === 'approved' ? 'enabled' : 'disabled');
 
             toast.success(newStatus === 'disabled' ? 'ปิดการใช้งานแล้ว' : 'เปิดการใช้งานแล้ว');
             fetchUsers();
@@ -569,7 +587,7 @@ function UsersManagementContent() {
     const rejectedCount = users.filter(u => u.status === 'rejected').length;
 
     return (
-        <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN]}>
+        <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN]}>
             <div className="container mx-auto py-8">
                 <Card>
                     <CardHeader>
@@ -838,6 +856,8 @@ function UsersManagementContent() {
                                                             size="sm"
                                                             variant="outline"
                                                             onClick={() => handleEdit(u)}
+                                                            disabled={!canEditUser(u)}
+                                                            title={!canEditUser(u) ? 'คุณไม่มีสิทธิ์แก้ไขผู้ใช้นี้' : ''}
                                                         >
                                                             <Edit className="h-3 w-3 mr-1" /> แก้ไข
                                                         </Button>
@@ -848,9 +868,9 @@ function UsersManagementContent() {
                                                                     ? 'default'
                                                                     : 'destructive'
                                                             }
-                                                            onClick={() =>
-                                                                handleDisable(u.uid, u.displayName, u.status)
-                                                            }
+                                                            onClick={() => handleDisable(u)}
+                                                            disabled={!canEditUser(u)}
+                                                            title={!canEditUser(u) ? 'คุณไม่มีสิทธิ์จัดการผู้ใช้นี้' : ''}
                                                         >
                                                             <UserX className="h-3 w-3 mr-1" />
                                                             {u.status === 'disabled'
@@ -946,7 +966,11 @@ function UsersManagementContent() {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="super_admin">ผู้ดูแลระบบสูงสุด</SelectItem>
+                                            {/* Only Super Admin can assign Super Admin role */}
+                                            {user?.role === ROLES.SUPER_ADMIN && (
+                                                <SelectItem value="super_admin">ผู้ดูแลระบบสูงสุด</SelectItem>
+                                            )}
+                                            <SelectItem value="system_admin">ผู้ดูแลระบบ</SelectItem>
                                             <SelectItem value="central_admin">ผู้ดูแลส่วนกลาง</SelectItem>
                                             <SelectItem value="regional_coordinator">
                                                 ผู้ประสานงานภาค

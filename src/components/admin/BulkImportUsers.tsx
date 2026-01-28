@@ -276,7 +276,8 @@ export default function BulkImportUsers({ existingEmails, onImportComplete }: Bu
 
     const getRoleDisplay = (role: User['role']): string => {
         const roleMap: Record<User['role'], string> = {
-            'super_admin': 'ผู้ดูแลระบบ',
+            'super_admin': 'ผู้ดูแลระบบสูงสุด',
+            'system_admin': 'ผู้ดูแลระบบ',
             'central_admin': 'ผู้ดูแลส่วนกลาง',
             'regional_coordinator': 'ผู้ประสานงานภาค',
             'provincial_staff': 'เจ้าหน้าที่จังหวัด',

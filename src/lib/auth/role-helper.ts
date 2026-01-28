@@ -2,6 +2,7 @@ import type { User } from '@/types/database';
 
 export const ROLES = {
     SUPER_ADMIN: 'super_admin',
+    SYSTEM_ADMIN: 'system_admin',
     CENTRAL_ADMIN: 'central_admin',
     REGIONAL: 'regional_coordinator',
     PROVINCIAL: 'provincial_staff',
@@ -20,19 +21,48 @@ export const UNIT_TYPES = {
 
 export type RoleType = typeof ROLES[keyof typeof ROLES];
 
-const ADMIN_ROLES = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN] as const;
+const ADMIN_ROLES = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN] as const;
+
+// System Admin can do everything except manage Super Admin
+const SYSTEM_ADMIN_ROLES = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN] as const;
+
+// Check if current user can manage target user (System Admin cannot touch Super Admin)
+export const canManageTargetUser = (currentUserRole: string, targetUserRole: string): boolean => {
+    // Super Admin can manage everyone
+    if (currentUserRole === ROLES.SUPER_ADMIN) {
+        return true;
+    }
+
+    // System Admin can manage everyone except Super Admin
+    if (currentUserRole === ROLES.SYSTEM_ADMIN) {
+        return targetUserRole !== ROLES.SUPER_ADMIN;
+    }
+
+    // Central Admin can manage lower roles
+    if (currentUserRole === ROLES.CENTRAL_ADMIN) {
+        const protectedRoles = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN] as const;
+        return !(protectedRoles as readonly string[]).includes(targetUserRole);
+    }
+
+    return false;
+};
+
+// Check if user is Super Admin or System Admin
+export const isSuperOrSystemAdmin = (role: string): boolean => {
+    return (SYSTEM_ADMIN_ROLES as readonly string[]).includes(role);
+};
 
 export const canManageUsers = (role: string): boolean => {
     return (ADMIN_ROLES as readonly string[]).includes(role);
 };
 
 export const canUploadEvidence = (role: string): boolean => {
-    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.PROVINCIAL, ROLES.DATA_OWNER] as const;
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.PROVINCIAL, ROLES.DATA_OWNER] as const;
     return (allowed as readonly string[]).includes(role);
 };
 
 export const canApproveEvidence = (role: string): boolean => {
-    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REVIEWER] as const;
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REVIEWER] as const;
     return (allowed as readonly string[]).includes(role);
 };
 
@@ -42,18 +72,19 @@ export const canDeleteFiles = (role: string): boolean => {
 };
 
 export const canViewAllData = (role: string): boolean => {
-    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.READ_ONLY] as const;
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.READ_ONLY] as const;
     return (allowed as readonly string[]).includes(role);
 };
 
 export const isMonitoringRole = (role: string): boolean => {
-    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REGIONAL] as const;
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN, ROLES.REGIONAL] as const;
     return (allowed as readonly string[]).includes(role);
 };
 
 export const getRoleDisplay = (role: string) => {
     switch (role) {
         case ROLES.SUPER_ADMIN: return 'ผู้ดูแลระบบสูงสุด';
+        case ROLES.SYSTEM_ADMIN: return 'ผู้ดูแลระบบ';
         case ROLES.CENTRAL_ADMIN: return 'ผู้ดูแลส่วนกลาง';
         case ROLES.REGIONAL: return 'ผู้ประสานงานภาค';
         case ROLES.PROVINCIAL: return 'เจ้าหน้าที่จังหวัด';
@@ -74,7 +105,7 @@ export const canAccessAdminFeatures = (role: string): boolean => {
 };
 
 export const canViewSystemStats = (role: string): boolean => {
-    const allowed = [ROLES.SUPER_ADMIN, ROLES.CENTRAL_ADMIN] as const;
+    const allowed = [ROLES.SUPER_ADMIN, ROLES.SYSTEM_ADMIN, ROLES.CENTRAL_ADMIN] as const;
     return (allowed as readonly string[]).includes(role);
 };
 
